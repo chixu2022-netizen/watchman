@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './NavBar.css';
 import Logo from './Logo';
+import SearchResults from './SearchResults';
+import { newsAPI } from '../services/newsAPI';
+import { NewsArticle, SearchFilters } from '../types/news';
 
 const primaryLinks = [
   'Home',
@@ -18,7 +21,11 @@ const moreLinks = ['Local', 'Health', 'Politics'];
 const NavBar: React.FC = () => {
   const [moreOpen, setMoreOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(false);
   const moreRef = useRef<HTMLLIElement | null>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -29,6 +36,61 @@ const NavBar: React.FC = () => {
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
+
+  // Search functionality
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const filters: SearchFilters = { query: query.trim() };
+      const response = await newsAPI.searchArticles(filters);
+      setSearchResults(response.articles);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Debounced search
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      handleSearch(searchQuery);
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchQuery]);
+
+  const handleArticleClick = (article: NewsArticle) => {
+    // Open article in new tab
+    window.open(article.url, '_blank');
+    setSearchOpen(false);
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
+  const handleCloseSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+  };
 
   return (
     <nav className="nm-navbar">
@@ -113,11 +175,11 @@ const NavBar: React.FC = () => {
           role="button"
           tabIndex={0}
           onClick={(e) => {
-            if (e.target === e.currentTarget) setSearchOpen(false);
+            if (e.target === e.currentTarget) handleCloseSearch();
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
-              setSearchOpen(false);
+              handleCloseSearch();
             }
           }}
         >
@@ -129,11 +191,14 @@ const NavBar: React.FC = () => {
             <div className="search-popup-header">
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search news articles..."
                 className="search-popup-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+
               />
               <button 
-                onClick={() => setSearchOpen(false)} 
+                onClick={handleCloseSearch} 
                 aria-label="Close popup"
                 className="search-popup-close"
               >
@@ -143,9 +208,13 @@ const NavBar: React.FC = () => {
               </button>
             </div>
             <div className="search-popup-content">
-              <div className="search-empty-state">
-                Type to search...
-              </div>
+              <SearchResults
+                articles={searchResults}
+                loading={loading}
+                query={searchQuery}
+                onArticleClick={handleArticleClick}
+                onSuggestionClick={handleSuggestionClick}
+              />
             </div>
           </div>
         </div>
