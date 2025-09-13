@@ -1,10 +1,7 @@
 import React from 'react'
 import './App.css'
-import './styles/theme.css'
 import Home from './pages/Home'
 import NavBar from './components/NavBar'
-import ThemeToggle from './components/ThemeToggle'
-import { ThemeProvider } from './contexts/ThemeContext'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import SearchResults from './pages/Search'
 import SignIn from './pages/SignIn'
@@ -18,10 +15,7 @@ function AppContent() {
     <div className="app-root">
       {!hideShell && (
         <header className="app-header">
-          <div className="header-content">
-            <NavBar />
-            <ThemeToggle />
-          </div>
+          <NavBar />
         </header>
       )}
 
@@ -42,10 +36,8 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
-    </ThemeProvider>
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   )
 }
