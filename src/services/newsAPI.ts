@@ -30,7 +30,7 @@ class NewsAPIService {
   }
 
   async getTopHeadlines(
-    category?: NewsCategory,
+    category?: NewsCategory | 'all',
     country: string = 'us',
     pageSize: number = 20
   ): Promise<NewsResponse> {
@@ -89,34 +89,109 @@ class NewsAPIService {
   }
 
   // Mock data for development and fallback
-  private getMockNews(category?: NewsCategory): NewsResponse {
-    const mockArticles = [
+  private getMockNews(category?: NewsCategory | 'all'): NewsResponse {
+    const allMockArticles = [
+      // Technology
+      {
+        title: "OpenAI's $100 Billion Pivot Blurs Its 'Mission' Further",
+        description: "The company continues to evolve its business model as it seeks massive funding rounds amid growing competition in AI.",
+        url: "https://example.com/openai-article",
+        urlToImage: undefined,
+        publishedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+        source: { name: "TechCrunch" },
+        category: NewsCategory.TECHNOLOGY
+      },
+      {
+        title: "Apple Announces Revolutionary AR Glasses for 2025",
+        description: "The tech giant unveils its most ambitious product since the iPhone, promising to revolutionize augmented reality.",
+        url: "https://example.com/apple-ar",
+        urlToImage: undefined,
+        publishedAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
+        source: { name: "The Verge" },
+        category: NewsCategory.TECHNOLOGY
+      },
+      // Business
+      {
+        title: "ECB's Nagel Says More Rate Cuts Could Jeopardize Stable Prices",
+        description: "European Central Bank official warns about the risks of aggressive monetary policy in current economic climate.",
+        url: "https://example.com/ecb-article",
+        urlToImage: undefined,
+        publishedAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(), // 1.5 hours ago
+        source: { name: "Financial Times" },
+        category: NewsCategory.BUSINESS
+      },
+      {
+        title: "Global Markets Surge on Positive Economic Data",
+        description: "Stock markets worldwide rally as inflation data shows cooling trend across major economies.",
+        url: "https://example.com/markets-surge",
+        urlToImage: undefined,
+        publishedAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(), // 2 hours ago
+        source: { name: "Reuters" },
+        category: NewsCategory.BUSINESS
+      },
+      // General/Politics
       {
         title: "ICE officer kills man in Chicago suburb during arrest attempt",
         description: "DHS said the ICE officer used 'appropriate force' during the incident. Lilian Jimenez, an Illinois state representative in Chicago, criticized ICE for the death.",
         url: "https://example.com/ice-officer-article",
         urlToImage: undefined,
-        publishedAt: new Date().toISOString(),
-        source: { name: "News Source" },
-        author: "Reporter Name"
+        publishedAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(), // 45 minutes ago
+        source: { name: "CNN" },
+        author: "Reporter Name",
+        category: NewsCategory.GENERAL
       },
+      // Sports
       {
-        title: "OpenAI's $100 Billion Pivot Blurs Its 'Mission' Further",
-        description: "The company continues to evolve its business model as it seeks massive funding rounds.",
-        url: "https://example.com/openai-article",
+        title: "NFL Playoffs: Unexpected Upsets Shake Championship Race",
+        description: "Underdog teams advance in stunning victories that have completely changed the playoff landscape.",
+        url: "https://example.com/nfl-playoffs",
         urlToImage: undefined,
-        publishedAt: new Date().toISOString(),
-        source: { name: "Tech News" }
+        publishedAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(), // 3 hours ago
+        source: { name: "ESPN" },
+        category: NewsCategory.SPORTS
       },
+      // Entertainment
       {
-        title: "ECB's Nagel Says More Rate Cuts Could Jeopardize Stable Prices",
-        description: "European Central Bank official warns about the risks of aggressive monetary policy.",
-        url: "https://example.com/ecb-article",
+        title: "Oscar Nominations Announced: Surprise Snubs and Predictions",
+        description: "This year's Academy Award nominations bring several surprises and notable omissions in major categories.",
+        url: "https://example.com/oscars-2025",
         urlToImage: undefined,
-        publishedAt: new Date().toISOString(),
-        source: { name: "Financial Times" }
+        publishedAt: new Date(Date.now() - 1000 * 60 * 240).toISOString(), // 4 hours ago
+        source: { name: "Variety" },
+        category: NewsCategory.ENTERTAINMENT
+      },
+      // Health
+      {
+        title: "New Study Links Mediterranean Diet to Longevity",
+        description: "Comprehensive research spanning 20 years shows significant health benefits of traditional Mediterranean eating patterns.",
+        url: "https://example.com/mediterranean-diet",
+        urlToImage: undefined,
+        publishedAt: new Date(Date.now() - 1000 * 60 * 300).toISOString(), // 5 hours ago
+        source: { name: "Health News" },
+        category: NewsCategory.HEALTH
+      },
+      // Science
+      {
+        title: "James Webb Telescope Discovers Potentially Habitable Exoplanet",
+        description: "Astronomers identify Earth-like conditions on planet 40 light-years away, raising hopes for extraterrestrial life.",
+        url: "https://example.com/webb-discovery",
+        urlToImage: undefined,
+        publishedAt: new Date(Date.now() - 1000 * 60 * 360).toISOString(), // 6 hours ago
+        source: { name: "NASA News" },
+        category: NewsCategory.SCIENCE
       }
     ];
+
+    // Filter by category if specified
+    let filteredArticles = allMockArticles;
+    if (category && category !== 'all') {
+      filteredArticles = allMockArticles.filter(article => 
+        (article as any).category === category
+      );
+    }
+
+    // Remove the category property before returning (it's not in our NewsArticle interface)
+    const mockArticles = filteredArticles.map(({ category, ...article }) => article);
 
     return {
       status: 'ok',
