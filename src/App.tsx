@@ -2,6 +2,7 @@ import React from 'react'
 import './App.css'
 import Home from './pages/Home'
 import NavBar from './components/NavBar'
+import StockTicker from './components/StockTicker'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import SearchResults from './pages/Search'
 import SignIn from './pages/SignIn'
@@ -13,6 +14,8 @@ function AppContent() {
 
   return (
     <div className="app-root">
+      {!hideShell && <StockTicker />}
+      
       {!hideShell && (
         <header className="app-header">
           <NavBar />
