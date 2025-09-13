@@ -1,96 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import SearchBar from '../components/SearchBar';
-import LoadingState from '../components/LoadingState';
-import { NewsCategory } from '../types/news';
-import { newsAPI } from '../services/newsAPI';
-import type { NewsArticle } from '../types/news';
+import React from 'react';
 import './Home.css';
 
 export default function Home() {
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentCategory, setCurrentCategory] = useState<NewsCategory | 'all'>('all');
-  const [isSearching, setIsSearching] = useState(false);
-
-  // Load initial news
-  useEffect(() => {
-    loadNews();
-  }, [currentCategory]);
-
-  const loadNews = async () => {
-    try {
-      setLoading(true);
-      const response = currentCategory === 'all' 
-        ? await newsAPI.getTopHeadlines()
-        : await newsAPI.getTopHeadlines(currentCategory);
-      
-      setArticles(response.articles);
-    } catch (error) {
-      console.error('Failed to load news:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSearch = async (query: string) => {
-    if (!query.trim()) {
-      loadNews();
-      setSearchQuery('');
-      return;
-    }
-
-    try {
-      setIsSearching(true);
-      setSearchQuery(query);
-      const response = await newsAPI.searchNews(query);
-      setArticles(response.articles);
-    } catch (error) {
-      console.error('Search failed:', error);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  const handleCategoryChange = (category: NewsCategory | 'all') => {
-    setCurrentCategory(category);
-    setSearchQuery(''); // Clear search when changing category
-  };
-
-  if (loading) {
-    return <LoadingState variant="page" message="Loading latest news..." />;
-  }
-
   return (
     <div className="home-container">
       <h2 className="top-feed-header">Exclusive</h2>
-      
-      {/* Add Search Bar */}
-      <SearchBar 
-        onSearch={handleSearch}
-        onCategoryChange={handleCategoryChange}
-        currentCategory={currentCategory}
-        isLoading={isSearching}
-      />
-
-      {/* Show search results info */}
-      {searchQuery && (
-        <div className="search-results-info">
-          <h3>Search results for &quot;{searchQuery}&quot;</h3>
-          <p>{articles.length} articles found</p>
-        </div>
-      )}
-
-      {/* Show category filter info */}
-      {!searchQuery && currentCategory !== 'all' && (
-        <div className="category-info">
-          <h3>{currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} News</h3>
-          <p>{articles.length} articles</p>
-        </div>
-      )}
-
-      {/* Loading state for search */}
-      {isSearching && <LoadingState variant="search" />}
       <div className="news-grid">
       {/* Row 1 */}
       <div className="grid-section grid-section-r1-c1">
