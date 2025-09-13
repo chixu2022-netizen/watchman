@@ -732,6 +732,13 @@
 }
 
 .grid-section-r7-c2 {
+  border-left: none;  /* Remove left border between col 1 and col 2 */
+  border-right: none; /* Remove right border between col 2 and col 3 */
+}
+
+.grid-section-r7-c3 {
+  border-left: none;  /* Remove left border between col 2 and col 3 */
+}
 
 /* NewsAPI Image containers for merged sections */
 .newsapi-image-container {
