@@ -14,11 +14,10 @@ function AppContent() {
 
   return (
     <div className="app-root">
-      {!hideShell && <StockTicker />}
-      
       {!hideShell && (
         <header className="app-header">
           <NavBar />
+          <StockTicker />
         </header>
       )}
 
