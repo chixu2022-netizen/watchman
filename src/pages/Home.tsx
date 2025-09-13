@@ -76,7 +76,7 @@ export default function Home() {
       {/* Show search results info */}
       {searchQuery && (
         <div className="search-results-info">
-          <h3>Search results for "{searchQuery}"</h3>
+          <h3>Search results for &quot;{searchQuery}&quot;</h3>
           <p>{articles.length} articles found</p>
         </div>
       )}
