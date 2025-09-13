@@ -145,13 +145,20 @@ export default function Home() {
         
         {/* Row 7 */}
         <div className="grid-section grid-section-r7-c1">
-          <h3 className="news-headline-small">ICE officer kills man in Chicago suburb during arrest attempt</h3>
-          <div className="news-article-text">
-            DHS said the ICE officer used &quot;appropriate force&quot; during the incident. Lilian Jimenez, an Illinois state representative in Chicago, criticized ICE for the death. &quot;This endangers all of our community for ICE to operate in this manner,&quot; she said.
+          <div className="news-article-card news-article-card--featured">
+            <h3 className="news-headline news-headline--large">
+              ICE officer kills man in Chicago suburb during arrest attempt
+            </h3>
+            <p className="news-content news-content--medium">
+              DHS said the ICE officer used &quot;appropriate force&quot; during the incident. Lilian Jimenez, an Illinois state representative in Chicago, criticized ICE for the death. &quot;This endangers all of our community for ICE to operate in this manner,&quot; she said.
+            </p>
+            <button 
+              className="news-read-more" 
+              onClick={() => window.open('https://www.example.com/ice-officer-article', '_blank')}
+            >
+              Read more
+            </button>
           </div>
-          <button className="read-more-link" onClick={() => window.open('https://www.example.com/ice-officer-article', '_blank')}>
-            Read more
-          </button>
         </div>
         <div className="grid-section grid-section-r7-c2">
           <div className="newsapi-image-container-wide">
