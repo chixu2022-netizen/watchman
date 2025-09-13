@@ -1,0 +1,6 @@
+.nm-link-for-you{
+	--shift: 0px;
+	transform: translateX(var(--shift));
+	padding: 6px 8px;
+	font-weight:600;
+}

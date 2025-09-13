@@ -1,0 +1,6 @@
+.nm-link-business{
+	--shift: 0px;
+	transform: translateX(var(--shift));
+	padding: 20px 20px;
+	font-weight:600;
+}

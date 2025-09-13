@@ -1,0 +1,5 @@
+.app-root{display:flex;flex-direction:column;min-height:100vh}
+.app-header{display:flex;align-items:center;gap:12px;padding:20px;background:#fff}
+.logo{width:40px;height:40px}
+.app-main{flex:1;padding:0;max-width:none;margin:0}
+.app-footer{text-align:center;padding:18px;background:#fff}

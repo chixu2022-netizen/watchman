@@ -1,0 +1,15 @@
+.nm-logo{
+	--logo-shift: -185px; /* change this value to move logo left/right */
+	width:96px;
+	height:auto;
+	display:block;
+	flex-shrink:0;
+	transform: translateX(var(--logo-shift));
+}
+
+/* allow consumers to override size via className or additional rules */
+.nm-logo--large{ width:120px; }
+
+/* small utility classes */
+.nm-logo--left{ --logo-shift: -8px; }
+.nm-logo--right{ --logo-shift: 8px; }

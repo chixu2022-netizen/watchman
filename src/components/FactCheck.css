@@ -1,0 +1,35 @@
+.nm-factcheck{
+  --factcheck-shift: 180px; /* change to shift button horizontally */
+  margin-left:6px; /* smaller gap so it sits closer to the other buttons */
+  width: auto;             /* allow to size to text */
+  min-width: 88px;        /* ensure enough room for two words */
+  padding: 0 12px;        /* horizontal padding to keep text comfortable */
+  height: 28px;           /* match current vertical size */
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
+  background: #000000;
+  color: #fff;
+  border: 0;
+  font-weight:600;
+  font-size:17px;
+  white-space:nowrap;     /* keep words on one line */
+  transform: translateX(var(--factcheck-shift));
+  cursor: pointer;
+}
+
+@media (max-width:767px){
+  .nm-factcheck{ min-width:64px; height:19px; font-size:14px; padding:0 8px; }
+}
+
+/* convenience utility: set this class on the button to shift it by 220px to the right */
+.nm-factcheck--shifted{ --factcheck-shift: 220px; }
+
+/* If the Fact check button is combined with other classes that also set transform
+   (for example `.nm-subscribe`), that other rule can override this one because
+   transform is a single property. Use a more specific selector to combine the
+   shifts so both variables are honored. */
+.nm-subscribe.nm-factcheck{
+  transform: translateX(calc(var(--subscribe-shift, 0px) + var(--factcheck-shift, 0px)));
+}

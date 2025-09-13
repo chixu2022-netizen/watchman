@@ -1,0 +1,7 @@
+.nm-subscribe{
+	/* baseline subscribe styles; feel free to override in this file */
+	--subscribe-shift: 0px;
+	transform: translateX(var(--subscribe-shift));
+	padding: 6px 8px;
+	font-weight:700;
+}

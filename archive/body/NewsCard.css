@@ -1,0 +1,18 @@
+/* Archived NewsCard.css -- moved from src/components */
+
+:root {
+    --nc-container-max: 920px;
+    --nc-padding: 0;
+    --nc-bg: #f80000;
+    --nc-control-hover: rgba(64, 0, 255, 0.04);
+    --nc-border: rgba(0, 0, 0, 0.06);
+    --nc-btn-border: rgba(0, 0, 0, 0.08);
+}
+
+.newscard-section { padding: 0; margin: 0; }
+
+#newscard-container { max-width: var(--nc-container-max); padding: var(--nc-padding); margin: 0 auto; position: relative; }
+
+/* ... archived styles ... */
+
+/* Full original file is saved here for restoration if needed. */

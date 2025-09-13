@@ -1,0 +1,735 @@
+/* Home Page Grid Layout Styles */
+
+/* Main container with side margins */
+.home-container {
+  min-height: calc(100vh - 80px); /* Full height minus navbar */
+  width: 100%;
+  padding: 30px 218px 0 218px; /* Added 80px top padding for exclusive header */
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Changed to column to stack header above grid */
+  align-items: center;
+}
+
+/* exclusiveheader styling */
+.top-feed-header {
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #393636;
+  text-align: left; /* Changed from center to left */
+  margin-bottom: 1px; /* Reduced from 20px to 1px for closer spacing */
+  letter-spacing: 0.5px;
+  text-transform: none; /* Changed from uppercase to normal case */
+  width: 100%; /* Full width to align with grid */
+  align-self: flex-start; /* Align to the left edge */
+}
+
+/* Section header styling - independent of grid */
+.section-header {
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #393636;
+  text-align: left;
+  margin: -270px 0 0px 0; /* Significantly increased negative margin for maximum closeness */
+  letter-spacing: 0.5px;
+  text-transform: none;
+  width: 100%;
+}
+
+/* World header styling - closer to row 6 ********************************************* */
+.world-header {
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #393636;
+  text-align: left;
+  margin: 30px 0 -5px 0; /* Small bottom margin to be closer to row 6 */
+  letter-spacing: 0.5px;
+  text-transform: none;
+  width: 100%;
+}
+
+/* Technology header styling - above row 7 */
+.technology-header {
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #393636;
+  text-align: left;
+  margin: 20px 0 1px 0; /* Reduced bottom margin to be closer to row 7 */
+  letter-spacing: 0.5px;
+  text-transform: none;
+  width: 100%;
+  grid-column: 1 / -1; /* Span across all columns */
+  grid-row: 2; /* Position in the gap row */
+  align-self: end; /* Align to bottom of gap row */
+}
+
+/* Bottom sections container */
+.bottom-sections {
+  width: 100%;
+  height: 260.7px; /* Set exact height to match row 5 */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 equal columns */
+  gap: 0px; /* No gap between sections */
+}
+
+/* 4x4 Grid Layout */
+.news-grid {
+  width: 100%;
+  height: calc(100vh - 80px); /* Full available height */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 equal columns */
+  grid-template-rows: 1fr 1fr 1fr 1fr; /* 4 equal rows */
+  gap: 0px; /* No gap between sections */
+  background-color: transparent;
+}
+
+/* Base grid section styling */
+.grid-section {
+  background-color: white;
+  border: 0.5px solid #c1bcbcff; /* Thin border lines */
+}
+
+/* Specific grid sections */
+
+/* Top-left 2x2 section for breaking news/featured image */
+.grid-section-r1-c1 {
+  grid-row: span 2; /* Spans 2 rows */
+  grid-column: span 2; /* Spans 2 columns */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #333;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Main headline section (row 1, column 3) */
+.grid-section-r1-c3 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Left-aligned text flow */
+  padding: 12px;
+}
+
+/* News article section (row 2, column 3) */
+.grid-section-r2-c3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 12px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.news-article-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  text-align: left;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.read-more-link {
+  font-size: 12px;
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.read-more-link:hover {
+  text-decoration: underline;
+  color: #004499;
+}
+
+/* Row 3 news sections styling */
+.grid-section-r3-c1,
+.grid-section-r3-c2,
+.grid-section-r3-c3,
+.grid-section-r3-c4 {
+  display: flex;
+  flex-direction: row; /* Changed to row for side-by-side layout */
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  gap: 8px; /* Space between text and image */
+  height: 60%; /* Reduced height by additional 10% (total 40% reduction) */
+}
+
+.news-image-area {
+  width: 80px; /* Significantly increased width for visibility */
+  height: 60px; /* Fixed square height */
+
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+  flex-shrink: 0; /* Prevent image from shrinking */
+}
+
+.news-headline-small {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  text-align: left;
+  line-height: 1.3;
+  margin: 0;
+  flex-grow: 1; /* Take remaining space */
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; /* Same font as navbar */
+}
+
+.dynamic-image-placeholder {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Breaking news content styling */
+.breaking-news-title {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.breaking-news-subtitle {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Main headline styling */
+.main-headline {
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+  color: #393636;
+  margin: 0;
+  text-align: left; /* Natural left-to-right text flow */
+  line-height: 1.3;
+}
+
+/* Row 4 news sections styling */
+.grid-section-r4-c1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+  padding: 16px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.grid-section-r4-c2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 16px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.grid-section-r4-c2 h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.grid-section-r4-c2 .news-article-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  text-align: left;
+  flex-grow: 1;
+}
+
+.grid-section-r4-c2 .read-more-link {
+  font-size: 12px;
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.grid-section-r4-c2 .read-more-link:hover {
+  text-decoration: underline;
+  color: #004499;
+}
+
+.grid-section-r4-c3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /*background-color: #f5f5f5;*/
+  border: 1px solid #ddd;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+  padding: 16px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.grid-section-r4-c4 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 16px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.grid-section-r4-c4 h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.grid-section-r4-c4 .news-article-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  text-align: left;
+  flex-grow: 1;
+}
+
+.grid-section-r4-c4 .read-more-link {
+  font-size: 12px;
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.grid-section-r4-c4 .read-more-link:hover {
+  text-decoration: underline;
+  color: #004499;
+}
+
+/* Second Grid Layout - modified for row 5 only */
+.news-grid-2 {
+  width: 100%;
+  height: 260.7px; /* Set exact height to match row 4 */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 equal columns */
+  grid-template-rows: 1fr; /* Single row taking full height */
+  gap: 0px; /* No gap between sections */
+  background-color: transparent;
+  margin-top: 0px; /* Removed space to bring row 5 directly adjacent to row 4 */
+}
+
+/* Third Grid Layout - for rows 6, 7, 8 with spacing */                       
+.news-grid-3 {
+  width: 100%;
+  height: auto; /* Allow natural height */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 equal columns */
+  grid-template-rows: 
+    minmax(200px, auto)  /* Row 6 */
+    60px                 /* Gap between row 6 and row 7 */
+    250px                /* Row 7 - fixed height 200px */
+    250px;               /* Row 8 - fixed height 200px */
+  gap: 0px; /* No gap between sections */
+  background-color: transparent;
+  margin-top: 5px; /* Reduced margin to bring row 6 closer to "World" header */
+}
+
+/* Fourth Grid Layout - for rows 7-8 together */
+.news-grid-4 {
+  width: 100%;
+  height: calc(50vh - 40px); /* Height for 2 rows */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 equal columns */
+  grid-template-rows: 1fr 1fr; /* 2 equal rows for rows 7-8 */
+  gap: 0px; /* No gap between sections */
+  background-color: transparent;
+  margin-top: 1000px; /* Very large margin to push rows 7-8 much further down */
+}
+
+/* Fifth Grid Layout - New separate 4x4 grid (rows 9-12) */
+.news-grid-5 {
+  width: 100%;
+  height: calc(80vh - 40px); /* Height for 4 rows */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 equal columns */
+  grid-template-rows: 1fr 1fr 1fr 1fr; /* 4 equal rows for rows 9-12 */
+  gap: 0px; /* No gap between sections */
+  background-color: transparent;
+  margin-top: 300px; /* Separate spacing from row 8 */
+}
+
+/* Row 5 sections */
+.grid-section-r5-c1,
+.grid-section-r5-c3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /*background-color: #f5f5f5;*/
+  border: 1px solid #ddd;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+  padding: 16px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.grid-section-r5-c2,
+.grid-section-r5-c4 {
+  /*background-color: white;*/
+  border: 0.5px solid #c1bcbcff; /* Thin border lines */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Row 5 heading styling */
+.grid-section-r5-c2 h3,
+.grid-section-r5-c4 h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* Row 5 article text styling */
+.grid-section-r5-c2 .news-article-text,
+.grid-section-r5-c4 .news-article-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  text-align: left;
+  flex-grow: 1;
+}
+
+/* Row 5 columns 2 and 4 layout */
+.grid-section-r5-c2,
+.grid-section-r5-c4 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 16px;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* Rows 6, 7, 8 sections - in their own grid container */
+.grid-section-r6-c1,
+.grid-section-r6-c2,
+.grid-section-r6-c3,
+.grid-section-r6-c4,
+.grid-section-r7-c1,
+.grid-section-r7-c2,
+.grid-section-r7-c3,
+.grid-section-r7-c4,
+.grid-section-r8-c1,
+.grid-section-r8-c2,
+.grid-section-r8-c3,
+.grid-section-r8-c4 {
+  background-color: white;
+  border: 0.5px solid #c1bcbcff; /* Thin border lines */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* Position row 6 in grid row 1 */
+.grid-section-r6-c1,
+.grid-section-r6-c2,
+.grid-section-r6-c3,
+.grid-section-r6-c4 {
+  grid-row: 1;
+  height: 440px; /* Increased row 6 length by 440px (from ~200px to 640px) */
+  flex-direction: column; /* Stack image and content vertically */
+  position: relative; /* For positioning the line */
+  align-items: flex-start; /* Align content to the left */
+  justify-content: flex-start; /* Align content to the top */
+  padding: 16px; /* Maintain padding for proper spacing */
+}
+
+/* Add horizontal line positioned up from the bottom */
+.grid-section-r6-c1::after,
+.grid-section-r6-c2::after,
+.grid-section-r6-c3::after,
+.grid-section-r6-c4::after {
+  content: '';
+  position: absolute;
+  bottom: 100px; /* 100px space below the line */
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #c4c1c1;
+}
+
+/* Image spaces for row 6 columns */
+.row6-image-space {
+  width: 279px;
+  height: 195px;
+  background-color: #f5f5f5; /* Light gray background for image placeholder */
+  border: 1px solid #ddd;
+  margin-top: 34px; /* 50px from column top (34px + 16px padding) */
+  margin-bottom: 10px; /* Space between image and text content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Bottom section for second news item in row 6 columns */
+.row6-bottom-section {
+  position: absolute;
+  bottom: 40px; /* Moved up to 40px from bottom */
+  left: 16px;
+  right: 16px;
+  padding-top: 10px; /* Space above the second headline */
+}
+
+/* Position row 7 in grid row 3 */
+.grid-section-r7-c4 {
+  grid-row: 3;
+}
+
+/* Position row 7 column 1 to span both rows 3 and 4 */
+.grid-section-r7-c1 {
+  grid-row: 3 / 5; /* Span from row 3 to row 5 (rows 3 and 4) */
+}
+
+/* Position row 7 column 2 to span both rows 3 and 4 */
+.grid-section-r7-c2 {
+  grid-row: 3 / 5; /* Span from row 3 to row 5 (rows 3 and 4) */
+  position: relative; /* Enable absolute positioning for wide image */
+}
+
+/* Position row 7 column 3 to span both rows 3 and 4 */
+.grid-section-r7-c3 {
+  grid-row: 3 / 5; /* Span from row 3 to row 5 (rows 3 and 4) */
+}
+
+/* Position row 8 in grid row 4 */
+.grid-section-r8-c4 {
+  grid-row: 4;
+}
+
+/* Hide row 8 columns 1, 2, 3 since they're merged with row 7 columns */
+.grid-section-r8-c1,
+.grid-section-r8-c2,
+.grid-section-r8-c3 {
+  display: none;
+}
+
+/* Remove vertical lines between merged columns */
+.grid-section-r7-c1 {
+  border-right: none; /* Remove right border between col 1 and col 2 */
+  justify-content: flex-start !important; /* Force align content to the top */
+  align-items: flex-start !important; /* Force align content to the left */
+  padding: 5px 16px 16px 16px !important; /* Override default padding - minimal top padding */
+  flex-direction: column !important; /* Force stack content vertically */
+}
+
+/* Bold headlines in merged row 7/8 sections */
+.grid-section-r7-c1 .news-headline-small {
+  font-weight: bold;
+  font-size: 30px; /* Slightly larger for emphasis */
+  margin: 0 !important; /* Remove ALL margins completely */
+  line-height: 1.1 !important; /* Tight line height */
+  display: block !important;
+  transform: translateY(45px) !important; /* Move headline down by 10px */
+}
+
+/* Force tight spacing for h3 elements in merged section */
+.grid-section-r7-c1 h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.1 !important;
+}
+
+/* Article text styling for merged section */
+.grid-section-r7-c1 .news-article-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  margin: 0 !important; /* Reset margin */
+  padding: 0 !important; /* Remove any default padding */
+  text-align: left;
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  display: block !important;
+  transform: translateY(-150px) !important; /* Move the text up by 80px to be much closer to headline */
+}
+
+/* Read more link styling for merged section */
+.grid-section-r7-c1 .read-more-link {
+  font-size: 12px;
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transform: translateY(-140px) !important; /* Move read more button up to match article text */
+}
+
+.grid-section-r7-c1 .read-more-link:hover {
+  text-decoration: underline;
+  color: #004499;
+}
+
+.grid-section-r7-c2 {
+  border-left: none;  /* Remove left border between col 1 and col 2 */
+  border-right: none; /* Remove right border between col 2 and col 3 */
+}
+
+.grid-section-r7-c3 {
+  border-left: none;  /* Remove left border between col 2 and col 3 */
+}
+
+/* NewsAPI Image containers for merged sections */
+.newsapi-image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.newsapi-image-placeholder {
+  width: 100%;
+  height: 80%; /* Use most of the available height */
+  background-color: #f0f0f0;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #666;
+  border-radius: 8px;
+  min-height: 300px; /* Ensure good minimum height for images */
+}
+
+/* Wide image container spanning columns 2 and 3, rows 7 and 8 */
+.newsapi-image-container-wide {
+  position: absolute;
+  width: 200%; /* Span across 2 columns (col 2 and col 3) */
+  height: 100%; /* Span the full height of the merged rows */
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  z-index: 2; /* Ensure it appears above other content */
+}
+
+.newsapi-image-placeholder-wide {
+  width: 100%;
+  height: 80%; /* Use most of the available height */
+  background-color: #f0f0f0;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #666;
+  border-radius: 8px;
+  min-height: 300px; /* Ensure good minimum height for wide image */
+}
+
+/* New 4x4 Grid sections (rows 9-12) */
+.grid-section-r9-c1,
+.grid-section-r9-c2,
+.grid-section-r9-c3,
+.grid-section-r9-c4,
+.grid-section-r10-c1,
+.grid-section-r10-c2,
+.grid-section-r10-c3,
+.grid-section-r10-c4,
+.grid-section-r11-c1,
+.grid-section-r11-c2,
+.grid-section-r11-c3,
+.grid-section-r11-c4,
+.grid-section-r12-c1,
+.grid-section-r12-c2,
+.grid-section-r12-c3,
+.grid-section-r12-c4 {
+  background-color: white;
+  border: 0.5px solid #c1bcbcff; /* Thin border lines */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* Removed large top margin from row 7 - using grid spacing instead */
+
+.grid-section {
+  font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Responsive considerations for future use */
+@media (max-width: 1200px) {
+  .home-container {
+    padding: 30px 218px 0 218px; /* Keep consistent side margins */
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 30px 100px 0 100px; /* Maintain spacing on mobile */
+  }
+  
+  .news-grid {
+    grid-template-columns: 1fr 1fr; /* 2x8 grid on mobile */
+    grid-template-rows: repeat(8, 1fr);
+  }
+  
+  .grid-section-r1-c1 {
+    grid-row: span 2;
+    grid-column: span 2; /* Full width on mobile */
+  }
+}

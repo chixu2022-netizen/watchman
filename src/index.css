@@ -1,0 +1,16 @@
+/* Minimal global styles for cleared Watchman app */
+html, body, #root { height: 100%; margin: 0; padding: 0; }
+
+/* Use Neo Sans Medium when available; fall back to system sans-serif stack */
+@font-face {
+	font-family: 'Neo Sans Medium Local';
+	/* Prefer a locally installed copy if present */
+	src: local('Neo Sans Medium'), local('NeoSansMedium');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+body { font-family: 'Neo Sans Medium Local', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; background: white; color: #000000; }
+* { box-sizing: border-box; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Courier New', monospace; }

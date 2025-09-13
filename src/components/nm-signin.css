@@ -1,0 +1,7 @@
+.nm-signin{
+	/* baseline signin styles; override as needed */
+	--signin-shift: 40px;
+	transform: translateX(var(--signin-shift));
+	padding: 6px 8px;
+	font-weight:600;
+}

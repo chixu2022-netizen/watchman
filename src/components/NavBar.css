@@ -1,0 +1,344 @@
+/* ===== WATCHMAN TEXT STYLES ===== */
+/* The "watchman" text that appears next to the logo */
+.nm-watchman-text {
+  margin: 0 0 0 -205px; /* Negative left margin to move text closer to logo */
+  font-size: 18px; /* Size of the watchman text - reduced from h2 to h3 size */
+  font-weight: bold; /* Make text bold - change to 'normal' for regular weight */
+  color: inherit; /* Use the same color as parent element */
+  font-family: inherit; /* Use the same font as the navbar */
+  pointer-events: auto; /* Allow clicking on the text */
+  z-index: 1; /* Keep text above other elements */
+}
+
+/* ===== SEARCH POPUP STYLES ===== */
+/* Full-screen backdrop that appears when search is opened */
+.search-backdrop {
+  position: fixed; /* Stay in place when scrolling */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* Cover entire screen */
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay - adjust opacity as needed */
+  display: flex;
+  align-items: flex-start; /* Align popup to top of screen */
+  justify-content: center; /* Center popup horizontally */
+  padding-top: 10vh; /* Distance from top - adjust to move popup up/down */
+  z-index: 1000; /* High z-index to appear above everything */
+}
+
+/* The actual search popup box */
+.search-popup {
+  background: white; /* Background color of popup - change as needed */
+  border-radius: 8px; /* Rounded corners - increase for more rounded */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Drop shadow - adjust for lighter/darker shadow */
+  width: 90%; /* Width on mobile */
+  max-width: 600px; /* Maximum width on desktop - adjust as needed */
+  max-height: 70vh; /* Maximum height - adjust to make taller/shorter */
+  overflow: hidden; /* Hide content that overflows */
+  display: flex;
+  flex-direction: column; /* Stack header and content vertically */
+}
+
+/* Header section of search popup (contains input and close button) */
+.search-popup-header {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  padding: 16px; /* Padding around header - adjust for more/less space */
+  border-bottom: 1px solid #e5e7eb; /* Bottom border - change color or remove */
+}
+
+/* Search input field */
+.search-popup-input {
+  flex: 1; /* Take up remaining space */
+  border: none; /* Remove default border */
+  outline: none; /* Remove focus outline */
+  font-size: 16px; /* Text size - adjust as needed */
+  padding: 8px; /* Padding inside input - adjust for comfort */
+  background: transparent; /* Transparent background */
+}
+
+/* Close button (X) in search popup */
+.search-popup-close {
+  background: none; /* No background */
+  border: none; /* No border */
+  cursor: pointer; /* Show pointer cursor */
+  padding: 4px; /* Small padding for easier clicking */
+  border-radius: 4px; /* Slightly rounded corners */
+  color: #6b7280; /* Gray color - change as needed */
+}
+
+/* Close button hover effect */
+.search-popup-close:hover {
+  background: #f3f4f6; /* Light gray background on hover */
+  color: #374151; /* Darker gray text on hover */
+}
+
+/* Close button icon */
+.search-popup-close svg {
+  width: 20px; /* Icon width */
+  height: 20px; /* Icon height */
+}
+
+/* Content area of search popup */
+.search-popup-content {
+  flex: 1; /* Take up remaining height */
+  overflow-y: auto; /* Allow scrolling if content is long */
+  padding: 8px; /* Padding around content */
+}
+
+/* Empty state message when no search results */
+.search-empty-state {
+  text-align: center; /* Center the text */
+  color: #6b7280; /* Gray color */
+  padding: 40px 20px; /* Generous padding */
+  font-size: 14px; /* Text size */
+}
+
+:root{
+  /* Use the same font stack as the rest of the site (matches news card/body) */
+  --nm-font: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --nm-accent: #111;
+}
+/* NavBar consolidated stylesheet - duplicates removed */
+
+:root{
+  /* Use the same font stack as the rest of the site (matches news card/body) */
+  --nm-font: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --nm-accent: #000;
+  --nm-max-width: 1200px;
+  --nm-gap: 16px;
+  /* Default horizontal shift for the search button. Tweak this variable to move the
+     search icon left/right. You can change the default here or use the utility
+     classes below. The search button uses:
+       .nm-search-button { transform: translateX(var(--nm-search-shift)); }
+     Change value to a positive px to move right, negative px to move left. */
+  --nm-search-shift: 100px; /* tweak me */
+  --nm-font-size: 14px;
+}
+
+
+/* navbar shell */
+.nm-navbar{ width:100%; border-bottom:1px solid #e6e6e6; background:#fff; font-family:var(--nm-font); }
+/* Keep the inner container centered but leave room on the left for the logo */
+.nm-inner{ max-width:1200px; margin:0 auto; padding:8px 16px; padding-left:56px; display:flex; align-items:center; justify-content:flex-start; position:relative; }
+
+/* Position the left block (logo) at the very left edge of the navbar */
+/* keep the left logo visually on the left but don't let it intercept clicks for nearby controls */
+.nm-left{ display:flex; align-items:center; gap:0px; position:absolute; left:-50px; top:50%; transform:translateY(-50%); pointer-events:none; z-index:0; }
+/* allow clicks on the logo itself and the watchman text */
+.nm-left .nm-logo{ position:relative; pointer-events:auto; z-index:1; }
+.nm-left .logo-link{ pointer-events:auto; display:inline-block; }
+.nm-left h2{ pointer-events:auto; z-index:1; }
+.nm-left .nm-watchman-text{ pointer-events:auto; z-index:1; }
+/* hamburger removed from markup; .nm-menu styles deleted */
+.nm-logo{ width:100px; height:auto; display:block; flex-shrink:0; /* halved visible size */ }
+
+.nm-center{ flex:1 1 auto; display:flex; justify-content:flex-start; margin-left:0; }
+.nm-links{ display:flex; gap:20px; align-items:center; list-style:none; margin:0; padding:0; }
+.nm-link{ color:var(--nm-accent); text-decoration:none; padding:6px 8px; font-weight:600; white-space:nowrap; }
+.nm-link:hover{ color:#cc0000; }
+
+/* ------ Shift helpers (per-item) ------
+   Each element exposes a custom property used for horizontal shifting.
+   Use the utility classes below (or set the variable directly) to move items.
+   Examples:
+     <a class="nm-link u-shift-220">Home</a>
+     <button class="nm-subscribe u-subscribe-shift-220">Subscribe</button>
+     or in CSS: .nm-subscribe { --subscribe-shift: 220px; }
+*/
+
+/* generic link shift */
+.nm-link{ --shift: 0px; transform: translateX(var(--shift)); }
+.u-shift-220{ --shift: 220px; }
+.u-shift--left-100{ --shift: -100px; } /* example left-shift utility */
+
+/* Utilities to quickly adjust the search button horizontal position. Apply
+  these to the wrapper containing .nm-search-button or to the button itself.
+  Example: <div className="u-search-shift-32"><SearchButton/></div> */
+.u-search-shift-0{ --nm-search-shift: 0px; }
+.u-search-shift-16{ --nm-search-shift: 16px; }
+.u-search-shift-32{ --nm-search-shift: 32px; }
+.u-search-shift-48{ --nm-search-shift: 48px; }
+.u-search-shift--16{ --nm-search-shift: -16px; }
+.u-search-shift--32{ --nm-search-shift: -32px; }
+
+/* subscribe/signin specific shifts (keeps variables separate) */
+.nm-subscribe{ --subscribe-shift: 0px; transform: translateX(var(--subscribe-shift)); }
+.u-subscribe-shift-220{ --subscribe-shift: 220px; }
+.u-subscribe-shift--left-50{ --subscribe-shift: -50px; }
+
+.nm-signin{ --signin-shift: 0px; transform: translateX(var(--signin-shift)); }
+.u-signin-shift-220{ --signin-shift: 220px; }
+.u-signin-shift--left-50{ --signin-shift: -50px; }
+
+
+.nm-more{ position:relative; }
+.nm-more-button{ background:transparent; border:0; cursor:pointer; padding:6px 8px; font-weight:600; }
+.nm-more-panel{ position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 6px 18px rgba(0,0,0,0.06); border-radius:6px; padding:6px; display:flex; flex-direction:column; }
+.nm-more-item{ padding:8px 12px; color:var(--nm-accent); text-decoration:none; white-space:nowrap; }
+.nm-more-item:hover{ background:#f5f5f5; }
+
+.nm-right{ display:flex; align-items:center; gap:10px; margin-left:auto; /* push right group to the far right */ }
+.nm-icon{ background:transparent; border:0; font-size:16px; cursor:pointer; }
+/* Scale sizes by 1.3x from the current 50x25 -> ~65x33 */
+.nm-subscribe{
+  background:#000000;
+  color:#fff;
+  border:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:85px; /* increased by ~1.3x from 65px */
+  height:28px; /* reduced by factor 1.2 from 33px (~27.5) */
+  padding:0;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:15px; /* scaled from 13px */
+}
+.nm-signin{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:65px; /* ~1.3x of 50px */
+  height:28px; /* reduced by factor 1.2 from 33px (~27.5) */
+  padding:0;
+  border:1px solid #e0e0e0;
+  border-radius:6px;
+  text-decoration:none;
+  color:var(--nm-accent);
+  white-space:nowrap;
+  font-size:15px;
+  font-weight:600;
+}
+
+/* Fact check styles moved to src/components/FactCheck.css */
+
+@media (max-width: 900px){
+  .nm-links{ gap:12px; }
+  .nm-inner{ padding:8px 12px; }
+}
+
+:root{
+  --nm-max-width:1100px;
+  --nm-gap:16px;
+  --nm-accent:#000;
+  --nm-search-shift: -20px; /* horizontal shift for search button; tweak this value to move the icon */
+}
+
+.nm-navbar{ position:relative; background:transparent; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif; --nm-font-size:14px; font-size:var(--nm-font-size); }
+
+
+
+/* mobile toggle removed per design - button deleted from markup */
+
+.nm-top-row{
+  width:100%;
+  max-width:var(--nm-max-width);
+  margin:0 auto;
+  position:relative; /* positioning context for the search button */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 0;
+  box-sizing:border-box;
+}
+
+.nm-pills{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:6px 12px;
+  border-radius:999px;
+  width:100%; /* span full width so search can be pushed to the right */
+  max-width:var(--nm-max-width);
+  box-sizing:border-box;
+  justify-content:flex-start;
+}
+
+/* each link is inside .nm-item and the set is .nm-items */
+.nm-items{ display:flex; gap:12px; align-items:center; flex:1 1 auto; overflow-x:auto; }
+.nm-item{ display:flex; white-space:nowrap; flex:0 0 auto; }
+
+
+
+
+
+
+
+
+.nm-center-list{ display:flex; gap:12px; margin:0; padding:0; list-style:none; white-space:nowrap; }
+.nm-link{ color:var(--nm-accent); text-decoration:none; padding:8px 12px; border-radius:6px; font-size:var(--nm-font-size); font-weight:600; }
+
+.nm-search-button{ margin-left:8px; display:inline-flex; align-items:center; justify-content:center; padding:6px; border-radius:6px; border:0; background:transparent; cursor:pointer; transform: translateX(var(--nm-search-shift)); }
+.nm-search-button:hover{ background:rgba(0,0,0,0.02) }
+.nm-search-icon{ width:18px; height:18px; display:block; }
+
+/* push search to the far right of the nav row */
+.nm-search-wrapper{
+  /* place the search control inside the nav on the left side (near the logo).
+     Use --nm-search-left to tweak horizontal position; positive moves right. */
+  position: absolute;
+  left: var(--nm-search-left, 1400px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  pointer-events: auto; /* ensure clicks reach the button */
+}
+
+@media (max-width:767px){
+  .nm-search-input{ width:100px; }
+  .nm-pills{ gap:8px; padding:6px 8px; }
+  /* mobile fallback: make subscribe wider (~77px) and keep signin smaller */
+  .nm-subscribe{ width:77px; height:19px; font-size:14px; }
+  .nm-signin{ width:59px; height:19px; font-size:14px; }
+}
+
+/* Scale navbar font size up on larger viewports: +2px at tablet, +4px at desktop */
+@media (min-width: 768px){
+  .nm-navbar{ --nm-font-size:10px; }
+}
+
+@media (min-width: 1024px){
+  .nm-navbar{ --nm-font-size:16px; }
+}
+
+/* ---- Fullscreen search mini-page/modal ---- */
+.nm-search-popup{
+  position: fixed;
+  inset: 0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:28px;
+  z-index:1200;
+  background: transparent;
+}
+
+.nm-search-popup-form{ width:100%; display:flex; justify-content:center; }
+
+.nm-search-popup-inner{ width: min(1200px, calc(100% - 140px)); }
+
+.nm-search-popup-input{
+  width:100%;
+  height:44px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.18);
+  padding: 8px 48px 8px 18px;
+  font-size:16px;
+  box-sizing:border-box;
+  background: #fff;
+}
+
+.nm-search-popup{ /* keep minimal popup styles */ position: absolute; top: 100%; right: 0; background: transparent; border: 0; padding: 6px; z-index: 30; }
+
+/* small inline popup input used by the original search button */
+.nm-search-popup-input{ width:200px; height:32px; border-radius:6px; border:1px solid rgba(0,0,0,0.08); padding:6px 10px; }
+.nm-search-popup-submit{
+  position: absolute;
+  right: calc((100% - min(1200px, calc(100% - 140px))) / 2 + 24px);
+  margin-top: -28px; /* visually center on the input */
+  width:30px; height:30px; border-radius:15px; border:0; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#111;
+}
+
+

@@ -1,0 +1,34 @@
+/* Shared auth container used by SignIn and SignUp to guarantee identical sizing/layout */
+.auth-container {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 550px; /* explicit to keep both pages identical */
+  padding: 32px; /* compact padding */
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* Shared auth logo sizing
+   - Change --auth-logo-size to adjust logo size across SignIn/SignUp
+*/
+:root {
+  --auth-logo-size: 72px;
+}
+
+.signin-logo {
+  width: var(--auth-logo-size);
+  height: var(--auth-logo-size);
+  display: inline-block;
+}
+
+/* When reusing the navbar logo on auth pages the nm-logo class carries a translateX
+   transform which is unwanted here. .auth-logo neutralizes positioning and makes
+   the image behave like a centered block inside the auth container. */
+.auth-logo {
+  transform: none !important;
+  --logo-shift: 0px !important;
+  display: block;
+  margin: 8px auto 0 auto; /* center horizontally and push near the top */
+}
