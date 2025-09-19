@@ -1,13 +1,348 @@
+/* ===== RESPONSIVE NAVBAR ROOT ===== */
+:root {
+  --navbar-height: clamp(50px, 8vh, 70px);
+  --navbar-padding: clamp(8px, 2vw, 24px);
+  --logo-size: clamp(80px, 8vw, 120px);
+  --nav-gap: clamp(2px, 0.5vw, 8px);
+  --nav-font-size: clamp(14px, 1.5vw, 16px);
+}
+
+@media (max-width: 900px) {
+  .nm-center-logo {
+    display: none !important; /* Hide the mobile center logo completely */
+  }
+  
+  .nm-left .nm-watchman-text {
+    display: none !important; /* Hide desktop watchman text on mobile */
+  }
+  
+  .nm-navbar {
+    border-bottom: none !important;
+    padding-bottom: 5.5px !important;
+    position: relative !important;
+  }
+  
+  /* Create edge-to-edge demarcation line */
+  .nm-navbar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 1px;
+    background-color: #ede9e9;
+    z-index: 1000;
+  }
+}
+@media (max-width: 900px) {
+  .nm-left,
+  .nm-center,
+  .nm-links,
+  .nm-right {
+    display: none !important;
+  }
+}
+@media (max-width: 900px) {
+  .nm-hamburger {
+    display: flex;
+  }
+  .nm-center-logo {
+    display: none !important; /* Hide mobile center logo */
+  }
+  .nm-right-mobile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: absolute;
+    right: 35px !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+  .nm-mobile-drawer {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 1202;
+    padding: 32px 0 0 0;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    transform: translateX(-100%);
+  }
+}
+@media (min-width: 901px) {
+  .nm-center-logo,
+  .nm-right-mobile,
+  .nm-mobile-drawer,
+  .nm-mobile-drawer.open {
+    display: none !important;
+  }
+  
+  /* Hide hamburger on desktop */
+  .nm-hamburger {
+    display: none !important;
+  }
+  
+  /* Show logo and text with free positioning on desktop */
+  .nm-left {
+    display: flex !important;
+    position: static !important;
+    pointer-events: auto !important;
+    align-items: center !important;
+  }
+  
+  /* Move logo slightly to the right on desktop only */
+  .nm-left .nm-logo {
+    margin-left: -25px !important;
+  }
+  
+  .nm-center,
+  .nm-right {
+    display: flex !important;
+    align-items: center;
+  }
+  
+  /* Center the navigation links on desktop */
+  .nm-center {
+    justify-content: center !important;
+    flex: 1 1 auto !important;
+  }
+  
+  .nm-left .nm-watchman-text {
+    display: block !important;
+  }
+}
+
+/* Medium screens and high zoom levels - adjust layout */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .nm-hamburger {
+    left: 0px !important;
+    padding-left: clamp(6px, 1.5vw, 12px) !important;
+  }
+  
+  .nm-links {
+    gap: clamp(1px, 0.3vw, 4px) !important;
+  }
+  
+  .nm-link {
+    padding: clamp(3px, 0.4vw, 6px) clamp(4px, 0.8vw, 8px) !important;
+    font-size: clamp(13px, 1.3vw, 15px) !important;
+  }
+}
+
+/* Large screens - optimal spacing */
+@media (min-width: 1201px) {
+  .nm-hamburger {
+    left: 0px !important;
+    padding-left: 16px !important;
+  }
+  
+  .nm-center {
+    padding: 0 24px !important;
+  }
+  
+  .nm-links {
+    gap: 8px !important;
+  }
+  
+  .nm-link {
+    padding: 8px 12px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Very large screens - prevent over-stretching */
+@media (min-width: 1600px) {
+  .nm-inner {
+    max-width: 1600px !important;
+    margin: 0 auto !important;
+  }
+  
+  .nm-hamburger {
+    left: 0px !important;
+    padding-left: 24px !important;
+  }
+}
+
+/* High zoom in (small effective screen) - compact layout */
+@media (min-width: 901px) and (max-width: 1024px) {
+  .nm-hamburger {
+    padding-left: 8px !important;
+  }
+  
+  .nm-links {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  
+  .nm-links::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+/* --- MOBILE NAVBAR STYLES --- */
+.nm-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1201;
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.nm-hamburger-bar {
+  width: 28px;
+  height: 3px;
+  background: #222;
+  margin: 3px 0;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.nm-mobile-links {
+  list-style: none;
+  padding: 0 0 0 24px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.nm-mobile-links .nm-link {
+  font-size: 20px;
+  padding: 8px 0;
+  color: #222;
+  font-weight: 600;
+  text-decoration: none;
+}
+.nm-mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.18);
+  z-index: 1200;
+}
+.nm-icon {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+}
+.nm-search-mobile {
+  color: #222;
+}
+.nm-search-mobile svg {
+  width: 22px !important;
+  height: 22px !important;
+  stroke-width: 2 !important;
+}
+.nm-subscribe-mobile {
+  color: #222;
+}
+.nm-signin-mobile {
+  display: none; /* archived - hidden from mobile view */
+  color: #222;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .nm-hamburger {
+    display: flex;
+  }
+  .nm-center-logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+  }
+  .nm-right-mobile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: absolute;
+    right: 35px !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+  .nm-mobile-drawer {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 1202;
+    padding: 32px 0 0 0;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    transform: translateX(-100%);
+  }
+  .nm-mobile-drawer.open {
+    display: block;
+    transform: translateX(0);
+  }
+  .nm-left-desktop,
+  .nm-center-desktop,
+  .nm-right-desktop {
+    display: none !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .nm-center-logo,
+  .nm-right-mobile,
+  .nm-mobile-drawer,
+  .nm-mobile-drawer.open {
+    display: none !important;
+  }
+  .nm-left-desktop,
+  .nm-center-desktop,
+  .nm-right-desktop {
+    display: flex !important;
+    align-items: center;
+  }
+}
 /* ===== WATCHMAN TEXT STYLES ===== */
-/* The "watchman" text that appears next to the logo */
+/* The "watchman" text that appears next to the logo - responsive */
 .nm-watchman-text {
-  margin: 0 0 0 -205px; /* Negative left margin to move text closer to logo */
-  font-size: 18px; /* Size of the watchman text - reduced from h2 to h3 size */
+  margin: 0; /* Reset margin - positioning handled by parent gap */
+  font-size: clamp(16px, 2vw, 20px); /* Responsive font size */
   font-weight: bold; /* Make text bold - change to 'normal' for regular weight */
   color: inherit; /* Use the same color as parent element */
   font-family: inherit; /* Use the same font as the navbar */
   pointer-events: auto; /* Allow clicking on the text */
   z-index: 1; /* Keep text above other elements */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow if needed */
+  text-overflow: ellipsis; /* Add ellipsis for long text */
 }
 
 /* ===== SEARCH POPUP STYLES ===== */
@@ -118,24 +453,26 @@
 
 
 /* navbar shell */
-.nm-navbar{ width:100%; border-bottom:1px solid #e6e6e6; background:#fff; font-family:var(--nm-font); }
+.nm-navbar{ width:100%; border-bottom:1px solid #e6e6e6; background:#fff; font-family:var(--nm-font); position: relative; overflow: visible; }
 /* Keep the inner container centered but leave room on the left for the logo */
-.nm-inner{ max-width:1200px; margin:0 auto; padding:8px 16px; padding-left:56px; display:flex; align-items:center; justify-content:flex-start; position:relative; }
+/* Base navbar container - responsive width and flexible layout */
+.nm-inner{ max-width:100%; margin:0; padding:6px 0px; display:flex; align-items:center; justify-content:flex-start; position:relative; width:100%; min-height:48px; overflow: visible; }
 
-/* Position the left block (logo) at the very left edge of the navbar */
-/* keep the left logo visually on the left but don't let it intercept clicks for nearby controls */
-.nm-left{ display:flex; align-items:center; gap:0px; position:absolute; left:-50px; top:50%; transform:translateY(-50%); pointer-events:none; z-index:0; }
+/* Logo and text container - free positioning */
+/* Allow free movement of logo and watchman text */
+.nm-left{ display:flex !important; align-items:center; gap:0px; position:static; pointer-events:auto; z-index:1000; }
 /* allow clicks on the logo itself and the watchman text */
-.nm-left .nm-logo{ position:relative; pointer-events:auto; z-index:1; }
-.nm-left .logo-link{ pointer-events:auto; display:inline-block; }
-.nm-left h2{ pointer-events:auto; z-index:1; }
-.nm-left .nm-watchman-text{ pointer-events:auto; z-index:1; }
+.nm-left .nm-logo{ position:relative; pointer-events:auto; z-index:1; --logo-shift: 0px !important; transform: translateX(0px) !important; margin-right: 0px !important; }
+.nm-left .logo-link{ pointer-events:auto; display:inline-block; margin-right: 0px !important; }
+.nm-left h2{ pointer-events:auto; z-index:1; margin-left: 0px !important; display: none !important; }
+.nm-left .nm-watchman-text{ pointer-events:auto; z-index:1; margin-left: 0px !important; display: none !important; }
 /* hamburger removed from markup; .nm-menu styles deleted */
-.nm-logo{ width:100px; height:auto; display:block; flex-shrink:0; /* halved visible size */ }
+/* Responsive logo sizing */
+.nm-logo{ width:clamp(64px, 6vw, 96px); height:auto; display:block; flex-shrink:0; /* responsive size */ }
 
-.nm-center{ flex:1 1 auto; display:flex; justify-content:flex-start; margin-left:0; }
-.nm-links{ display:flex; gap:20px; align-items:center; list-style:none; margin:0; padding:0; }
-.nm-link{ color:var(--nm-accent); text-decoration:none; padding:6px 8px; font-weight:600; white-space:nowrap; }
+.nm-center{ flex:1 1 auto; display:flex; justify-content:center; margin-left:0; padding:0 clamp(8px, 2vw, 24px); min-width:0; }
+.nm-links{ display:flex; gap:clamp(2px, 0.5vw, 8px); align-items:center; list-style:none; margin:0; padding:0; flex-wrap:wrap; justify-content:center; }
+.nm-link{ color:var(--nm-accent); text-decoration:none; padding:clamp(3px, 0.4vw, 6px) clamp(5px, 0.8vw, 10px); font-weight:600; white-space:nowrap; font-size:clamp(13px, 1.4vw, 15px); }
 .nm-link:hover{ color:#cc0000; }
 
 /* ------ Shift helpers (per-item) ------
@@ -178,7 +515,7 @@
 .nm-more-item{ padding:8px 12px; color:var(--nm-accent); text-decoration:none; white-space:nowrap; }
 .nm-more-item:hover{ background:#f5f5f5; }
 
-.nm-right{ display:flex; align-items:center; gap:10px; margin-left:auto; /* push right group to the far right */ }
+.nm-right{ display:flex; align-items:center; gap:10px; margin-left:auto; margin-right:0; /* push right group to the absolute right edge */ }
 .nm-icon{ background:transparent; border:0; font-size:16px; cursor:pointer; }
 /* Scale sizes by 1.3x from the current 50x25 -> ~65x33 */
 .nm-subscribe{
@@ -197,7 +534,7 @@
   font-size:15px; /* scaled from 13px */
 }
 .nm-signin{
-  display:inline-flex;
+  display:none; /* archived - hidden from view */
   align-items:center;
   justify-content:center;
   width:65px; /* ~1.3x of 50px */
@@ -216,7 +553,12 @@
 
 @media (max-width: 900px){
   .nm-links{ gap:12px; }
-  .nm-inner{ padding:8px 12px; }
+  .nm-inner{ padding:6px 10px; }
+  
+  /* Force right mobile buttons positioning */
+  .nm-navbar .nm-right-mobile {
+    right: 0px !important;
+  }
 }
 
 :root{
@@ -270,20 +612,28 @@
 .nm-center-list{ display:flex; gap:12px; margin:0; padding:0; list-style:none; white-space:nowrap; }
 .nm-link{ color:var(--nm-accent); text-decoration:none; padding:8px 12px; border-radius:6px; font-size:var(--nm-font-size); font-weight:600; }
 
-.nm-search-button{ margin-left:8px; display:inline-flex; align-items:center; justify-content:center; padding:6px; border-radius:6px; border:0; background:transparent; cursor:pointer; transform: translateX(var(--nm-search-shift)); }
+.nm-search-button{ 
+  margin-left: 0px; 
+  margin-right: 2px;
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 6px; 
+  border-radius: 6px; 
+  border: 0; 
+  background: transparent; 
+  cursor: pointer; 
+  transform: none;
+}
 .nm-search-button:hover{ background:rgba(0,0,0,0.02) }
 .nm-search-icon{ width:18px; height:18px; display:block; }
 
-/* push search to the far right of the nav row */
+/* Search wrapper - position normally in flow next to subscribe button */
 .nm-search-wrapper{
-  /* place the search control inside the nav on the left side (near the logo).
-     Use --nm-search-left to tweak horizontal position; positive moves right. */
-  position: absolute;
-  left: var(--nm-search-left, 1400px);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 20;
-  pointer-events: auto; /* ensure clicks reach the button */
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
 }
 
 @media (max-width:767px){
@@ -341,4 +691,15 @@
   width:30px; height:30px; border-radius:15px; border:0; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#111;
 }
 
-
+/* MOBILE BUTTONS - SIMPLE POSITIONING LIKE TEST OBJECT */
+@media (max-width: 900px) {
+  .nm-right-mobile {
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    z-index: 1000 !important;
+  }
+}

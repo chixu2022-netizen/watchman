@@ -1,6 +1,0 @@
-/* Archived NewsLayout.base.module.css */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-.news-container { max-width: 1200px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 1fr 360px; gap: 30px; }
-.section-title { font-size: 20px; font-weight: 500; margin-bottom: 20px; color: #333; display: flex; align-items: center; gap: 8px; }
-
-/* ... archived styles ... */

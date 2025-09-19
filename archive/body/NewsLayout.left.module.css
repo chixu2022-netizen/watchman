@@ -1,6 +1,0 @@
-/* Archived NewsLayout.left.module.css */
-.leftColumn { display: flex; flex-direction: column; gap: 18px; }
-.leftColumnTitle { color: #000000; font-size: 18px; font-weight: 600; }
-.mainNewsCard { display: flex; min-height: 140px; background: #ffffff; border-radius: 12px; padding: 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.04); }
-
-/* ... archived styles ... */
