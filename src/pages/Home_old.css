@@ -27,7 +27,7 @@
 .world-section {
   margin-bottom: 40px;
   position: relative;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #00ff0d;
   padding-bottom: 30px;
 }
 
@@ -181,20 +181,17 @@
   display: flex;
   gap: 20px;
   position: relative;
-  margin-bottom: 40px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 80px;
+  margin-bottom: 0px;
 }
 
 /* ===== TECHNOLOGY SECTION - 2X2 GRID ===== */
 .technology-section {
   position: relative;
-  border-bottom: none;
-  padding-bottom: 0;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 45px;
   width: 70%;
   flex: 0 0 70%;
-  height: auto;
-  min-height: 501px;
+  height: 501px;
 }
 
 /* ===== SIDEBAR ===== */
@@ -255,8 +252,8 @@
 
 .technology-cards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 0;
   position: relative;
 }
@@ -264,27 +261,58 @@
 .tech-card {
   cursor: pointer;
   position: relative;
-  background: transparent;
   border: 1px solid #e0e0e0;
+  min-height: 200px;
+  background: transparent;
+}
+
+#tech-card-2,
+#tech-card-4 {
   height: 225px;
 }
 
-#tech-card-1 .tech-card-image {
+.tech-card-image {
   width: 100%;
-  height: 100%;
+  height: 200px;
+  overflow: hidden;
+  margin-bottom: 8px;
 }
 
-#tech-card-1 .tech-card-image img {
+.tech-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.tech-card-content {
+  padding: 0;
+}
+
+.tech-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tech-card-time {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
 }
 
 /* ===== CATEGORIES SECTION ===== */
 .categories-section {
   position: relative;
   margin-bottom: 40px;
-  margin-top: 30px;
+  margin-top: 100px;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 30px;
 }
@@ -459,7 +487,7 @@
 .categories-section-2 {
   position: relative;
   margin-bottom: 40px;
-  margin-top: 80px;
+  margin-top: 40px;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 30px;
 }
@@ -568,19 +596,16 @@
   gap: 20px;
   position: relative;
   margin-bottom: 40px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 80px;
 }
 
 /* ===== TECHNOLOGY SECTION 2 - 2X2 GRID ===== */
 .technology-section-2 {
   position: relative;
-  border-bottom: none;
-  padding-bottom: 0;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 45px;
   width: 70%;
   flex: 0 0 70%;
-  height: auto;
-  min-height: 501px;
+  height: 501px;
 }
 
 /* ===== SIDEBAR 2 ===== */
@@ -641,8 +666,8 @@
 
 .technology-cards-2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 0;
   position: relative;
 }
@@ -650,26 +675,56 @@
 .tech-card-2 {
   cursor: pointer;
   position: relative;
-  background: transparent;
   border: 1px solid #e0e0e0;
+  min-height: 200px;
+  background: transparent;
+}
+
+#tech-card-2-2,
+#tech-card-2-4 {
   height: 225px;
 }
 
-#tech-card-2-1 .tech-card-image-2 {
+.tech-card-image-2 {
   width: 100%;
-  height: 100%;
+  height: 200px;
+  overflow: hidden;
+  margin-bottom: 8px;
 }
 
-#tech-card-2-1 .tech-card-image-2 img {
+.tech-card-image-2 img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.tech-card-content-2 {
+  padding: 0;
+}
+
+.tech-card-title-2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tech-card-time-2 {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
 /* ===== CRYPTO SECTION 3 ===== */
 .crypto-section-3 {
   margin-bottom: 40px;
-  margin-top: 80px;
   position: relative;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 30px;
@@ -979,19 +1034,16 @@
   gap: 20px;
   position: relative;
   margin-bottom: 40px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 80px;
 }
 
 /* ===== TECHNOLOGY SECTION 3 - 2X2 GRID ===== */
 .technology-section-3 {
   position: relative;
-  border-bottom: none;
-  padding-bottom: 0;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 45px;
   width: 70%;
   flex: 0 0 70%;
-  height: auto;
-  min-height: 501px;
+  height: 501px;
 }
 
 /* ===== SIDEBAR 3 ===== */
@@ -1052,8 +1104,8 @@
 
 .technology-cards-3 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 0;
   position: relative;
 }
@@ -1061,27 +1113,58 @@
 .tech-card-3 {
   cursor: pointer;
   position: relative;
-  background: transparent;
   border: 1px solid #e0e0e0;
+  min-height: 200px;
+  background: transparent;
+}
+
+#tech-card-3-2,
+#tech-card-3-4 {
   height: 225px;
 }
 
-#tech-card-3-1 .tech-card-image-3 {
+.tech-card-image-3 {
   width: 100%;
-  height: 100%;
+  height: 200px;
+  overflow: hidden;
+  margin-bottom: 8px;
 }
 
-#tech-card-3-1 .tech-card-image-3 img {
+.tech-card-image-3 img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.tech-card-content-3 {
+  padding: 0;
+}
+
+.tech-card-title-3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tech-card-time-3 {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
 }
 
 /* ===== CATEGORIES SECTION 4 ===== */
 .categories-section-4 {
   position: relative;
   margin-bottom: 40px;
-  margin-top: 80px;
+  margin-top: 40px;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 30px;
 }
@@ -1258,336 +1341,7 @@
   margin: 0;
 }
 
-/* ===== ENTERTAINMENT SECTION 5 ===== */
-.entertainment-section-5 {
-  margin-bottom: 40px;
-  position: relative;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 30px;
-}
 
-.entertainment-header-5 {
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.entertainment-title-5 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #333;
-  margin: 0;
-  position: relative;
-}
-
-.entertainment-link-5 {
-  color: #333;
-  text-decoration: none;
-}
-
-.entertainment-cards-5 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  position: relative;
-}
-
-.entertainment-card-5 {
-  cursor: pointer;
-  position: relative;
-}
-
-.entertainment-card-content-5 {
-  padding: 0;
-}
-
-.entertainment-card-title-5 {
-  font-size: 15px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.4;
-  margin: 0 0 8px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.entertainment-card-time-5 {
-  font-size: 13px;
-  color: #666;
-  margin: 0;
-}
-
-/* ===== LOCAL NEWS SECTION 4 ===== */
-.local-section-4 {
-  margin-bottom: 40px;
-  position: relative;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 30px;
-}
-
-.local-header-4 {
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.local-title-4 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #333;
-  margin: 0;
-  position: relative;
-}
-
-.local-link-4 {
-  color: #333;
-  text-decoration: none;
-}
-
-.local-cards-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  position: relative;
-}
-
-.local-card-4 {
-  cursor: pointer;
-  position: relative;
-}
-
-.local-card-image-4 {
-  width: 100%;
-  height: 160px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.local-card-image-4 img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.local-card-content-4 {
-  padding: 0;
-}
-
-.local-card-title-4 {
-  font-size: 15px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.4;
-  margin: 0 0 8px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.local-card-time-4 {
-  font-size: 13px;
-  color: #666;
-  margin: 0;
-}
-
-/* ===== HEALTH CATEGORIES SECTION 5 ===== */
-.health-categories-section-5 {
-  position: relative;
-  margin-bottom: 40px;
-  margin-top: 80px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 30px;
-}
-
-.health-categories-grid-5 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  position: relative;
-}
-
-.health-category-column-5 {
-  position: relative;
-}
-
-.health-category-header-5 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 16px 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.health-category-link-5 {
-  color: #333;
-  text-decoration: none;
-  flex: 1;
-}
-
-.health-category-link-5:hover {
-  text-decoration: underline;
-}
-
-.health-category-card-5 {
-  margin-bottom: 16px;
-  cursor: pointer;
-  position: relative;
-}
-
-.health-category-card-5.featured {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 16px;
-}
-
-.health-category-card-image-5 {
-  width: 100%;
-  height: 160px;
-  overflow: hidden;
-  margin-bottom: 8px;
-  border-radius: 4px;
-}
-
-.health-category-card-image-5 img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.health-category-card-content-5 {
-  padding: 0;
-}
-
-.health-category-card-title-5 {
-  font-size: 15px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.4;
-  margin: 0 0 6px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.health-category-card-5:not(.featured) .health-category-card-title-5 {
-  font-size: 14px;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-}
-
-.health-category-card-time-5 {
-  font-size: 12px;
-  color: #666;
-  margin: 0;
-}
-
-/* ===== HEALTH CATEGORIES SECTION 6 ===== */
-.health-categories-section-6 {
-  position: relative;
-  margin-bottom: 40px;
-  margin-top: 80px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 30px;
-}
-
-.health-categories-grid-6 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  position: relative;
-}
-
-.health-category-column-6 {
-  position: relative;
-}
-
-.health-category-header-6 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 16px 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.health-category-link-6 {
-  color: #333;
-  text-decoration: none;
-  flex: 1;
-}
-
-.health-category-link-6:hover {
-  text-decoration: underline;
-}
-
-.health-category-card-6 {
-  margin-bottom: 16px;
-  cursor: pointer;
-  position: relative;
-}
-
-.health-category-card-6.featured {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 16px;
-}
-
-.health-category-card-image-6 {
-  width: 100%;
-  height: 160px;
-  overflow: hidden;
-  margin-bottom: 8px;
-  border-radius: 4px;
-}
-
-.health-category-card-image-6 img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.health-category-card-content-6 {
-  padding: 0;
-}
-
-.health-category-card-title-6 {
-  font-size: 15px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.4;
-  margin: 0 0 6px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.health-category-card-6:not(.featured) .health-category-card-title-6 {
-  font-size: 14px;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-}
-
-.health-category-card-time-6 {
-  font-size: 12px;
-  color: #666;
-  margin: 0;
-}
 
 /* ===== RESPONSIVE GRID SYSTEM ===== */
 .home__grid {
@@ -1723,4 +1477,95 @@
     border-bottom: none;
     margin-bottom: 0;
   }
+}
+
+/* ===== LOADING STATES ===== */
+.loading-placeholder {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-text {
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-text-small {
+  height: 14px;
+  width: 80px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.loading .world-card-image,
+.loading .tech-card-image,
+.loading .crypto-card-content {
+  pointer-events: none;
+}
+
+/* ===== ERROR STATES ===== */
+.error-message {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 40px 0;
+}
+
+.error-message h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #e74c3c;
+  margin: 0 0 16px 0;
+}
+
+.error-message p {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.retry-button {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #005a9e;
 }

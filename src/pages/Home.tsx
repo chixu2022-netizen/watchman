@@ -128,6 +128,9 @@ function Home() {
               
               <article id="tech-card-1" className="tech-card">
                 <span className="id-label">tech-card-1</span>
+                <div className="tech-card-image">
+                  <img src="/placeholders/placeholder1.svg" alt="Tech news placeholder" />
+                </div>
               </article>
 
               <article id="tech-card-2" className="tech-card">
@@ -136,6 +139,12 @@ function Home() {
 
               <article id="tech-card-3" className="tech-card">
                 <span className="id-label">tech-card-3</span>
+                <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
+                  A selfie of Rafie Nadi in a grey hoodie by a bus window
+                  Migration
+                  &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
+                  Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
+                </h3>
               </article>
 
               <article id="tech-card-4" className="tech-card">
@@ -468,6 +477,16 @@ function Home() {
               
               <article id="tech-card-2-1" className="tech-card-2">
                 <span className="id-label">tech-card-2-1</span>
+                <img 
+                  src="/placeholders/placeholder1.svg" 
+                  alt="Technology placeholder" 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '8px'
+                  }}
+                />
               </article>
 
               <article id="tech-card-2-2" className="tech-card-2">
@@ -476,6 +495,12 @@ function Home() {
 
               <article id="tech-card-2-3" className="tech-card-2">
                 <span className="id-label">tech-card-2-3</span>
+                <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
+                  A selfie of Rafie Nadi in a grey hoodie by a bus window
+                  Migration
+                  &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
+                  Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
+                </h3>
               </article>
 
               <article id="tech-card-2-4" className="tech-card-2">
@@ -798,6 +823,16 @@ function Home() {
               
               <article id="tech-card-3-1" className="tech-card-3">
                 <span className="id-label">tech-card-3-1</span>
+                <img 
+                  src="/placeholders/placeholder1.svg" 
+                  alt="Technology placeholder" 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '8px'
+                  }}
+                />
               </article>
 
               <article id="tech-card-3-2" className="tech-card-3">
@@ -806,6 +841,12 @@ function Home() {
 
               <article id="tech-card-3-3" className="tech-card-3">
                 <span className="id-label">tech-card-3-3</span>
+                <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
+                  A selfie of Rafie Nadi in a grey hoodie by a bus window
+                  Migration
+                  &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
+                  Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
+                </h3>
               </article>
 
               <article id="tech-card-3-4" className="tech-card-3">
@@ -1018,10 +1059,346 @@ function Home() {
           </div>
         </section>
 
+        {/* Entertainment Section 5 (Duplicated from Crypto Section 4) */}
+        <section id="entertainment-section-5" className="entertainment-section-5">
+          <div className="entertainment-header-5">
+            <h2 id="entertainment-title-5" className="entertainment-title-5">
+              <a href="/entertainment" className="entertainment-link-5">Entertainment &gt;</a>
+              <span className="id-label">entertainment-title-5</span>
+            </h2>
+          </div>
+          
+          <div id="entertainment-cards-container-5" className="entertainment-cards-5">
+            <span className="id-label">entertainment-cards-container-5</span>
+            
+            <article id="entertainment-card-5-1" className="entertainment-card-5">
+              <span className="id-label">entertainment-card-5-1</span>
+              <div className="entertainment-card-content-5">
+                <h3 className="entertainment-card-title-5">New Marvel movie breaks box office records in opening weekend</h3>
+                <p className="entertainment-card-time-5">31 mins ago</p>
+              </div>
+            </article>
+
+            <article id="entertainment-card-5-2" className="entertainment-card-5">
+              <span className="id-label">entertainment-card-5-2</span>
+              <div className="entertainment-card-content-5">
+                <h3 className="entertainment-card-title-5">Taylor Swift announces surprise album during concert tour</h3>
+                <p className="entertainment-card-time-5">7 hours ago</p>
+              </div>
+            </article>
+
+            <article id="entertainment-card-5-3" className="entertainment-card-5">
+              <span className="id-label">entertainment-card-5-3</span>
+              <div className="entertainment-card-content-5">
+                <h3 className="entertainment-card-title-5">Netflix original series wins Emmy for best drama</h3>
+                <p className="entertainment-card-time-5">2 hours ago</p>
+              </div>
+            </article>
+
+            <article id="entertainment-card-5-4" className="entertainment-card-5">
+              <span className="id-label">entertainment-card-5-4</span>
+              <div className="entertainment-card-content-5">
+                <h3 className="entertainment-card-title-5">Hollywood actors reach new contract agreement after negotiations</h3>
+                <p className="entertainment-card-time-5">4 hours ago</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {/* Local News Section 4 (Duplicated from World News Section 3) */}
+        <section id="local-news-section-4" className="local-section-4">
+          <div className="local-header-4">
+            <h2 id="local-title-4" className="local-title-4">
+              <a href="/local" className="local-link-4">Local &gt;</a>
+              <span className="id-label">local-title-4</span>
+            </h2>
+          </div>
+          
+          <div id="local-cards-container-4" className="local-cards-4">
+            <span className="id-label">local-cards-container-4</span>
+            
+            <article id="local-card-4-1" className="local-card-4">
+              <span className="id-label">local-card-4-1</span>
+              <div className="local-card-image-4">
+                <img src="/ttttttt.jpg" alt="City council budget meeting" />
+              </div>
+              <div className="local-card-content-4">
+                <h3 className="local-card-title-4">City council approves new budget for infrastructure improvements</h3>
+                <p className="local-card-time-4">2 hours ago</p>
+              </div>
+            </article>
+
+            <article id="local-card-4-2" className="local-card-4">
+              <span className="id-label">local-card-4-2</span>
+              <div className="local-card-image-4">
+                <img src="/ttttttt.jpg" alt="Local school district announcement" />
+              </div>
+              <div className="local-card-content-4">
+                <h3 className="local-card-title-4">School district announces new STEM programs for fall semester</h3>
+                <p className="local-card-time-4">2 hours ago</p>
+              </div>
+            </article>
+
+            <article id="local-card-4-3" className="local-card-4">
+              <span className="id-label">local-card-4-3</span>
+              <div className="local-card-image-4">
+                <img src="/ttttttt.jpg" alt="Community park renovation" />
+              </div>
+              <div className="local-card-content-4">
+                <h3 className="local-card-title-4">Downtown park renovation project begins next month</h3>
+                <p className="local-card-time-4">7 mins ago</p>
+              </div>
+            </article>
+
+            <article id="local-card-4-4" className="local-card-4">
+              <span className="id-label">local-card-4-4</span>
+              <div className="local-card-image-4">
+                <img src="/ttttttt.jpg" alt="Local business expansion" />
+              </div>
+              <div className="local-card-content-4">
+                <h3 className="local-card-title-4">Local tech startup expands operations with new downtown office</h3>
+                <p className="local-card-time-4">3 hours ago</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {/* Health Categories Section 5 (Duplicated from Categories Section 4) */}
+        <section id="health-categories-section-5" className="health-categories-section-5">
+          <span className="id-label">health-categories-section-5</span>
+          <div id="health-categories-grid-5" className="health-categories-grid-5">
+            <span className="id-label">health-categories-grid-5</span>
+            
+            {/* Health Column 5 */}
+            <div id="health-column-5" className="health-category-column-5">
+              <span className="id-label">health-column-5</span>
+              <h2 id="health-header-5" className="health-category-header-5">
+                <span className="id-label">health-header-5</span>
+                <a href="/health" className="health-category-link-5">Health</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="health-card-5-1" className="health-category-card-5 featured">
+                <span className="id-label">health-card-5-1</span>
+                <div className="health-category-card-image-5">
+                  <img src="/ttttttt.jpg" alt="Medical breakthrough research" />
+                </div>
+                <div className="health-category-card-content-5">
+                  <h3 className="health-category-card-title-5">New cancer treatment shows 95% success rate in clinical trials</h3>
+                  <p className="health-category-card-time-5">7 mins ago</p>
+                </div>
+              </article>
+
+              <article id="health-card-5-2" className="health-category-card-5">
+                <span className="id-label">health-card-5-2</span>
+                <h3 className="health-category-card-title-5">CDC updates vaccination guidelines for fall season</h3>
+                <p className="health-category-card-time-5">10 hours ago</p>
+              </article>
+            </div>
+
+            {/* Politics Column 5 */}
+            <div id="politics-column-5" className="health-category-column-5">
+              <span className="id-label">politics-column-5</span>
+              <h2 id="politics-header-5" className="health-category-header-5">
+                <span className="id-label">politics-header-5</span>
+                <a href="/politics" className="health-category-link-5">Politics</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="politics-card-5-1" className="health-category-card-5 featured">
+                <span className="id-label">politics-card-5-1</span>
+                <div className="health-category-card-image-5">
+                  <img src="/ttttttt.jpg" alt="Congressional hearing session" />
+                </div>
+                <div className="health-category-card-content-5">
+                  <h3 className="health-category-card-title-5">Congress passes bipartisan infrastructure bill in key vote</h3>
+                  <p className="health-category-card-time-5">6 hours ago</p>
+                </div>
+              </article>
+
+              <article id="politics-card-5-2" className="health-category-card-5">
+                <span className="id-label">politics-card-5-2</span>
+                <h3 className="health-category-card-title-5">Senate committee reviews new climate policy proposals</h3>
+                <p className="health-category-card-time-5">10 hours ago</p>
+              </article>
+            </div>
+
+            {/* Business Column 5 */}
+            <div id="business-column-5" className="health-category-column-5">
+              <span className="id-label">business-column-5</span>
+              <h2 id="business-header-5" className="health-category-header-5">
+                <span className="id-label">business-header-5</span>
+                <a href="/business" className="health-category-link-5">Business</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="business-card-5-1" className="health-category-card-5 featured">
+                <span className="id-label">business-card-5-1</span>
+                <div className="health-category-card-image-5">
+                  <img src="/ttttttt.jpg" alt="Stock market trends" />
+                </div>
+                <div className="health-category-card-content-5">
+                  <h3 className="health-category-card-title-5">Tech stocks surge following quarterly earnings reports</h3>
+                  <p className="health-category-card-time-5">2 hours ago</p>
+                </div>
+              </article>
+
+              <article id="business-card-5-2" className="health-category-card-5">
+                <span className="id-label">business-card-5-2</span>
+                <h3 className="health-category-card-title-5">Federal Reserve considers interest rate adjustments next quarter</h3>
+                <p className="health-category-card-time-5">4 hours ago</p>
+              </article>
+            </div>
+
+            {/* Technology Column 5 */}
+            <div id="technology-column-5" className="health-category-column-5">
+              <span className="id-label">technology-column-5</span>
+              <h2 id="technology-header-5" className="health-category-header-5">
+                <span className="id-label">technology-header-5</span>
+                <a href="/technology" className="health-category-link-5">Technology</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="technology-card-5-1" className="health-category-card-5 featured">
+                <span className="id-label">technology-card-5-1</span>
+                <div className="health-category-card-image-5">
+                  <img src="/ttttttt.jpg" alt="AI innovation showcase" />
+                </div>
+                <div className="health-category-card-content-5">
+                  <h3 className="health-category-card-title-5">Apple unveils revolutionary AI-powered features in latest update</h3>
+                  <p className="health-category-card-time-5">September 18, 2025</p>
+                </div>
+              </article>
+
+              <article id="technology-card-5-2" className="health-category-card-5">
+                <span className="id-label">technology-card-5-2</span>
+                <h3 className="health-category-card-title-5">Google announces breakthrough in quantum computing development</h3>
+                <p className="health-category-card-time-5">September 18, 2025</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
         {/* Your fresh body content goes here */}
         <div className="home__grid">
           {/* Ready to build something new! */}
         </div>
+
+        {/* Health Categories Section 6 (Duplicated from Health Categories Section 5) */}
+        <section id="health-categories-section-6" className="health-categories-section-6">
+          <span className="id-label">health-categories-section-6</span>
+          <div id="health-categories-grid-6" className="health-categories-grid-6">
+            <span className="id-label">health-categories-grid-6</span>
+            
+            {/* Health Column 6 */}
+            <div id="health-column-6" className="health-category-column-6">
+              <span className="id-label">health-column-6</span>
+              <h2 id="health-header-6" className="health-category-header-6">
+                <span className="id-label">health-header-6</span>
+                <a href="/health" className="health-category-link-6">Health</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="health-card-6-1" className="health-category-card-6 featured">
+                <span className="id-label">health-card-6-1</span>
+                <div className="health-category-card-image-6">
+                  <img src="/ttttttt.jpg" alt="Medical breakthrough research" />
+                </div>
+                <div className="health-category-card-content-6">
+                  <h3 className="health-category-card-title-6">New cancer treatment shows 95% success rate in clinical trials</h3>
+                  <p className="health-category-card-time-6">7 mins ago</p>
+                </div>
+              </article>
+
+              <article id="health-card-6-2" className="health-category-card-6">
+                <span className="id-label">health-card-6-2</span>
+                <h3 className="health-category-card-title-6">CDC updates vaccination guidelines for fall season</h3>
+                <p className="health-category-card-time-6">10 hours ago</p>
+              </article>
+            </div>
+
+            {/* Politics Column 6 */}
+            <div id="politics-column-6" className="health-category-column-6">
+              <span className="id-label">politics-column-6</span>
+              <h2 id="politics-header-6" className="health-category-header-6">
+                <span className="id-label">politics-header-6</span>
+                <a href="/politics" className="health-category-link-6">Politics</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="politics-card-6-1" className="health-category-card-6 featured">
+                <span className="id-label">politics-card-6-1</span>
+                <div className="health-category-card-image-6">
+                  <img src="/ttttttt.jpg" alt="Congressional hearing session" />
+                </div>
+                <div className="health-category-card-content-6">
+                  <h3 className="health-category-card-title-6">Congress passes bipartisan infrastructure bill in key vote</h3>
+                  <p className="health-category-card-time-6">6 hours ago</p>
+                </div>
+              </article>
+
+              <article id="politics-card-6-2" className="health-category-card-6">
+                <span className="id-label">politics-card-6-2</span>
+                <h3 className="health-category-card-title-6">Senate committee reviews new climate policy proposals</h3>
+                <p className="health-category-card-time-6">10 hours ago</p>
+              </article>
+            </div>
+
+            {/* Business Column 6 */}
+            <div id="business-column-6" className="health-category-column-6">
+              <span className="id-label">business-column-6</span>
+              <h2 id="business-header-6" className="health-category-header-6">
+                <span className="id-label">business-header-6</span>
+                <a href="/business" className="health-category-link-6">Business</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="business-card-6-1" className="health-category-card-6 featured">
+                <span className="id-label">business-card-6-1</span>
+                <div className="health-category-card-image-6">
+                  <img src="/ttttttt.jpg" alt="Stock market trends" />
+                </div>
+                <div className="health-category-card-content-6">
+                  <h3 className="health-category-card-title-6">Tech stocks surge following quarterly earnings reports</h3>
+                  <p className="health-category-card-time-6">2 hours ago</p>
+                </div>
+              </article>
+
+              <article id="business-card-6-2" className="health-category-card-6">
+                <span className="id-label">business-card-6-2</span>
+                <h3 className="health-category-card-title-6">Federal Reserve considers interest rate adjustments next quarter</h3>
+                <p className="health-category-card-time-6">4 hours ago</p>
+              </article>
+            </div>
+
+            {/* Technology Column 6 */}
+            <div id="technology-column-6" className="health-category-column-6">
+              <span className="id-label">technology-column-6</span>
+              <h2 id="technology-header-6" className="health-category-header-6">
+                <span className="id-label">technology-header-6</span>
+                <a href="/technology" className="health-category-link-6">Technology</a>
+                <span className="arrow-symbol">›</span>
+              </h2>
+              
+              <article id="technology-card-6-1" className="health-category-card-6 featured">
+                <span className="id-label">technology-card-6-1</span>
+                <div className="health-category-card-image-6">
+                  <img src="/ttttttt.jpg" alt="AI innovation showcase" />
+                </div>
+                <div className="health-category-card-content-6">
+                  <h3 className="health-category-card-title-6">Apple unveils revolutionary AI-powered features in latest update</h3>
+                  <p className="health-category-card-time-6">September 18, 2025</p>
+                </div>
+              </article>
+
+              <article id="technology-card-6-2" className="health-category-card-6">
+                <span className="id-label">technology-card-6-2</span>
+                <h3 className="health-category-card-title-6">Google announces breakthrough in quantum computing development</h3>
+                <p className="health-category-card-time-6">September 18, 2025</p>
+              </article>
+            </div>
+          </div>
+        </section>
       </div>
 
       <Footer />
