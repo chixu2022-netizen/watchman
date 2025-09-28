@@ -14,29 +14,18 @@ const primaryLinks = [
   'Entertainment',
   'Sports',
   'World',
+  'Local',
+  'Health',
+  'Politics',
 ];
 
-const moreLinks = ['Local', 'Health', 'Politics'];
-
 const NavBar: React.FC = () => {
-  const [moreOpen, setMoreOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const moreRef = useRef<HTMLLIElement | null>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    function onDoc(e: MouseEvent) {
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-        setMoreOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
-  }, []);
 
   // Search functionality
   const handleSearch = async (query: string) => {
@@ -111,18 +100,6 @@ const NavBar: React.FC = () => {
                 </li>
               );
             })}
-            <li role="none" ref={moreRef} className="nm-more">
-              <button className="nm-link nm-more-button" aria-haspopup="true" aria-expanded={moreOpen} onClick={() => setMoreOpen(v => !v)}>
-                More ▾
-              </button>
-              {moreOpen && (
-                <div className="nm-more-panel" role="menu">
-                  {moreLinks.map(m => (
-                    <a key={m} role="menuitem" className="nm-more-item" href={`/${m.toLowerCase()}`}>{m}</a>
-                  ))}
-                </div>
-              )}
-            </li>
           </ul>
         </div>
         <div className="nm-right">
@@ -228,18 +205,6 @@ const NavBar: React.FC = () => {
                 </li>
               );
             })}
-            <li role="none" ref={moreRef} className="nm-more">
-              <button className="nm-link nm-more-button" aria-haspopup="true" aria-expanded={moreOpen} onClick={() => setMoreOpen(v => !v)}>
-                More ▾
-              </button>
-              {moreOpen && (
-                <div className="nm-more-panel" role="menu">
-                  {moreLinks.map(m => (
-                    <a key={m} role="menuitem" className="nm-more-item" href={`/${m.toLowerCase()}`}>{m}</a>
-                  ))}
-                </div>
-              )}
-            </li>
           </ul>
         </div>
         {mobileMenuOpen && (
@@ -267,18 +232,6 @@ const NavBar: React.FC = () => {
                 </li>
               );
             })}
-            <li role="none" ref={moreRef} className="nm-more">
-              <button className="nm-link nm-more-button" aria-haspopup="true" aria-expanded={moreOpen} onClick={() => setMoreOpen(v => !v)}>
-                More ▾
-              </button>
-              {moreOpen && (
-                <div className="nm-more-panel" role="menu">
-                  {moreLinks.map(m => (
-                    <a key={m} role="menuitem" className="nm-more-item" href={`/${m.toLowerCase()}`}>{m}</a>
-                  ))}
-                </div>
-              )}
-            </li>
           </ul>
         </div>
         {/* Overlay for mobile menu */}

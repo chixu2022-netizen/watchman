@@ -10,5 +10,18 @@
   </head>
   <body class="antialiased bg-white">
     <div id="root"></div>
+    
+    <!-- Prevent browser extension conflicts -->
+    <script>
+      // Handle browser extension injection conflicts
+      try {
+        if (window.ethereum && Object.getOwnPropertyDescriptor(window, 'ethereum')) {
+          // Property already exists, no need to redefine
+        }
+      } catch (e) {
+        // Ignore extension conflicts
+        console.log('Browser extension conflict detected (normal behavior)');
+      }
+    </script>
   </body>
 </html>

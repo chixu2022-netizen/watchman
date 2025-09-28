@@ -1,8 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
+import { HomepageNewsData } from '../types/news';
+// import { newsAPI } from '../services/newsAPI'; // Temporarily disabled due to CORS
+import { mockNewsAPI } from '../services/mockNewsData'; // Using mock data for testing
 import './Home.css';
 
 function Home() {
+  const [newsData, setNewsData] = useState<HomepageNewsData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHomePageNews = async () => {
+      try {
+        console.log('🚀 Fetching homepage news from mock data...');
+        const data = await mockNewsAPI.getHomepageNews();
+        console.log('📰 Mock news data received:', data);
+        setNewsData(data);
+      } catch (error) {
+        console.error('❌ Error fetching homepage news:', error);
+        // Keep loading false so fallback content shows
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomePageNews();
+  }, []);
+
+  // Fallback to static content if API fails or is loading
+  const worldNews = newsData?.worldNews || [];
+
+  // Debug info for testing  
+  const hasApiData = newsData && worldNews.length > 0;
+  const debugInfo = `API Status: ${hasApiData ? '� TOP STORIES (Mock)' : loading ? 'LOADING...' : 'FALLBACK'} | Articles: ${worldNews.length} | First Title: ${worldNews[0]?.title?.slice(0, 30) || 'none'} | Updated: ${new Date().toLocaleTimeString()}`;
+  
+  // Enhanced debugging
+  console.log('🔍 Homepage Debug - TOP STORIES from each category:', {
+    loading,
+    hasNewsData: !!newsData,
+    worldNewsCount: worldNews.length,
+    businessNewsCount: newsData?.categories?.business?.length || 0,
+    sportsNewsCount: newsData?.categories?.sports?.length || 0,
+    entertainmentNewsCount: newsData?.categories?.entertainment?.length || 0,
+    firstBusinessImage: newsData?.categories?.business?.[0]?.imageUrl,
+    topStoriesActive: true,
+    topStoriesLogic: 'Homepage shows curated top stories from each category'
+  });
+  
   return (
     <div className="home">
       <div className="home__container">
@@ -12,32 +56,69 @@ function Home() {
             <h2 id="world-title" className="world-title">
               <a href="/world" className="world-link">World &gt;</a>
               <span className="id-label">world-title</span>
+              <small style={{color: hasApiData ? 'green' : 'orange', fontSize: '12px', marginLeft: '10px'}}>
+                {debugInfo}
+              </small>
             </h2>
           </div>
           
           <div id="world-cards-container" className="world-cards">
             <span className="id-label">world-cards-container</span>
             
-            <article id="world-card-1" className="world-card">
-              <span className="id-label">world-card-1</span>
-              <div className="world-card-image">
-                <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
+            {loading ? (
+              // Loading state
+              <div style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
+                Loading latest news...
               </div>
-              <div className="world-card-content">
-                <h3 className="world-card-title">Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact</h3>
-                <p className="world-card-time">2 hours ago</p>
-              </div>
-            </article>
+            ) : worldNews.length > 0 ? worldNews.slice(0, 4).map((article, index) => (
+              <article key={article.id} id={`world-card-${index + 1}`} className="world-card">
+                <span className="id-label">world-card-{index + 1}</span>
+                <div className="world-card-image">
+                  <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
+                </div>
+                <div className="world-card-content">
+                  <h3 className="world-card-title">{article.title}</h3>
+                  <p className="world-card-time">
+                    {(() => {
+                      const now = new Date();
+                      const published = new Date(article.publishedAt);
+                      const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
+                      
+                      if (diffInMinutes < 1) return 'Just now';
+                      if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+                      
+                      const diffInHours = Math.floor(diffInMinutes / 60);
+                      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+                      
+                      const diffInDays = Math.floor(diffInHours / 24);
+                      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+                    })()}
+                  </p>
+                </div>
+              </article>
+            )) : (
+              // Fallback static content
+              <>
+                <article id="world-card-1" className="world-card">
+                  <span className="id-label">world-card-1</span>
+                  <div className="world-card-image">
+                    <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
+                  </div>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact</h3>
+                    <p className="world-card-time">2 hours ago</p>
+                  </div>
+                </article>
 
-            <article id="world-card-2" className="world-card">
-              <span className="id-label">world-card-2</span>
-              <div className="world-card-image">
-                <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
-              </div>
-              <div className="world-card-content">
-                <h3 className="world-card-title">Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome</h3>
-                <p className="world-card-time">2 hours ago</p>
-              </div>
+                <article id="world-card-2" className="world-card">
+                  <span className="id-label">world-card-2</span>
+                  <div className="world-card-image">
+                    <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
+                  </div>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome</h3>
+                    <p className="world-card-time">2 hours ago</p>
+                  </div>
             </article>
 
             <article id="world-card-3" className="world-card">
@@ -51,62 +132,99 @@ function Home() {
               </div>
             </article>
 
-            <article id="world-card-4" className="world-card">
-              <span className="id-label">world-card-4</span>
-              <div className="world-card-image">
-                <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
-              </div>
-              <div className="world-card-content">
-                <h3 className="world-card-title">Beetle that threatens Australia&apos;s grains industry found in imported nappies</h3>
-                <p className="world-card-time">3 hours ago</p>
-              </div>
-            </article>
+                <article id="world-card-4" className="world-card">
+                  <span className="id-label">world-card-4</span>
+                  <div className="world-card-image">
+                    <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
+                  </div>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Beetle that threatens Australia&apos;s grains industry found in imported nappies</h3>
+                    <p className="world-card-time">3 hours ago</p>
+                  </div>
+                </article>
+              </>
+            )}
           </div>
         </section>
 
-        {/* Crypto Section */}
+        {/* Crypto Section - NOW DYNAMIC */}
         <section id="crypto-section" className="crypto-section">
           <div className="crypto-header">
             <h2 id="crypto-title" className="crypto-title">
               <a href="/crypto" className="crypto-link">Crypto &gt;</a>
               <span className="id-label">crypto-title</span>
+              <small style={{color: (newsData?.categoryNews?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                {newsData?.categoryNews?.length || 0} top stories
+              </small>
             </h2>
           </div>
           
           <div id="crypto-cards-container" className="crypto-cards">
             <span className="id-label">crypto-cards-container</span>
             
-            <article id="crypto-card-1" className="crypto-card">
-              <span className="id-label">crypto-card-1</span>
-              <div className="crypto-card-content">
-                <h3 className="crypto-card-title">Wall St steadies with indexes on track for weekly gains; FedEx jumps</h3>
-                <p className="crypto-card-time">31 mins ago</p>
+            {loading ? (
+              <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
+                Loading crypto news...
               </div>
-            </article>
+            ) : (newsData?.categoryNews?.length || 0) > 0 ? newsData!.categoryNews!.slice(0, 4).map((article, index) => (
+              <article key={article.id} id={`crypto-card-${index + 1}`} className="crypto-card">
+                <span className="id-label">crypto-card-{index + 1}</span>
+                <div className="crypto-card-content">
+                  <h3 className="crypto-card-title">{article.title}</h3>
+                  <p className="crypto-card-time">
+                    {(() => {
+                      const now = new Date();
+                      const published = new Date(article.publishedAt);
+                      const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
+                      
+                      if (diffInMinutes < 1) return 'Just now';
+                      if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+                      
+                      const diffInHours = Math.floor(diffInMinutes / 60);
+                      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+                      
+                      const diffInDays = Math.floor(diffInHours / 24);
+                      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+                    })()}
+                  </p>
+                </div>
+              </article>
+            )) : (
+              // Static fallback - only show if no API data
+              <>
+                <article id="crypto-card-1" className="crypto-card">
+                  <span className="id-label">crypto-card-1</span>
+                  <div className="crypto-card-content">
+                    <h3 className="crypto-card-title">Wall St steadies with indexes on track for weekly gains; FedEx jumps</h3>
+                    <p className="crypto-card-time">31 mins ago</p>
+                  </div>
+                </article>
 
-            <article id="crypto-card-2" className="crypto-card">
-              <span className="id-label">crypto-card-2</span>
-              <div className="crypto-card-content">
-                <h3 className="crypto-card-title">Pound, gilts hit by surge in UK borrowing</h3>
-                <p className="crypto-card-time">7 hours ago</p>
-              </div>
-            </article>
+                <article id="crypto-card-2" className="crypto-card">
+                  <span className="id-label">crypto-card-2</span>
+                  <div className="crypto-card-content">
+                    <h3 className="crypto-card-title">Pound, gilts hit by surge in UK borrowing</h3>
+                    <p className="crypto-card-time">7 hours ago</p>
+                  </div>
+                </article>
 
-            <article id="crypto-card-3" className="crypto-card">
-              <span className="id-label">crypto-card-3</span>
-              <div className="crypto-card-content">
-                <h3 className="crypto-card-title">EU ministers reach &apos;compromise&apos; on digital euro roadmap</h3>
-                <p className="crypto-card-time">2 hours ago</p>
-              </div>
-            </article>
+                <article id="crypto-card-3" className="crypto-card">
+                  <span className="id-label">crypto-card-3</span>
+                  <div className="crypto-card-content">
+                    <h3 className="crypto-card-title">EU ministers reach &apos;compromise&apos; on digital euro roadmap</h3>
+                    <p className="crypto-card-time">2 hours ago</p>
+                  </div>
+                </article>
 
-            <article id="crypto-card-4" className="crypto-card">
-              <span className="id-label">crypto-card-4</span>
-              <div className="crypto-card-content">
-                <h3 className="crypto-card-title">Adani Group stocks rise as SEBI&apos;s dismissal signals end to Hindenburg overhang</h3>
-                <p className="crypto-card-time">4 hours ago</p>
-              </div>
-            </article>
+                <article id="crypto-card-4" className="crypto-card">
+                  <span className="id-label">crypto-card-4</span>
+                  <div className="crypto-card-content">
+                    <h3 className="crypto-card-title">Adani Group stocks rise as SEBI&apos;s dismissal signals end to Hindenburg overhang</h3>
+                    <p className="crypto-card-time">4 hours ago</p>
+                  </div>
+                </article>
+              </>
+            )}
           </div>
         </section>
 
@@ -114,42 +232,80 @@ function Home() {
         <div id="tech-sidebar-layout" className="tech-sidebar-layout">
           <span className="id-label">tech-sidebar-layout</span>
           
-          {/* Technology Section - 2x2 Grid */}
+          {/* Technology Section - NOW DYNAMIC */}
           <section id="technology-news-section" className="technology-section">
             <div className="technology-header">
               <h2 id="technology-title" className="technology-title">
                 <a href="/technology" className="technology-link">Technology &gt;</a>
                 <span className="id-label">technology-title</span>
+                <small style={{color: (newsData?.categories?.technology?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                  {newsData?.categories?.technology?.length || 0} top stories
+                </small>
               </h2>
             </div>
             
             <div id="technology-cards-container" className="technology-cards">
               <span className="id-label">technology-cards-container</span>
               
-              <article id="tech-card-1" className="tech-card">
-                <span className="id-label">tech-card-1</span>
-                <div className="tech-card-image">
-                  <img src="/placeholders/placeholder1.svg" alt="Tech news placeholder" />
+              {loading ? (
+                <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
+                  Loading tech news...
                 </div>
-              </article>
+              ) : (newsData?.categories?.technology?.length || 0) > 0 ? newsData!.categories!.technology!.slice(0, 4).map((article, index) => (
+                <article key={article.id} id={`tech-card-${index + 1}`} className="tech-card">
+                  <span className="id-label">tech-card-{index + 1}</span>
+                  <div className="tech-card-image">
+                    <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
+                  </div>
+                  <div className="tech-card-content">
+                    <h3 className="tech-card-title">{article.title}</h3>
+                    <p className="tech-card-time">
+                      {(() => {
+                        const now = new Date();
+                        const published = new Date(article.publishedAt);
+                        const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
+                        
+                        if (diffInMinutes < 1) return 'Just now';
+                        if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+                        
+                        const diffInHours = Math.floor(diffInMinutes / 60);
+                        if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+                        
+                        const diffInDays = Math.floor(diffInHours / 24);
+                        return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+                      })()}
+                    </p>
+                  </div>
+                </article>
+              )) : (
+                // Static fallback
+                <>
+                  <article id="tech-card-1" className="tech-card">
+                    <span className="id-label">tech-card-1</span>
+                    <div className="tech-card-image">
+                      <img src="/placeholders/placeholder1.svg" alt="Tech news placeholder" />
+                    </div>
+                  </article>
 
-              <article id="tech-card-2" className="tech-card">
-                <span className="id-label">tech-card-2</span>
-              </article>
+                  <article id="tech-card-2" className="tech-card">
+                    <span className="id-label">tech-card-2</span>
+                  </article>
 
-              <article id="tech-card-3" className="tech-card">
-                <span className="id-label">tech-card-3</span>
-                <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
-                  A selfie of Rafie Nadi in a grey hoodie by a bus window
-                  Migration
-                  &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
-                  Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
-                </h3>
-              </article>
+                  <article id="tech-card-3" className="tech-card">
+                    <span className="id-label">tech-card-3</span>
+                    <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
+                      A selfie of Rafie Nadi in a grey hoodie by a bus window
+                      Migration
+                      &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
+                      Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
+                    </h3>
+                  </article>
 
-              <article id="tech-card-4" className="tech-card">
-                <span className="id-label">tech-card-4</span>
-              </article>
+                  <article id="tech-card-4" className="tech-card">
+                    <span className="id-label">tech-card-4</span>
+                  </article>
+                </>
+              )}
             </div>
           </section>
 
@@ -193,25 +349,68 @@ function Home() {
               <h2 id="business-header" className="category-header">
                 <span className="id-label">business-header</span>
                 <a href="/business" className="category-link">Business</a>
+                <small style={{color: (newsData?.categories?.business?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                  {newsData?.categories?.business?.length || 0} articles (mock)
+                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="business-card-1" className="category-card featured">
-                <span className="id-label">business-card-1</span>
-                <div className="category-card-image">
-                  <img src="/ttttttt.jpg" alt="Luxury brands challenge" />
+              {loading ? (
+                <div className="loading-placeholder">
+                  Loading business news...
                 </div>
-                <div className="category-card-content">
-                  <h3 className="category-card-title">Luxury brands&apos; big challenge: figuring out Gen Z</h3>
-                  <p className="category-card-time">7 mins ago</p>
-                </div>
-              </article>
+              ) : (newsData?.categories?.business?.length || 0) > 0 ? newsData!.categories!.business!.slice(0, 2).map((article, index) => (
+                <article key={article.id} id={`business-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+                  <span className="id-label">business-card-{index + 1}</span>
+                  {index === 0 && (
+                    <div className="category-card-image">
+                      {article.imageUrl ? (
+                        <img src={article.imageUrl} alt={article.title} />
+                      ) : (
+                        <img src="/ttttttt.jpg" alt={article.title} />
+                      )}
+                    </div>
+                  )}
+                  <div className="category-card-content">
+                    <h3 className="category-card-title">{article.title}</h3>
+                    <p className="category-card-time">
+                      {(() => {
+                        const publishedDate = new Date(article.publishedAt);
+                        const now = new Date();
+                        const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+                        
+                        if (diffInMinutes < 60) {
+                          return `${diffInMinutes} mins ago`;
+                        } else if (diffInMinutes < 1440) {
+                          return `${Math.floor(diffInMinutes / 60)} hours ago`;
+                        } else {
+                          return `${Math.floor(diffInMinutes / 1440)} days ago`;
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </article>
+              )) : (
+                // Static fallback - only show if no API data
+                <>
+                  <article id="business-card-1" className="category-card featured">
+                    <span className="id-label">business-card-1</span>
+                    <div className="category-card-image">
+                      <img src="/ttttttt.jpg" alt="Luxury brands challenge" />
+                    </div>
+                    <div className="category-card-content">
+                      <h3 className="category-card-title">Luxury brands&apos; big challenge: figuring out Gen Z</h3>
+                      <p className="category-card-time">7 mins ago</p>
+                    </div>
+                  </article>
 
-              <article id="business-card-2" className="category-card">
-                <span className="id-label">business-card-2</span>
-                <h3 className="category-card-title">UK retail sales rise by more than expected in August, ONS says</h3>
-                <p className="category-card-time">10 hours ago</p>
-              </article>
+                  <article id="business-card-2" className="category-card">
+                    <span className="id-label">business-card-2</span>
+                    <h3 className="category-card-title">UK retail sales rise by more than expected in August, ONS says</h3>
+                    <p className="category-card-time">10 hours ago</p>
+                  </article>
+                </>
+              )}
             </div>
 
             {/* Sports Column */}
@@ -220,25 +419,68 @@ function Home() {
               <h2 id="sports-header" className="category-header">
                 <span className="id-label">sports-header</span>
                 <a href="/sports" className="category-link">Sports</a>
+                <small style={{color: (newsData?.categories?.sports?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                  {newsData?.categories?.sports?.length || 0} articles
+                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="sports-card-1" className="category-card featured">
-                <span className="id-label">sports-card-1</span>
-                <div className="category-card-image">
-                  <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
+              {loading ? (
+                <div className="loading-placeholder">
+                  Loading sports news...
                 </div>
-                <div className="category-card-content">
-                  <h3 className="category-card-title">How Canada&apos;s Haisla became the world&apos;s first Indigenous LNG owners</h3>
-                  <p className="category-card-time">6 hours ago</p>
-                </div>
-              </article>
+              ) : (newsData?.categories?.sports?.length || 0) > 0 ? newsData!.categories!.sports!.slice(0, 2).map((article, index) => (
+                <article key={article.id} id={`sports-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+                  <span className="id-label">sports-card-{index + 1}</span>
+                  {index === 0 && (
+                    <div className="category-card-image">
+                      {article.imageUrl ? (
+                        <img src={article.imageUrl} alt={article.title} />
+                      ) : (
+                        <img src="/ttttttt.jpg" alt={article.title} />
+                      )}
+                    </div>
+                  )}
+                  <div className="category-card-content">
+                    <h3 className="category-card-title">{article.title}</h3>
+                    <p className="category-card-time">
+                      {(() => {
+                        const publishedDate = new Date(article.publishedAt);
+                        const now = new Date();
+                        const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+                        
+                        if (diffInMinutes < 60) {
+                          return `${diffInMinutes} mins ago`;
+                        } else if (diffInMinutes < 1440) {
+                          return `${Math.floor(diffInMinutes / 60)} hours ago`;
+                        } else {
+                          return `${Math.floor(diffInMinutes / 1440)} days ago`;
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </article>
+              )) : (
+                // Static fallback - only show if no API data
+                <>
+                  <article id="sports-card-1" className="category-card featured">
+                    <span className="id-label">sports-card-1</span>
+                    <div className="category-card-image">
+                      <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
+                    </div>
+                    <div className="category-card-content">
+                      <h3 className="category-card-title">How Canada&apos;s Haisla became the world&apos;s first Indigenous LNG owners</h3>
+                      <p className="category-card-time">6 hours ago</p>
+                    </div>
+                  </article>
 
-              <article id="sports-card-2" className="category-card">
-                <span className="id-label">sports-card-2</span>
-                <h3 className="category-card-title">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
-                <p className="category-card-time">10 hours ago</p>
-              </article>
+                  <article id="sports-card-2" className="category-card">
+                    <span className="id-label">sports-card-2</span>
+                    <h3 className="category-card-title">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
+                    <p className="category-card-time">10 hours ago</p>
+                  </article>
+                </>
+              )}
             </div>
 
             {/* AI Column */}
@@ -274,25 +516,68 @@ function Home() {
               <h2 id="entertainment-header" className="category-header">
                 <span className="id-label">entertainment-header</span>
                 <a href="/entertainment" className="category-link">Entertainment</a>
+                <small style={{color: (newsData?.categories?.entertainment?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                  {newsData?.categories?.entertainment?.length || 0} articles
+                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="entertainment-card-1" className="category-card featured">
-                <span className="id-label">entertainment-card-1</span>
-                <div className="category-card-image">
-                  <img src="/ttttttt.jpg" alt="Taiwan arms show" />
+              {loading ? (
+                <div className="loading-placeholder">
+                  Loading entertainment news...
                 </div>
-                <div className="category-card-content">
-                  <h3 className="category-card-title">Taiwan&apos;s spending bonanza draws more foreign firms to its largest arms show</h3>
-                  <p className="category-card-time">September 18, 2025</p>
-                </div>
-              </article>
+              ) : (newsData?.categories?.entertainment?.length || 0) > 0 ? newsData!.categories!.entertainment!.slice(0, 2).map((article, index) => (
+                <article key={article.id} id={`entertainment-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+                  <span className="id-label">entertainment-card-{index + 1}</span>
+                  {index === 0 && (
+                    <div className="category-card-image">
+                      {article.imageUrl ? (
+                        <img src={article.imageUrl} alt={article.title} />
+                      ) : (
+                        <img src="/ttttttt.jpg" alt={article.title} />
+                      )}
+                    </div>
+                  )}
+                  <div className="category-card-content">
+                    <h3 className="category-card-title">{article.title}</h3>
+                    <p className="category-card-time">
+                      {(() => {
+                        const publishedDate = new Date(article.publishedAt);
+                        const now = new Date();
+                        const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+                        
+                        if (diffInMinutes < 60) {
+                          return `${diffInMinutes} mins ago`;
+                        } else if (diffInMinutes < 1440) {
+                          return `${Math.floor(diffInMinutes / 60)} hours ago`;
+                        } else {
+                          return `${Math.floor(diffInMinutes / 1440)} days ago`;
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </article>
+              )) : (
+                // Static fallback - only show if no API data
+                <>
+                  <article id="entertainment-card-1" className="category-card featured">
+                    <span className="id-label">entertainment-card-1</span>
+                    <div className="category-card-image">
+                      <img src="/ttttttt.jpg" alt="Taiwan arms show" />
+                    </div>
+                    <div className="category-card-content">
+                      <h3 className="category-card-title">Taiwan&apos;s spending bonanza draws more foreign firms to its largest arms show</h3>
+                      <p className="category-card-time">September 18, 2025</p>
+                    </div>
+                  </article>
 
-              <article id="entertainment-card-2" className="category-card">
-                <span className="id-label">entertainment-card-2</span>
-                <h3 className="category-card-title">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
-                <p className="category-card-time">September 18, 2025</p>
-              </article>
+                  <article id="entertainment-card-2" className="category-card">
+                    <span className="id-label">entertainment-card-2</span>
+                    <h3 className="category-card-title">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
+                    <p className="category-card-time">September 18, 2025</p>
+                  </article>
+                </>
+              )}
             </div>
           </div>
         </section>
@@ -355,25 +640,68 @@ function Home() {
               <h2 id="business-header-2" className="category-header-2">
                 <span className="id-label">business-header-2</span>
                 <a href="/business" className="category-link-2">Business</a>
+                <small style={{color: (newsData?.categories?.business?.length || 0) > 2 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                  {Math.max(0, (newsData?.categories?.business?.length || 0) - 2)} more articles
+                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="business-card-2-1" className="category-card-2 featured">
-                <span className="id-label">business-card-2-1</span>
-                <div className="category-card-image-2">
-                  <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
+              {loading ? (
+                <div className="loading-placeholder">
+                  Loading more business news...
                 </div>
-                <div className="category-card-content-2">
-                  <h3 className="category-card-title-2">Luxury brands&apos; big challenge: figuring out Gen Z</h3>
-                  <p className="category-card-time-2">7 mins ago</p>
-                </div>
-              </article>
+              ) : (newsData?.categories?.business?.length || 0) > 2 ? newsData!.categories!.business!.slice(2, 4).map((article, index) => (
+                <article key={article.id} id={`business-card-2-${index + 1}`} className={`category-card-2 ${index === 0 ? 'featured' : ''}`}>
+                  <span className="id-label">business-card-2-{index + 1}</span>
+                  {index === 0 && (
+                    <div className="category-card-image-2">
+                      {article.imageUrl ? (
+                        <img src={article.imageUrl} alt={article.title} />
+                      ) : (
+                        <img src="/ttttttt.jpg" alt={article.title} />
+                      )}
+                    </div>
+                  )}
+                  <div className="category-card-content-2">
+                    <h3 className="category-card-title-2">{article.title}</h3>
+                    <p className="category-card-time-2">
+                      {(() => {
+                        const publishedDate = new Date(article.publishedAt);
+                        const now = new Date();
+                        const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+                        
+                        if (diffInMinutes < 60) {
+                          return `${diffInMinutes} mins ago`;
+                        } else if (diffInMinutes < 1440) {
+                          return `${Math.floor(diffInMinutes / 60)} hours ago`;
+                        } else {
+                          return `${Math.floor(diffInMinutes / 1440)} days ago`;
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </article>
+              )) : (
+                // Static fallback - only show if not enough API data
+                <>
+                  <article id="business-card-2-1" className="category-card-2 featured">
+                    <span className="id-label">business-card-2-1</span>
+                    <div className="category-card-image-2">
+                      <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
+                    </div>
+                    <div className="category-card-content-2">
+                      <h3 className="category-card-title-2">Luxury brands&apos; big challenge: figuring out Gen Z</h3>
+                      <p className="category-card-time-2">7 mins ago</p>
+                    </div>
+                  </article>
 
-              <article id="business-card-2-2" className="category-card-2">
-                <span className="id-label">business-card-2-2</span>
-                <h3 className="category-card-title-2">UK retail sales rise by more than expected in August, ONS says</h3>
-                <p className="category-card-time-2">10 hours ago</p>
-              </article>
+                  <article id="business-card-2-2" className="category-card-2">
+                    <span className="id-label">business-card-2-2</span>
+                    <h3 className="category-card-title-2">UK retail sales rise by more than expected in August, ONS says</h3>
+                    <p className="category-card-time-2">10 hours ago</p>
+                  </article>
+                </>
+              )}
             </div>
 
             {/* Sports Column 2 */}
@@ -382,25 +710,68 @@ function Home() {
               <h2 id="sports-header-2" className="category-header-2">
                 <span className="id-label">sports-header-2</span>
                 <a href="/sports" className="category-link-2">Sports</a>
+                <small style={{color: (newsData?.categories?.sports?.length || 0) > 2 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                  {Math.max(0, (newsData?.categories?.sports?.length || 0) - 2)} more articles
+                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="sports-card-2-1" className="category-card-2 featured">
-                <span className="id-label">sports-card-2-1</span>
-                <div className="category-card-image-2">
-                  <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
+              {loading ? (
+                <div className="loading-placeholder">
+                  Loading more sports news...
                 </div>
-                <div className="category-card-content-2">
-                  <h3 className="category-card-title-2">How Canada&apos;s Haisla became the world&apos;s first indigenous LNG owners</h3>
-                  <p className="category-card-time-2">6 hours ago</p>
-                </div>
-              </article>
+              ) : (newsData?.categories?.sports?.length || 0) > 2 ? newsData!.categories!.sports!.slice(2, 4).map((article, index) => (
+                <article key={article.id} id={`sports-card-2-${index + 1}`} className={`category-card-2 ${index === 0 ? 'featured' : ''}`}>
+                  <span className="id-label">sports-card-2-{index + 1}</span>
+                  {index === 0 && (
+                    <div className="category-card-image-2">
+                      {article.imageUrl ? (
+                        <img src={article.imageUrl} alt={article.title} />
+                      ) : (
+                        <img src="/ttttttt.jpg" alt={article.title} />
+                      )}
+                    </div>
+                  )}
+                  <div className="category-card-content-2">
+                    <h3 className="category-card-title-2">{article.title}</h3>
+                    <p className="category-card-time-2">
+                      {(() => {
+                        const publishedDate = new Date(article.publishedAt);
+                        const now = new Date();
+                        const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+                        
+                        if (diffInMinutes < 60) {
+                          return `${diffInMinutes} mins ago`;
+                        } else if (diffInMinutes < 1440) {
+                          return `${Math.floor(diffInMinutes / 60)} hours ago`;
+                        } else {
+                          return `${Math.floor(diffInMinutes / 1440)} days ago`;
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </article>
+              )) : (
+                // Static fallback - only show if not enough API data
+                <>
+                  <article id="sports-card-2-1" className="category-card-2 featured">
+                    <span className="id-label">sports-card-2-1</span>
+                    <div className="category-card-image-2">
+                      <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
+                    </div>
+                    <div className="category-card-content-2">
+                      <h3 className="category-card-title-2">How Canada&apos;s Haisla became the world&apos;s first indigenous LNG owners</h3>
+                      <p className="category-card-time-2">6 hours ago</p>
+                    </div>
+                  </article>
 
-              <article id="sports-card-2-2" className="category-card-2">
-                <span className="id-label">sports-card-2-2</span>
-                <h3 className="category-card-title-2">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
-                <p className="category-card-time-2">10 hours ago</p>
-              </article>
+                  <article id="sports-card-2-2" className="category-card-2">
+                    <span className="id-label">sports-card-2-2</span>
+                    <h3 className="category-card-title-2">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
+                    <p className="category-card-time-2">10 hours ago</p>
+                  </article>
+                </>
+              )}
             </div>
 
             {/* AI Column 2 */}
@@ -436,25 +807,68 @@ function Home() {
               <h2 id="entertainment-header-2" className="category-header-2">
                 <span className="id-label">entertainment-header-2</span>
                 <a href="/entertainment" className="category-link-2">Entertainment</a>
+                <small style={{color: (newsData?.categories?.entertainment?.length || 0) > 2 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                  {Math.max(0, (newsData?.categories?.entertainment?.length || 0) - 2)} more articles
+                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="entertainment-card-2-1" className="category-card-2 featured">
-                <span className="id-label">entertainment-card-2-1</span>
-                <div className="category-card-image-2">
-                  <img src="/ttttttt.jpg" alt="Taiwan arms show" />
+              {loading ? (
+                <div className="loading-placeholder">
+                  Loading more entertainment news...
                 </div>
-                <div className="category-card-content-2">
-                  <h3 className="category-card-title-2">Taiwan&apos;s spending bonanza draws more foreign firms to its largest arms show</h3>
-                  <p className="category-card-time-2">September 18, 2025</p>
-                </div>
-              </article>
+              ) : (newsData?.categories?.entertainment?.length || 0) > 2 ? newsData!.categories!.entertainment!.slice(2, 4).map((article, index) => (
+                <article key={article.id} id={`entertainment-card-2-${index + 1}`} className={`category-card-2 ${index === 0 ? 'featured' : ''}`}>
+                  <span className="id-label">entertainment-card-2-{index + 1}</span>
+                  {index === 0 && (
+                    <div className="category-card-image-2">
+                      {article.imageUrl ? (
+                        <img src={article.imageUrl} alt={article.title} />
+                      ) : (
+                        <img src="/ttttttt.jpg" alt={article.title} />
+                      )}
+                    </div>
+                  )}
+                  <div className="category-card-content-2">
+                    <h3 className="category-card-title-2">{article.title}</h3>
+                    <p className="category-card-time-2">
+                      {(() => {
+                        const publishedDate = new Date(article.publishedAt);
+                        const now = new Date();
+                        const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+                        
+                        if (diffInMinutes < 60) {
+                          return `${diffInMinutes} mins ago`;
+                        } else if (diffInMinutes < 1440) {
+                          return `${Math.floor(diffInMinutes / 60)} hours ago`;
+                        } else {
+                          return `${Math.floor(diffInMinutes / 1440)} days ago`;
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </article>
+              )) : (
+                // Static fallback - only show if not enough API data
+                <>
+                  <article id="entertainment-card-2-1" className="category-card-2 featured">
+                    <span className="id-label">entertainment-card-2-1</span>
+                    <div className="category-card-image-2">
+                      <img src="/ttttttt.jpg" alt="Taiwan arms show" />
+                    </div>
+                    <div className="category-card-content-2">
+                      <h3 className="category-card-title-2">Taiwan&apos;s spending bonanza draws more foreign firms to its largest arms show</h3>
+                      <p className="category-card-time-2">September 18, 2025</p>
+                    </div>
+                  </article>
 
-              <article id="entertainment-card-2-2" className="category-card-2">
-                <span className="id-label">entertainment-card-2-2</span>
-                <h3 className="category-card-title-2">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
-                <p className="category-card-time-2">September 18, 2025</p>
-              </article>
+                  <article id="entertainment-card-2-2" className="category-card-2">
+                    <span className="id-label">entertainment-card-2-2</span>
+                    <h3 className="category-card-title-2">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
+                    <p className="category-card-time-2">September 18, 2025</p>
+                  </article>
+                </>
+              )}
             </div>
           </div>
         </section>

@@ -78,15 +78,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               <p className="search-result-description">{article.description}</p>
               <div className="search-result-meta">
                 <span className="search-result-source">{article.source.name}</span>
-                <span className="search-result-category">{article.category}</span>
+                <span className="search-result-category">{(article as any).category || 'General'}</span>
                 <span className="search-result-time">
                   {new Date(article.publishedAt).toLocaleDateString()}
                 </span>
               </div>
             </div>
-            {article.imageUrl && (
+            {(article as any).imageUrl && (
               <div className="search-result-image">
-                <img src={article.imageUrl} alt={article.title} />
+                <img src={(article as any).imageUrl} alt={article.title} />
               </div>
             )}
           </div>
