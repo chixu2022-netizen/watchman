@@ -70,8 +70,8 @@ function Home() {
                 Loading crypto news...
               </div>
             ) : (newsData?.categoryNews?.length || 0) > 0 ? newsData!.categoryNews!.slice(0, 4).map((article, index) => (
-              <article key={article.id} id={`world-card-${index + 1}`} className="world-card">
-                <span className="id-label">world-card-{index + 1}</span>
+              <article key={article.id} id={`crypto-card-${index + 1}`} className="world-card">
+                <span className="id-label">crypto-card-{index + 1}</span>
                 <div className="world-card-image">
                   <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
                 </div>
@@ -98,32 +98,32 @@ function Home() {
             )) : (
               // Fallback static content
               <>
-                <article id="world-card-1" className="world-card">
-                  <span className="id-label">world-card-1</span>
+                <article id="crypto-card-1" className="world-card">
+                  <span className="id-label">crypto-card-1</span>
                   <div className="world-card-content">
                     <h3 className="world-card-title">Bitcoin Reaches New All-Time High Amid Institutional Adoption</h3>
                     <p className="world-card-time">1 hour ago</p>
                   </div>
                 </article>
 
-                <article id="world-card-2" className="world-card">
-                  <span className="id-label">world-card-2</span>
+                <article id="crypto-card-2" className="world-card">
+                  <span className="id-label">crypto-card-2</span>
                   <div className="world-card-content">
                     <h3 className="world-card-title">Ethereum 2.0 Upgrade Shows Promising Results</h3>
                     <p className="world-card-time">3 hours ago</p>
                   </div>
                 </article>
 
-                <article id="world-card-3" className="world-card">
-                  <span className="id-label">world-card-3</span>
+                <article id="crypto-card-3" className="world-card">
+                  <span className="id-label">crypto-card-3</span>
                   <div className="world-card-content">
                     <h3 className="world-card-title">Central Bank Digital Currencies Gain Global Momentum</h3>
                     <p className="world-card-time">5 hours ago</p>
                   </div>
                 </article>
 
-                <article id="world-card-4" className="world-card">
-                  <span className="id-label">world-card-4</span>
+                <article id="crypto-card-4" className="world-card">
+                  <span className="id-label">crypto-card-4</span>
                   <div className="world-card-content">
                     <h3 className="world-card-title">DeFi Protocol Launches Revolutionary Yield Farming Solution</h3>
                     <p className="world-card-time">8 hours ago</p>
@@ -211,11 +211,8 @@ function Home() {
               
               return combinedArticles.slice(0, 4);
             })().map((article, index) => (
-              <article key={article.id} id={`crypto-card-${index + 1}`} className="crypto-card">
-                <span className="id-label">crypto-card-{index + 1}</span>
-                <div className="crypto-card-image">
-                  <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
-                </div>
+              <article key={article.id} id={`world-card-${index + 1}`} className="crypto-card">
+                <span className="id-label">world-card-{index + 1}</span>
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">
@@ -239,44 +236,32 @@ function Home() {
             )) : (
               // Fallback static content
               <>
-                <article id="crypto-card-1" className="crypto-card">
-                  <span className="id-label">crypto-card-1</span>
-                  <div className="crypto-card-image">
-                    <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
-                  </div>
+                <article id="world-card-1" className="crypto-card">
+                  <span className="id-label">world-card-1</span>
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact</h3>
                     <p className="crypto-card-time">2 hours ago</p>
                   </div>
                 </article>
 
-                <article id="crypto-card-2" className="crypto-card">
-                  <span className="id-label">crypto-card-2</span>
-                  <div className="crypto-card-image">
-                    <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
-                  </div>
+                <article id="world-card-2" className="crypto-card">
+                  <span className="id-label">world-card-2</span>
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome</h3>
                     <p className="crypto-card-time">2 hours ago</p>
                   </div>
                 </article>
 
-                <article id="crypto-card-3" className="crypto-card">
-                  <span className="id-label">crypto-card-3</span>
-                  <div className="crypto-card-image">
-                    <img src="/ttttttt.jpg" alt="France protests strikes" />
-                  </div>
+                <article id="world-card-3" className="crypto-card">
+                  <span className="id-label">world-card-3</span>
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">France gears up for protests, strikes over budget cuts</h3>
                     <p className="crypto-card-time">7 mins ago</p>
                   </div>
                 </article>
 
-                <article id="crypto-card-4" className="crypto-card">
-                  <span className="id-label">crypto-card-4</span>
-                  <div className="crypto-card-image">
-                    <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
-                  </div>
+                <article id="world-card-4" className="crypto-card">
+                  <span className="id-label">world-card-4</span>
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">Beetle that threatens Australia&apos;s grains industry found in imported nappies</h3>
                     <p className="crypto-card-time">3 hours ago</p>
