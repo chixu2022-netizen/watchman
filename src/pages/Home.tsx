@@ -247,65 +247,28 @@ function Home() {
             <div id="technology-cards-container" className="technology-cards">
               <span className="id-label">technology-cards-container</span>
               
-              {loading ? (
-                <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
-                  Loading tech news...
+              <article className="featured-article">
+                <div className="featured-content">
+                  <h1 className="featured-headline">
+                    Revolutionary AI breakthrough transforms quantum computing capabilities
+                  </h1>
+                  <p className="featured-description">
+                    Scientists at MIT have developed a new quantum-AI hybrid system that can process complex calculations 1000x faster than traditional supercomputers, opening new possibilities for drug discovery and climate modeling.
+                  </p>
+                  <p className="featured-date">September 27, 2025</p>
                 </div>
-              ) : (newsData?.categories?.technology?.length || 0) > 0 ? newsData!.categories!.technology!.slice(0, 4).map((article, index) => (
-                <article key={article.id} id={`tech-card-${index + 1}`} className="tech-card">
-                  <span className="id-label">tech-card-{index + 1}</span>
-                  <div className="tech-card-image">
-                    <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
-                  </div>
-                  <div className="tech-card-content">
-                    <h3 className="tech-card-title">{article.title}</h3>
-                    <p className="tech-card-time">
-                      {(() => {
-                        const now = new Date();
-                        const published = new Date(article.publishedAt);
-                        const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
-                        
-                        if (diffInMinutes < 1) return 'Just now';
-                        if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
-                        
-                        const diffInHours = Math.floor(diffInMinutes / 60);
-                        if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-                        
-                        const diffInDays = Math.floor(diffInHours / 24);
-                        return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-                      })()}
-                    </p>
-                  </div>
-                </article>
-              )) : (
-                // Static fallback
-                <>
-                  <article id="tech-card-1" className="tech-card">
-                    <span className="id-label">tech-card-1</span>
-                    <div className="tech-card-image">
-                      <img src="/placeholders/placeholder1.svg" alt="Tech news placeholder" />
-                    </div>
-                  </article>
-
-                  <article id="tech-card-2" className="tech-card">
-                    <span className="id-label">tech-card-2</span>
-                  </article>
-
-                  <article id="tech-card-3" className="tech-card">
-                    <span className="id-label">tech-card-3</span>
-                    <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
-                      A selfie of Rafie Nadi in a grey hoodie by a bus window
-                      Migration
-                      &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
-                      Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
-                    </h3>
-                  </article>
-
-                  <article id="tech-card-4" className="tech-card">
-                    <span className="id-label">tech-card-4</span>
-                  </article>
-                </>
-              )}
+                <div className="featured-image">
+                  <img 
+                    src="/ttttttt.jpg" 
+                    alt="Revolutionary AI breakthrough transforms quantum computing capabilities"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </div>
+              </article>
             </div>
           </section>
 
@@ -889,36 +852,27 @@ function Home() {
             <div id="technology-cards-container-2" className="technology-cards-2">
               <span className="id-label">technology-cards-container-2</span>
               
-              <article id="tech-card-2-1" className="tech-card-2">
-                <span className="id-label">tech-card-2-1</span>
-                <img 
-                  src="/placeholders/placeholder1.svg" 
-                  alt="Technology placeholder" 
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: '8px'
-                  }}
-                />
-              </article>
-
-              <article id="tech-card-2-2" className="tech-card-2">
-                <span className="id-label">tech-card-2-2</span>
-              </article>
-
-              <article id="tech-card-2-3" className="tech-card-2">
-                <span className="id-label">tech-card-2-3</span>
-                <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
-                  A selfie of Rafie Nadi in a grey hoodie by a bus window
-                  Migration
-                  &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
-                  Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
-                </h3>
-              </article>
-
-              <article id="tech-card-2-4" className="tech-card-2">
-                <span className="id-label">tech-card-2-4</span>
+              <article className="featured-article-2">
+                <div className="featured-content-2">
+                  <h1 className="featured-headline-2">
+                    Holy war: How Russia recruited Orthodox priests to sway Moldova&apos;s voters
+                  </h1>
+                  <p className="featured-description-2">
+                    Russia gave them debit cards loaded with hundreds of dollars on their return from Moscow excursions. The priests then created Telegram channels to promote traditional values over &quot;gay Europe.&quot;
+                  </p>
+                  <p className="featured-date-2">September 26, 2025</p>
+                </div>
+                <div className="featured-image-2">
+                  <img 
+                    src="/ttttttt.jpg" 
+                    alt="Holy war: How Russia recruited Orthodox priests to sway Moldova's voters"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </div>
               </article>
             </div>
           </section>
@@ -1235,36 +1189,27 @@ function Home() {
             <div id="technology-cards-container-3" className="technology-cards-3">
               <span className="id-label">technology-cards-container-3</span>
               
-              <article id="tech-card-3-1" className="tech-card-3">
-                <span className="id-label">tech-card-3-1</span>
-                <img 
-                  src="/placeholders/placeholder1.svg" 
-                  alt="Technology placeholder" 
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: '8px'
-                  }}
-                />
-              </article>
-
-              <article id="tech-card-3-2" className="tech-card-3">
-                <span className="id-label">tech-card-3-2</span>
-              </article>
-
-              <article id="tech-card-3-3" className="tech-card-3">
-                <span className="id-label">tech-card-3-3</span>
-                <h3 style={{ fontWeight: 'bold', padding: '12px', fontSize: '14px', lineHeight: '1.3' }}>
-                  A selfie of Rafie Nadi in a grey hoodie by a bus window
-                  Migration
-                  &apos;I was terrified of dying&apos;: how one man survived 40 hours adrift in the sea
-                  Boris Johnson giving evidence at Dorland House in London before the Covid inquiry
-                </h3>
-              </article>
-
-              <article id="tech-card-3-4" className="tech-card-3">
-                <span className="id-label">tech-card-3-4</span>
+              <article className="featured-article-3">
+                <div className="featured-content-3">
+                  <h1 className="featured-headline-3">
+                    Climate technology summit announces $50 billion investment in clean energy solutions
+                  </h1>
+                  <p className="featured-description-3">
+                    World leaders and tech giants commit to unprecedented funding for renewable energy infrastructure, promising to accelerate the global transition to sustainable power sources by 2030.
+                  </p>
+                  <p className="featured-date-3">September 26, 2025</p>
+                </div>
+                <div className="featured-image-3">
+                  <img 
+                    src="/ttttttt.jpg" 
+                    alt="Climate technology summit announces $50 billion investment in clean energy solutions"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </div>
               </article>
             </div>
           </section>
