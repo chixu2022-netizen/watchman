@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
+import StockTicker from '../components/StockTicker';
 import { HomepageNewsData } from '../types/news';
 // import { newsAPI } from '../services/newsAPI'; // Temporarily disabled due to CORS
 import { mockNewsAPI } from '../services/mockNewsData'; // Using mock data for testing
@@ -49,105 +50,89 @@ function Home() {
   
   return (
     <div className="home">
+      <StockTicker />
       <div className="home__container">
+        {/* Duplicated Technology Section with Sidebar Layout - NEW AT TOP */}
+        <div id="tech-sidebar-layout-new" className="tech-sidebar-layout">
+          <span className="id-label">tech-sidebar-layout-new</span>
+          
+          {/* Technology Section - DUPLICATED */}
+          <section id="technology-news-section-new" className="technology-section">
+            <div className="technology-header">
+              <h2 id="technology-title-new" className="technology-title">
+                <span className="id-label">technology-title-new</span>
+              </h2>
+            </div>
+            
+            <div id="technology-cards-container-new" className="technology-cards">
+              <span className="id-label">technology-cards-container-new</span>
+              
+              <article className="featured-article">
+                <div className="featured-content">
+                  <h1 className="featured-headline">
+                    Revolutionary AI breakthrough transforms quantum computing capabilities
+                  </h1>
+                  <p className="featured-description">
+                    Scientists at MIT have developed a new quantum-AI hybrid system that can process complex calculations 1000x faster than traditional supercomputers, opening new possibilities for drug discovery and climate modeling.
+                  </p>
+                  <p className="featured-date">September 27, 2025</p>
+                </div>
+                <div className="featured-image">
+                  <img 
+                    src="/ttttttt.jpg" 
+                    alt="Revolutionary AI breakthrough transforms quantum computing capabilities"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </div>
+              </article>
+            </div>
+          </section>
+
+          {/* Sidebar - 30% width - DUPLICATED */}
+          <aside id="tech-sidebar-new" className="tech-sidebar">
+            <span className="id-label">tech-sidebar-new</span>
+            
+            <article id="sidebar-news-new-1" className="sidebar-news-item">
+              <span className="id-label">sidebar-news-new-1</span>
+              <h3 className="sidebar-news-title">Hollywood comes to Kimmel&apos;s defense after ABC pulls late-night show</h3>
+              <p className="sidebar-news-time">2 hours ago</p>
+            </article>
+
+            <article id="sidebar-news-new-2" className="sidebar-news-item">
+              <span className="id-label">sidebar-news-new-2</span>
+              <h3 className="sidebar-news-title">Unresolved questions hang over case against Charlie Kirk&apos;s accused killer</h3>
+              <p className="sidebar-news-time">8 hours ago</p>
+            </article>
+
+            <article id="sidebar-news-new-3" className="sidebar-news-item">
+              <span className="id-label">sidebar-news-new-3</span>
+              <h3 className="sidebar-news-title">White House readies executive order on political violence as liberal groups sound warning</h3>
+              <p className="sidebar-news-time">9 hours ago</p>
+            </article>
+
+            <article id="sidebar-news-new-4" className="sidebar-news-item">
+              <span className="id-label">sidebar-news-new-4</span>
+              <h3 className="sidebar-news-title">Markets respond to Federal Reserve&apos;s latest interest rate decision</h3>
+              <p className="sidebar-news-time">10 hours ago</p>
+            </article>
+          </aside>
+        </div>
+
         {/* World News Section */}
         <section id="world-news-section" className="world-section">
           <div className="world-header">
             <h2 id="world-title" className="world-title">
-              <a href="/crypto" className="world-link">Crypto &gt;</a>
+              <a href="/world" className="world-link">World &gt;</a>
               <span className="id-label">world-title</span>
-              <small style={{color: (newsData?.categoryNews?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                {newsData?.categoryNews?.length || 0} top stories
-              </small>
             </h2>
           </div>
           
           <div id="world-cards-container" className="world-cards">
             <span className="id-label">world-cards-container</span>
-            
-            {loading ? (
-              <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
-                Loading crypto news...
-              </div>
-            ) : (newsData?.categoryNews?.length || 0) > 0 ? newsData!.categoryNews!.slice(0, 4).map((article, index) => (
-              <article key={article.id} id={`crypto-card-${index + 1}`} className="world-card">
-                <span className="id-label">crypto-card-{index + 1}</span>
-                <div className="world-card-image">
-                  <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
-                </div>
-                <div className="world-card-content">
-                  <h3 className="world-card-title">{article.title}</h3>
-                  <p className="world-card-time">
-                    {(() => {
-                      const now = new Date();
-                      const published = new Date(article.publishedAt);
-                      const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
-                      
-                      if (diffInMinutes < 1) return 'Just now';
-                      if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
-                      
-                      const diffInHours = Math.floor(diffInMinutes / 60);
-                      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-                      
-                      const diffInDays = Math.floor(diffInHours / 24);
-                      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-                    })()}
-                  </p>
-                </div>
-              </article>
-            )) : (
-              // Fallback static content
-              <>
-                <article id="crypto-card-1" className="world-card">
-                  <span className="id-label">crypto-card-1</span>
-                  <div className="world-card-content">
-                    <h3 className="world-card-title">Bitcoin Reaches New All-Time High Amid Institutional Adoption</h3>
-                    <p className="world-card-time">1 hour ago</p>
-                  </div>
-                </article>
-
-                <article id="crypto-card-2" className="world-card">
-                  <span className="id-label">crypto-card-2</span>
-                  <div className="world-card-content">
-                    <h3 className="world-card-title">Ethereum 2.0 Upgrade Shows Promising Results</h3>
-                    <p className="world-card-time">3 hours ago</p>
-                  </div>
-                </article>
-
-                <article id="crypto-card-3" className="world-card">
-                  <span className="id-label">crypto-card-3</span>
-                  <div className="world-card-content">
-                    <h3 className="world-card-title">Central Bank Digital Currencies Gain Global Momentum</h3>
-                    <p className="world-card-time">5 hours ago</p>
-                  </div>
-                </article>
-
-                <article id="crypto-card-4" className="world-card">
-                  <span className="id-label">crypto-card-4</span>
-                  <div className="world-card-content">
-                    <h3 className="world-card-title">DeFi Protocol Launches Revolutionary Yield Farming Solution</h3>
-                    <p className="world-card-time">8 hours ago</p>
-                  </div>
-                </article>
-              </>
-            )}
-          </div>
-        </section>
-
-        {/* Crypto Section - NOW DYNAMIC */}
-        <section id="crypto-section" className="crypto-section">
-          <div className="crypto-header">
-            <h2 id="crypto-title" className="crypto-title">
-              <a href="/world" className="crypto-link">World &gt;</a>
-              <span className="id-label">crypto-title</span>
-              <small style={{color: hasApiData ? 'green' : 'orange', fontSize: '12px', marginLeft: '10px'}}>
-                {debugInfo}
-              </small>
-            </h2>
-          </div>
-          
-          <div id="crypto-cards-container" className="crypto-cards">
-            <span className="id-label">crypto-cards-container</span>
             
             {loading ? (
               // Loading state
@@ -211,8 +196,101 @@ function Home() {
               
               return combinedArticles.slice(0, 4);
             })().map((article, index) => (
-              <article key={article.id} id={`world-card-${index + 1}`} className="crypto-card">
+              <article key={article.id} id={`world-card-${index + 1}`} className="world-card">
                 <span className="id-label">world-card-{index + 1}</span>
+                <div className="world-card-image">
+                  <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
+                </div>
+                <div className="world-card-content">
+                  <h3 className="world-card-title">{article.title}</h3>
+                  <p className="world-card-time">
+                    {(() => {
+                      const now = new Date();
+                      const published = new Date(article.publishedAt);
+                      const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
+                      
+                      if (diffInMinutes < 1) return 'Just now';
+                      if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+                      
+                      const diffInHours = Math.floor(diffInMinutes / 60);
+                      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+                      
+                      const diffInDays = Math.floor(diffInHours / 24);
+                      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+                    })()}
+                  </p>
+                </div>
+              </article>
+            )) : (
+              // Fallback static content
+              <>
+                <article id="world-card-1" className="world-card">
+                  <span className="id-label">world-card-1</span>
+                  <div className="world-card-image">
+                    <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
+                  </div>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact</h3>
+                    <p className="world-card-time">2 hours ago</p>
+                  </div>
+                </article>
+
+                <article id="world-card-2" className="world-card">
+                  <span className="id-label">world-card-2</span>
+                  <div className="world-card-image">
+                    <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
+                  </div>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome</h3>
+                    <p className="world-card-time">2 hours ago</p>
+                  </div>
+                </article>
+
+                <article id="world-card-3" className="world-card">
+                  <span className="id-label">world-card-3</span>
+                  <div className="world-card-image">
+                    <img src="/ttttttt.jpg" alt="France protests strikes" />
+                  </div>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">France gears up for protests, strikes over budget cuts</h3>
+                    <p className="world-card-time">7 mins ago</p>
+                  </div>
+                </article>
+
+                <article id="world-card-4" className="world-card">
+                  <span className="id-label">world-card-4</span>
+                  <div className="world-card-image">
+                    <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
+                  </div>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Beetle that threatens Australia&apos;s grains industry found in imported nappies</h3>
+                    <p className="world-card-time">3 hours ago</p>
+                  </div>
+                </article>
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Crypto Section - NOW DYNAMIC */}
+        <section id="crypto-section" className="crypto-section">
+          <div className="crypto-header">
+            <h2 id="crypto-title" className="crypto-title">
+              <a href="/crypto" className="crypto-link">Crypto &gt;</a>
+              <span className="id-label">crypto-title</span>
+            </h2>
+          </div>
+          
+          <div id="crypto-cards-container" className="crypto-cards">
+            <span className="id-label">crypto-cards-container</span>
+            
+            {loading ? (
+              <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
+                Loading crypto news...
+              </div>
+            ) : (newsData?.categoryNews?.length || 0) > 0 ? newsData!.categoryNews!.slice(0, 4).map((article, index) => (
+              <article key={article.id} id={`crypto-card-${index + 1}`} className="crypto-card">
+                <span className="id-label">crypto-card-{index + 1}</span>
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">
@@ -234,37 +312,37 @@ function Home() {
                 </div>
               </article>
             )) : (
-              // Fallback static content
+              // Static fallback - only show if no API data
               <>
-                <article id="world-card-1" className="crypto-card">
-                  <span className="id-label">world-card-1</span>
+                <article id="crypto-card-1" className="crypto-card">
+                  <span className="id-label">crypto-card-1</span>
                   <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact</h3>
-                    <p className="crypto-card-time">2 hours ago</p>
+                    <h3 className="crypto-card-title">Bitcoin Reaches New All-Time High Amid Institutional Adoption</h3>
+                    <p className="crypto-card-time">1 hour ago</p>
                   </div>
                 </article>
 
-                <article id="world-card-2" className="crypto-card">
-                  <span className="id-label">world-card-2</span>
+                <article id="crypto-card-2" className="crypto-card">
+                  <span className="id-label">crypto-card-2</span>
                   <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome</h3>
-                    <p className="crypto-card-time">2 hours ago</p>
-                  </div>
-                </article>
-
-                <article id="world-card-3" className="crypto-card">
-                  <span className="id-label">world-card-3</span>
-                  <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">France gears up for protests, strikes over budget cuts</h3>
-                    <p className="crypto-card-time">7 mins ago</p>
-                  </div>
-                </article>
-
-                <article id="world-card-4" className="crypto-card">
-                  <span className="id-label">world-card-4</span>
-                  <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">Beetle that threatens Australia&apos;s grains industry found in imported nappies</h3>
+                    <h3 className="crypto-card-title">Ethereum 2.0 Upgrade Shows Promising Results</h3>
                     <p className="crypto-card-time">3 hours ago</p>
+                  </div>
+                </article>
+
+                <article id="crypto-card-3" className="crypto-card">
+                  <span className="id-label">crypto-card-3</span>
+                  <div className="crypto-card-content">
+                    <h3 className="crypto-card-title">Central Bank Digital Currencies Gain Global Momentum</h3>
+                    <p className="crypto-card-time">5 hours ago</p>
+                  </div>
+                </article>
+
+                <article id="crypto-card-4" className="crypto-card">
+                  <span className="id-label">crypto-card-4</span>
+                  <div className="crypto-card-content">
+                    <h3 className="crypto-card-title">DeFi Protocol Launches Revolutionary Yield Farming Solution</h3>
+                    <p className="crypto-card-time">8 hours ago</p>
                   </div>
                 </article>
               </>
@@ -282,9 +360,6 @@ function Home() {
               <h2 id="technology-title" className="technology-title">
                 <a href="/technology" className="technology-link">Technology &gt;</a>
                 <span className="id-label">technology-title</span>
-                <small style={{color: (newsData?.categories?.technology?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                  {newsData?.categories?.technology?.length || 0} top stories
-                </small>
               </h2>
             </div>
             
@@ -356,9 +431,6 @@ function Home() {
               <h2 id="business-header" className="category-header">
                 <span className="id-label">business-header</span>
                 <a href="/business" className="category-link">Business</a>
-                <small style={{color: (newsData?.categories?.business?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                  {newsData?.categories?.business?.length || 0} articles (mock)
-                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
@@ -426,9 +498,6 @@ function Home() {
               <h2 id="sports-header" className="category-header">
                 <span className="id-label">sports-header</span>
                 <a href="/sports" className="category-link">Sports</a>
-                <small style={{color: (newsData?.categories?.sports?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                  {newsData?.categories?.sports?.length || 0} articles
-                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
@@ -523,9 +592,6 @@ function Home() {
               <h2 id="entertainment-header" className="category-header">
                 <span className="id-label">entertainment-header</span>
                 <a href="/entertainment" className="category-link">Entertainment</a>
-                <small style={{color: (newsData?.categories?.entertainment?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                  {newsData?.categories?.entertainment?.length || 0} articles
-                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
@@ -647,9 +713,6 @@ function Home() {
               <h2 id="business-header-2" className="category-header-2">
                 <span className="id-label">business-header-2</span>
                 <a href="/business" className="category-link-2">Business</a>
-                <small style={{color: (newsData?.categories?.business?.length || 0) > 2 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                  {Math.max(0, (newsData?.categories?.business?.length || 0) - 2)} more articles
-                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
@@ -717,9 +780,6 @@ function Home() {
               <h2 id="sports-header-2" className="category-header-2">
                 <span className="id-label">sports-header-2</span>
                 <a href="/sports" className="category-link-2">Sports</a>
-                <small style={{color: (newsData?.categories?.sports?.length || 0) > 2 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                  {Math.max(0, (newsData?.categories?.sports?.length || 0) - 2)} more articles
-                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               
@@ -814,9 +874,6 @@ function Home() {
               <h2 id="entertainment-header-2" className="category-header-2">
                 <span className="id-label">entertainment-header-2</span>
                 <a href="/entertainment" className="category-link-2">Entertainment</a>
-                <small style={{color: (newsData?.categories?.entertainment?.length || 0) > 2 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                  {Math.max(0, (newsData?.categories?.entertainment?.length || 0) - 2)} more articles
-                </small>
                 <span className="arrow-symbol">›</span>
               </h2>
               

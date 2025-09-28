@@ -210,8 +210,18 @@
   background: transparent;
   position: relative;
   padding: 16px;
-  margin-top: 56px;
+  margin-top: 0;
   box-sizing: border-box;
+}
+
+/* Align duplicated tech sidebar with technology cards container */
+#tech-sidebar-new {
+  margin-top: 21px;
+}
+
+/* Align main tech sidebar */
+#tech-sidebar {
+  margin-top: 57px;
 }
 
 .sidebar-news-item {
