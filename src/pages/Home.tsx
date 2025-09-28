@@ -70,7 +70,63 @@ function Home() {
               <div style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
                 Loading latest news...
               </div>
-            ) : worldNews.length > 0 ? worldNews.slice(0, 4).map((article, index) => (
+            ) : worldNews.length > 0 ? (() => {
+              // Ensure we always have 4 articles by combining API and fallback data
+              const fallbackArticles = [
+                {
+                  id: 'fallback-world-1',
+                  title: 'Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact',
+                  description: 'Saudi Arabia and Pakistan have signed a mutual defense agreement.',
+                  url: '#',
+                  imageUrl: '/ttttttt.jpg',
+                  publishedAt: new Date(Date.now() - 7200000).toISOString(),
+                  source: { name: 'News Source' },
+                  category: 'world'
+                },
+                {
+                  id: 'fallback-world-2',
+                  title: 'Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome',
+                  description: 'High-level diplomatic discussions continue.',
+                  url: '#',
+                  imageUrl: '/ttttttt.jpg',
+                  publishedAt: new Date(Date.now() - 7200000).toISOString(),
+                  source: { name: 'News Source' },
+                  category: 'world'
+                },
+                {
+                  id: 'fallback-world-3',
+                  title: 'France gears up for protests, strikes over budget cuts',
+                  description: 'Economic tensions rise across European nations.',
+                  url: '#',
+                  imageUrl: '/ttttttt.jpg',
+                  publishedAt: new Date(Date.now() - 420000).toISOString(),
+                  source: { name: 'News Source' },
+                  category: 'world'
+                },
+                {
+                  id: 'fallback-world-4',
+                  title: 'Beetle that threatens Australia\'s grains industry found in imported nappies',
+                  description: 'Agricultural security measures under review.',
+                  url: '#',
+                  imageUrl: '/ttttttt.jpg',
+                  publishedAt: new Date(Date.now() - 10800000).toISOString(),
+                  source: { name: 'News Source' },
+                  category: 'world'
+                }
+              ];
+              
+              const combinedArticles = [...worldNews];
+              
+              // Add fallback articles to reach 4 total
+              while (combinedArticles.length < 4 && fallbackArticles.length > 0) {
+                const fallbackArticle = fallbackArticles[combinedArticles.length - worldNews.length];
+                if (fallbackArticle) {
+                  combinedArticles.push(fallbackArticle);
+                }
+              }
+              
+              return combinedArticles.slice(0, 4);
+            })().map((article, index) => (
               <article key={article.id} id={`world-card-${index + 1}`} className="world-card">
                 <span className="id-label">world-card-{index + 1}</span>
                 <div className="world-card-image">
