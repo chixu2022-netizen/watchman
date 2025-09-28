@@ -54,16 +54,100 @@ function Home() {
         <section id="world-news-section" className="world-section">
           <div className="world-header">
             <h2 id="world-title" className="world-title">
-              <a href="/world" className="world-link">World &gt;</a>
+              <a href="/crypto" className="world-link">Crypto &gt;</a>
               <span className="id-label">world-title</span>
-              <small style={{color: hasApiData ? 'green' : 'orange', fontSize: '12px', marginLeft: '10px'}}>
-                {debugInfo}
+              <small style={{color: (newsData?.categoryNews?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
+                {newsData?.categoryNews?.length || 0} top stories
               </small>
             </h2>
           </div>
           
           <div id="world-cards-container" className="world-cards">
             <span className="id-label">world-cards-container</span>
+            
+            {loading ? (
+              <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
+                Loading crypto news...
+              </div>
+            ) : (newsData?.categoryNews?.length || 0) > 0 ? newsData!.categoryNews!.slice(0, 4).map((article, index) => (
+              <article key={article.id} id={`world-card-${index + 1}`} className="world-card">
+                <span className="id-label">world-card-{index + 1}</span>
+                <div className="world-card-image">
+                  <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
+                </div>
+                <div className="world-card-content">
+                  <h3 className="world-card-title">{article.title}</h3>
+                  <p className="world-card-time">
+                    {(() => {
+                      const now = new Date();
+                      const published = new Date(article.publishedAt);
+                      const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
+                      
+                      if (diffInMinutes < 1) return 'Just now';
+                      if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+                      
+                      const diffInHours = Math.floor(diffInMinutes / 60);
+                      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+                      
+                      const diffInDays = Math.floor(diffInHours / 24);
+                      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+                    })()}
+                  </p>
+                </div>
+              </article>
+            )) : (
+              // Fallback static content
+              <>
+                <article id="world-card-1" className="world-card">
+                  <span className="id-label">world-card-1</span>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Bitcoin Reaches New All-Time High Amid Institutional Adoption</h3>
+                    <p className="world-card-time">1 hour ago</p>
+                  </div>
+                </article>
+
+                <article id="world-card-2" className="world-card">
+                  <span className="id-label">world-card-2</span>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Ethereum 2.0 Upgrade Shows Promising Results</h3>
+                    <p className="world-card-time">3 hours ago</p>
+                  </div>
+                </article>
+
+                <article id="world-card-3" className="world-card">
+                  <span className="id-label">world-card-3</span>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">Central Bank Digital Currencies Gain Global Momentum</h3>
+                    <p className="world-card-time">5 hours ago</p>
+                  </div>
+                </article>
+
+                <article id="world-card-4" className="world-card">
+                  <span className="id-label">world-card-4</span>
+                  <div className="world-card-content">
+                    <h3 className="world-card-title">DeFi Protocol Launches Revolutionary Yield Farming Solution</h3>
+                    <p className="world-card-time">8 hours ago</p>
+                  </div>
+                </article>
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Crypto Section - NOW DYNAMIC */}
+        <section id="crypto-section" className="crypto-section">
+          <div className="crypto-header">
+            <h2 id="crypto-title" className="crypto-title">
+              <a href="/world" className="crypto-link">World &gt;</a>
+              <span className="id-label">crypto-title</span>
+              <small style={{color: hasApiData ? 'green' : 'orange', fontSize: '12px', marginLeft: '10px'}}>
+                {debugInfo}
+              </small>
+            </h2>
+          </div>
+          
+          <div id="crypto-cards-container" className="crypto-cards">
+            <span className="id-label">crypto-cards-container</span>
             
             {loading ? (
               // Loading state
@@ -127,104 +211,11 @@ function Home() {
               
               return combinedArticles.slice(0, 4);
             })().map((article, index) => (
-              <article key={article.id} id={`world-card-${index + 1}`} className="world-card">
-                <span className="id-label">world-card-{index + 1}</span>
-                <div className="world-card-image">
-                  <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
-                </div>
-                <div className="world-card-content">
-                  <h3 className="world-card-title">{article.title}</h3>
-                  <p className="world-card-time">
-                    {(() => {
-                      const now = new Date();
-                      const published = new Date(article.publishedAt);
-                      const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
-                      
-                      if (diffInMinutes < 1) return 'Just now';
-                      if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
-                      
-                      const diffInHours = Math.floor(diffInMinutes / 60);
-                      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-                      
-                      const diffInDays = Math.floor(diffInHours / 24);
-                      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-                    })()}
-                  </p>
-                </div>
-              </article>
-            )) : (
-              // Fallback static content
-              <>
-                <article id="world-card-1" className="world-card">
-                  <span className="id-label">world-card-1</span>
-                  <div className="world-card-image">
-                    <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
-                  </div>
-                  <div className="world-card-content">
-                    <h3 className="world-card-title">Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact</h3>
-                    <p className="world-card-time">2 hours ago</p>
-                  </div>
-                </article>
-
-                <article id="world-card-2" className="world-card">
-                  <span className="id-label">world-card-2</span>
-                  <div className="world-card-image">
-                    <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
-                  </div>
-                  <div className="world-card-content">
-                    <h3 className="world-card-title">Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome</h3>
-                    <p className="world-card-time">2 hours ago</p>
-                  </div>
-            </article>
-
-            <article id="world-card-3" className="world-card">
-              <span className="id-label">world-card-3</span>
-              <div className="world-card-image">
-                <img src="/ttttttt.jpg" alt="France protests strikes" />
-              </div>
-              <div className="world-card-content">
-                <h3 className="world-card-title">France gears up for protests, strikes over budget cuts</h3>
-                <p className="world-card-time">7 mins ago</p>
-              </div>
-            </article>
-
-                <article id="world-card-4" className="world-card">
-                  <span className="id-label">world-card-4</span>
-                  <div className="world-card-image">
-                    <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
-                  </div>
-                  <div className="world-card-content">
-                    <h3 className="world-card-title">Beetle that threatens Australia&apos;s grains industry found in imported nappies</h3>
-                    <p className="world-card-time">3 hours ago</p>
-                  </div>
-                </article>
-              </>
-            )}
-          </div>
-        </section>
-
-        {/* Crypto Section - NOW DYNAMIC */}
-        <section id="crypto-section" className="crypto-section">
-          <div className="crypto-header">
-            <h2 id="crypto-title" className="crypto-title">
-              <a href="/crypto" className="crypto-link">Crypto &gt;</a>
-              <span className="id-label">crypto-title</span>
-              <small style={{color: (newsData?.categoryNews?.length || 0) > 0 ? 'green' : 'orange', fontSize: '10px', marginLeft: '5px'}}>
-                {newsData?.categoryNews?.length || 0} top stories
-              </small>
-            </h2>
-          </div>
-          
-          <div id="crypto-cards-container" className="crypto-cards">
-            <span className="id-label">crypto-cards-container</span>
-            
-            {loading ? (
-              <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
-                Loading crypto news...
-              </div>
-            ) : (newsData?.categoryNews?.length || 0) > 0 ? newsData!.categoryNews!.slice(0, 4).map((article, index) => (
               <article key={article.id} id={`crypto-card-${index + 1}`} className="crypto-card">
                 <span className="id-label">crypto-card-{index + 1}</span>
+                <div className="crypto-card-image">
+                  <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
+                </div>
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">
@@ -246,37 +237,49 @@ function Home() {
                 </div>
               </article>
             )) : (
-              // Static fallback - only show if no API data
+              // Fallback static content
               <>
                 <article id="crypto-card-1" className="crypto-card">
                   <span className="id-label">crypto-card-1</span>
+                  <div className="crypto-card-image">
+                    <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
+                  </div>
                   <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">Wall St steadies with indexes on track for weekly gains; FedEx jumps</h3>
-                    <p className="crypto-card-time">31 mins ago</p>
+                    <h3 className="crypto-card-title">Saudi Arabia, nuclear-armed Pakistan sign mutual defence pact</h3>
+                    <p className="crypto-card-time">2 hours ago</p>
                   </div>
                 </article>
 
                 <article id="crypto-card-2" className="crypto-card">
                   <span className="id-label">crypto-card-2</span>
+                  <div className="crypto-card-image">
+                    <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
+                  </div>
                   <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">Pound, gilts hit by surge in UK borrowing</h3>
-                    <p className="crypto-card-time">7 hours ago</p>
+                    <h3 className="crypto-card-title">Starmer and Trump to discuss foreign affairs, investment after pomp-filled royal welcome</h3>
+                    <p className="crypto-card-time">2 hours ago</p>
                   </div>
                 </article>
 
                 <article id="crypto-card-3" className="crypto-card">
                   <span className="id-label">crypto-card-3</span>
+                  <div className="crypto-card-image">
+                    <img src="/ttttttt.jpg" alt="France protests strikes" />
+                  </div>
                   <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">EU ministers reach &apos;compromise&apos; on digital euro roadmap</h3>
-                    <p className="crypto-card-time">2 hours ago</p>
+                    <h3 className="crypto-card-title">France gears up for protests, strikes over budget cuts</h3>
+                    <p className="crypto-card-time">7 mins ago</p>
                   </div>
                 </article>
 
                 <article id="crypto-card-4" className="crypto-card">
                   <span className="id-label">crypto-card-4</span>
+                  <div className="crypto-card-image">
+                    <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
+                  </div>
                   <div className="crypto-card-content">
-                    <h3 className="crypto-card-title">Adani Group stocks rise as SEBI&apos;s dismissal signals end to Hindenburg overhang</h3>
-                    <p className="crypto-card-time">4 hours ago</p>
+                    <h3 className="crypto-card-title">Beetle that threatens Australia&apos;s grains industry found in imported nappies</h3>
+                    <p className="crypto-card-time">3 hours ago</p>
                   </div>
                 </article>
               </>
