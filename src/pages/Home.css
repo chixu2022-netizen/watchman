@@ -1727,7 +1727,7 @@
   }
 }
 
-/* Tablet - 2 columns */
+/* Tablet - Keep 4 columns for world cards */
 @media (max-width: 1199px) and (min-width: 768px) {
   .home__grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1735,7 +1735,7 @@
   }
   
   .world-cards {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
   
