@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
+import { newsAPI } from '../services/newsAPI';
+import { NewsArticle } from '../types/news';
 import './Home.css'; // Use the same CSS as Home
 
-interface NewsArticle {
-  title: string;
-  urlToImage: string | null;
-  publishedAt: string;
-  url: string;
-}
+// Using NewsArticle from types/news.ts
 
 interface NewsData {
   worldNews: NewsArticle[];
@@ -76,10 +73,14 @@ const Crypto: React.FC = () => {
   };
 
   const mockArticle = (title: string, timeAgo: string = '2 hours ago'): NewsArticle => ({
+    id: Math.random().toString(),
     title,
-    urlToImage: "/ttttttt.jpg",
+    description: 'Crypto news description',
+    imageUrl: "/ttttttt.jpg",
     publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-    url: "#"
+    url: "#",
+    source: { name: 'Crypto News' },
+    category: 'crypto'
   });
 
   const loadMoreArticles = async () => {
@@ -103,12 +104,61 @@ const Crypto: React.FC = () => {
     const loadAllNews = async () => {
       setLoading(true);
       
-      // Mock data to avoid API rate limits
+      // 🔥 NewsAPI Integration (COMMENTED OUT - Ready for activation)
+      /*
+      try {
+        console.log('🚀 Fetching live crypto news from NewsAPI...');
+        const [
+          cryptoGeneral,
+          bitcoinNews, 
+          ethereumNews,
+          defiNews,
+          nftNews
+        ] = await Promise.all([
+          newsAPI.getNewsByCategory('crypto', 8),
+          newsAPI.getNewsByCategory('bitcoin', 4),
+          newsAPI.getNewsByCategory('ethereum', 4), 
+          newsAPI.getNewsByCategory('defi', 4),
+          newsAPI.getNewsByCategory('nft', 4)
+        ]);
+        
+        setNewsData({
+          worldNews: cryptoGeneral.slice(0, 4),
+          cryptoUpdates: cryptoGeneral.slice(4, 8),
+          bitcoin: bitcoinNews,
+          ethereum: ethereumNews,
+          defi: defiNews,
+          nft: nftNews,
+          // Duplicate sections with same data
+          worldNews2: cryptoGeneral.slice(0, 4),
+          cryptoUpdates2: cryptoGeneral.slice(4, 8),
+          bitcoin2: bitcoinNews,
+          ethereum2: ethereumNews,
+          defi2: defiNews,
+          nft2: nftNews,
+          worldNews3: cryptoGeneral.slice(0, 4),
+          cryptoUpdates3: cryptoGeneral.slice(4, 8),
+          bitcoin3: bitcoinNews,
+          ethereum3: ethereumNews,
+          defi3: defiNews,
+          nft3: nftNews
+        });
+      } catch (error) {
+        console.error('❌ Error fetching crypto news:', error);
+        // Fallback to mock data
+      }
+      */
+      
+      // Mock data (TEMPORARY - Will be replaced with live news)
       const mockArticle = (title: string, timeAgo: string = '2 hours ago'): NewsArticle => ({
+        id: Math.random().toString(),
         title,
-        urlToImage: "/ttttttt.jpg",
+        description: 'Crypto news description',
+        imageUrl: "/ttttttt.jpg",
         publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-        url: "#"
+        url: "#",
+        source: { name: 'Crypto News' },
+        category: 'crypto'
       });
 
       setTimeout(() => {
@@ -219,15 +269,14 @@ const Crypto: React.FC = () => {
     <div className="home">
       <div className="home__container">
         {/* World News Section */}
-        <section id="world-news-section" className="world-section">
-          <div id="world-cards-container" className="world-cards">
+        <section className="world-section">
+          <div className="world-cards">
             
             {newsData.worldNews.map((article, index) => (
-              <article key={index} id={`world-card-${index + 1}`} className="world-card">
-                <span className="id-label">{`world-card-${index + 1}`}</span>
+              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                 <div className="world-card-image">
                   <img 
-                    src={article.urlToImage || "/ttttttt.jpg"} 
+                    src={article.imageUrl || "/ttttttt.jpg"} 
                     alt={article.title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -244,12 +293,11 @@ const Crypto: React.FC = () => {
         </section>
 
         {/* Crypto Updates Section */}
-        <section id="crypto-section" className="crypto-section">
-          <div id="crypto-cards-container" className="crypto-cards">
+        <section className="crypto-section">
+          <div className="crypto-cards">
             
             {newsData.cryptoUpdates.map((article, index) => (
-              <article key={index} id={`crypto-card-${index + 1}`} className="crypto-card">
-                <span className="id-label">{`crypto-card-${index + 1}`}</span>
+              <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -260,25 +308,17 @@ const Crypto: React.FC = () => {
         </section>
 
         {/* Categories Section */}
-        <section id="categories-section" className="categories-section">
-          <span className="id-label">categories-section</span>
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Bitcoin Column */}
-            <div id="bitcoin-column" className="category-column">
-              <span className="id-label">bitcoin-column</span>
-              <h2 id="bitcoin-header" className="category-header">
-                <span className="id-label">bitcoin-header</span>
-                <a href="/bitcoin" className="category-link">Bitcoin</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.bitcoin.map((article: NewsArticle, index: number) => (
-                <article key={index} id={`bitcoin-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
-                  <span className="id-label">{`bitcoin-card-${index + 1}`}</span>
+                <article key={index} className={`category-card ${index === 0 ? 'featured' : ''}`}>
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -295,25 +335,18 @@ const Crypto: React.FC = () => {
             </div>
 
             {/* Ethereum Column */}
-            <div id="ethereum-column" className="category-column">
-              <span className="id-label">ethereum-column</span>
-              <h2 id="ethereum-header" className="category-header">
-                <span className="id-label">ethereum-header</span>
-                <a href="/ethereum" className="category-link">Ethereum</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.ethereum.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`ethereum-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
-                  <span className="id-label">{`ethereum-card-${index + 1}`}</span>
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -330,25 +363,18 @@ const Crypto: React.FC = () => {
             </div>
 
             {/* DeFi Column */}
-            <div id="defi-column" className="category-column">
-              <span className="id-label">defi-column</span>
-              <h2 id="defi-header" className="category-header">
-                <span className="id-label">defi-header</span>
-                <a href="/defi" className="category-link">DeFi</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.defi.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`defi-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
-                  <span className="id-label">{`defi-card-${index + 1}`}</span>
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -365,25 +391,18 @@ const Crypto: React.FC = () => {
             </div>
 
             {/* NFTs Column */}
-            <div id="nfts-column" className="category-column">
-              <span className="id-label">nfts-column</span>
-              <h2 id="nfts-header" className="category-header">
-                <span className="id-label">nfts-header</span>
-                <a href="/nfts" className="category-link">NFTs</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.nft.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`nfts-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
-                  <span className="id-label">{`nfts-card-${index + 1}`}</span>
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -402,14 +421,13 @@ const Crypto: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 1 - World News Section */}
-        <section id="world-news-section-2" className="world-section">
-            <div id="world-cards-container-2" className="world-cards">
+        <section className="world-section">
+            <div className="world-cards">
               {newsData.worldNews2.map((article: NewsArticle, index: number) => (
-                <article key={index} id={`world-card-2-${index + 1}`} className="world-card">
-                  <span className="id-label">{`world-card-2-${index + 1}`}</span>
+                <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                   <div className="world-card-image">
                     <img 
-                      src={article.urlToImage || "/ttttttt.jpg"} 
+                      src={article.imageUrl || "/ttttttt.jpg"} 
                       alt={article.title}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -426,11 +444,10 @@ const Crypto: React.FC = () => {
           </section>
 
         {/* DUPLICATE SET 1 - Crypto Updates Section */}
-        <section id="crypto-section-2" className="crypto-section">
-            <div id="crypto-cards-container-2" className="crypto-cards">
+        <section className="crypto-section">
+            <div className="crypto-cards">
               {newsData.cryptoUpdates2.map((article: NewsArticle, index: number) => (
-                <article key={index} id={`crypto-card-2-${index + 1}`} className="crypto-card">
-                  <span className="id-label">{`crypto-card-2-${index + 1}`}</span>
+                <article key={index} className="crypto-card">
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">{article.title}</h3>
                     <p className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -441,29 +458,24 @@ const Crypto: React.FC = () => {
           </section>
 
         {/* DUPLICATE SET 1 - Categories Section */}
-        <section id="categories-section-2" className="categories-section">
-            <span className="id-label">categories-section-2</span>
+        <section className="categories-section">
             <div className="categories-grid">
               {/* Bitcoin Column */}
-              <div id="bitcoin-column-2" className="category-column">
-                <span className="id-label">bitcoin-column-2</span>
-                <h2 id="bitcoin-header-2" className="category-header">
-                  <span className="id-label">bitcoin-header-2</span>
-                  <a href="/bitcoin" className="category-link">Bitcoin</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column">
                 
                 {newsData.bitcoin2.map((article: NewsArticle, index: number) => (
                   <article 
-                    key={index} 
-                    id={`bitcoin-card-2-${index + 1}`} 
+                    key={`bitcoin-2-${index}`}
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
+                    data-article-id={article.id || `bitcoin-2-${index}`}
+                    data-category="bitcoin"
+                    data-section="2"
+                    data-position={index + 1}
                   >
-                    <span className="id-label">{`bitcoin-card-2-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -471,6 +483,7 @@ const Crypto: React.FC = () => {
                         />
                       </div>
                     )}
+                    <span className="dev-label">BTC-2-{index + 1}</span>
                     <div className="category-card-content">
                       <h3 className="category-card-title">{article.title}</h3>
                       <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -480,25 +493,21 @@ const Crypto: React.FC = () => {
               </div>
 
               {/* Ethereum Column */}
-              <div id="ethereum-column-2" className="category-column">
-                <span className="id-label">ethereum-column-2</span>
-                <h2 id="ethereum-header-2" className="category-header">
-                  <span className="id-label">ethereum-header-2</span>
-                  <a href="/ethereum" className="category-link">Ethereum</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column" data-column="ethereum-2">
                 
                 {newsData.ethereum2.map((article: NewsArticle, index: number) => (
                   <article 
-                    key={index} 
-                    id={`ethereum-card-2-${index + 1}`} 
+                    key={`ethereum-2-${index}`}
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
+                    data-article-id={article.id || `ethereum-2-${index}`}
+                    data-category="ethereum"
+                    data-section="2"
+                    data-position={index + 1}
                   >
-                    <span className="id-label">{`ethereum-card-2-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -506,6 +515,7 @@ const Crypto: React.FC = () => {
                         />
                       </div>
                     )}
+                    <span className="dev-label">ETH-2-{index + 1}</span>
                     <div className="category-card-content">
                       <h3 className="category-card-title">{article.title}</h3>
                       <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -515,25 +525,18 @@ const Crypto: React.FC = () => {
               </div>
 
               {/* DeFi Column */}
-              <div id="defi-column-2" className="category-column">
-                <span className="id-label">defi-column-2</span>
-                <h2 id="defi-header-2" className="category-header">
-                  <span className="id-label">defi-header-2</span>
-                  <a href="/defi" className="category-link">DeFi</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column">
                 
                 {newsData.defi2.map((article: NewsArticle, index: number) => (
                   <article 
                     key={index} 
-                    id={`defi-card-2-${index + 1}`} 
+                    
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
                   >
-                    <span className="id-label">{`defi-card-2-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -541,6 +544,7 @@ const Crypto: React.FC = () => {
                         />
                       </div>
                     )}
+                    <span className="dev-label">DEFI-2-{index + 1}</span>
                     <div className="category-card-content">
                       <h3 className="category-card-title">{article.title}</h3>
                       <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -550,25 +554,18 @@ const Crypto: React.FC = () => {
               </div>
 
               {/* NFTs Column */}
-              <div id="nfts-column-2" className="category-column">
-                <span className="id-label">nfts-column-2</span>
-                <h2 id="nfts-header-2" className="category-header">
-                  <span className="id-label">nfts-header-2</span>
-                  <a href="/nfts" className="category-link">NFTs</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column">
                 
                 {newsData.nft2.map((article: NewsArticle, index: number) => (
                   <article 
                     key={index} 
-                    id={`nfts-card-2-${index + 1}`} 
+                    
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
                   >
-                    <span className="id-label">{`nfts-card-2-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -576,6 +573,7 @@ const Crypto: React.FC = () => {
                         />
                       </div>
                     )}
+                    <span className="dev-label">NFT-2-{index + 1}</span>
                     <div className="category-card-content">
                       <h3 className="category-card-title">{article.title}</h3>
                       <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -587,14 +585,13 @@ const Crypto: React.FC = () => {
           </section>
 
         {/* DUPLICATE SET 2 - World News Section */}
-        <section id="world-news-section-3" className="world-section">
-            <div id="world-cards-container-3" className="world-cards">
+        <section className="world-section">
+            <div className="world-cards">
               {newsData.worldNews3.map((article: NewsArticle, index: number) => (
-                <article key={index} id={`world-card-3-${index + 1}`} className="world-card">
-                  <span className="id-label">{`world-card-3-${index + 1}`}</span>
+                <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                   <div className="world-card-image">
                     <img 
-                      src={article.urlToImage || "/ttttttt.jpg"} 
+                      src={article.imageUrl || "/ttttttt.jpg"} 
                       alt={article.title}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -611,11 +608,10 @@ const Crypto: React.FC = () => {
           </section>
 
         {/* DUPLICATE SET 2 - Crypto Updates Section */}
-        <section id="crypto-section-3" className="crypto-section">
-            <div id="crypto-cards-container-3" className="crypto-cards">
+        <section className="crypto-section">
+            <div className="crypto-cards">
               {newsData.cryptoUpdates3.map((article: NewsArticle, index: number) => (
-                <article key={index} id={`crypto-card-3-${index + 1}`} className="crypto-card">
-                  <span className="id-label">{`crypto-card-3-${index + 1}`}</span>
+                <article key={index} className="crypto-card">
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">{article.title}</h3>
                     <p className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -626,29 +622,21 @@ const Crypto: React.FC = () => {
           </section>
 
         {/* DUPLICATE SET 2 - Categories Section */}
-        <section id="categories-section-3" className="categories-section">
-            <span className="id-label">categories-section-3</span>
+        <section className="categories-section">
             <div className="categories-grid">
               {/* Bitcoin Column */}
-              <div id="bitcoin-column-3" className="category-column">
-                <span className="id-label">bitcoin-column-3</span>
-                <h2 id="bitcoin-header-3" className="category-header">
-                  <span className="id-label">bitcoin-header-3</span>
-                  <a href="/bitcoin" className="category-link">Bitcoin</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column">
                 
                 {newsData.bitcoin3.map((article: NewsArticle, index: number) => (
                   <article 
                     key={index} 
-                    id={`bitcoin-card-3-${index + 1}`} 
+                    
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
                   >
-                    <span className="id-label">{`bitcoin-card-3-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -665,25 +653,18 @@ const Crypto: React.FC = () => {
               </div>
 
               {/* Ethereum Column */}
-              <div id="ethereum-column-3" className="category-column">
-                <span className="id-label">ethereum-column-3</span>
-                <h2 id="ethereum-header-3" className="category-header">
-                  <span className="id-label">ethereum-header-3</span>
-                  <a href="/ethereum" className="category-link">Ethereum</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column">
                 
                 {newsData.ethereum3.map((article: NewsArticle, index: number) => (
                   <article 
                     key={index} 
-                    id={`ethereum-card-3-${index + 1}`} 
+                    
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
                   >
-                    <span className="id-label">{`ethereum-card-3-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -700,25 +681,18 @@ const Crypto: React.FC = () => {
               </div>
 
               {/* DeFi Column */}
-              <div id="defi-column-3" className="category-column">
-                <span className="id-label">defi-column-3</span>
-                <h2 id="defi-header-3" className="category-header">
-                  <span className="id-label">defi-header-3</span>
-                  <a href="/defi" className="category-link">DeFi</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column">
                 
                 {newsData.defi3.map((article: NewsArticle, index: number) => (
                   <article 
                     key={index} 
-                    id={`defi-card-3-${index + 1}`} 
+                    
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
                   >
-                    <span className="id-label">{`defi-card-3-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -735,25 +709,18 @@ const Crypto: React.FC = () => {
               </div>
 
               {/* NFTs Column */}
-              <div id="nfts-column-3" className="category-column">
-                <span className="id-label">nfts-column-3</span>
-                <h2 id="nfts-header-3" className="category-header">
-                  <span className="id-label">nfts-header-3</span>
-                  <a href="/nfts" className="category-link">NFTs</a>
-                  <span className="arrow-symbol">›</span>
-                </h2>
+              <div className="category-column">
                 
                 {newsData.nft3.map((article: NewsArticle, index: number) => (
                   <article 
                     key={index} 
-                    id={`nfts-card-3-${index + 1}`} 
+                    
                     className={`category-card ${index === 0 ? 'featured' : ''}`}
                   >
-                    <span className="id-label">{`nfts-card-3-${index + 1}`}</span>
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.urlToImage || "/ttttttt.jpg"} 
+                          src={article.imageUrl || "/ttttttt.jpg"} 
                           alt={article.title}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -775,20 +742,19 @@ const Crypto: React.FC = () => {
         {additionalSections.map((sectionArticles: NewsArticle[], sectionIndex: number) => (
           <section 
             key={sectionIndex} 
-            id={`additional-news-section-${sectionIndex + 1}`} 
+            
             className="world-section"
           >
-            <div id={`additional-cards-container-${sectionIndex + 1}`} className="world-cards">
+            <div className="world-cards">
               {sectionArticles.map((article: NewsArticle, articleIndex: number) => (
                 <article 
                   key={articleIndex} 
-                  id={`additional-card-${sectionIndex + 1}-${articleIndex + 1}`} 
+                  
                   className="world-card"
                 >
-                  <span className="id-label">{`additional-card-${sectionIndex + 1}-${articleIndex + 1}`}</span>
                   <div className="world-card-image">
                     <img 
-                      src={article.urlToImage || "/ttttttt.jpg"} 
+                      src={article.imageUrl || "/ttttttt.jpg"} 
                       alt={article.title}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/ttttttt.jpg";

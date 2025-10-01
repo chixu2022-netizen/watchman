@@ -1,9 +1,9 @@
 import { NewsArticle, HomepageNewsData } from '../types/news';
 
-// NewsAPI configuration
-const NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY || '3bcc9a67c7f94506a6fcd39fc073ec70'; // Temporarily hardcoded for testing
+// NewsData.io configuration
+const NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY || 'pub_d46b571620df42fe81341ffb2f6c8236'; // NewsData.io API key
 console.log('🔧 Environment check - API Key loaded:', NEWS_API_KEY ? `${NEWS_API_KEY.slice(0, 8)}...` : 'MISSING');
-const NEWS_API_BASE_URL = 'https://newsapi.org/v2';
+const NEWS_API_BASE_URL = 'https://newsdata.io/api/1';
 
 // These are kept commented for potential future use when backend proxy is implemented
 // interface NewsAPIResponse {
@@ -37,20 +37,20 @@ const NEWS_API_BASE_URL = 'https://newsapi.org/v2';
 // Transform NewsAPI response to our NewsArticle format
 
 
-const transformNewsAPIArticle = (article: any, category: string = 'general'): NewsArticle => {
-  // Enhanced image handling with better validation
+const transformNewsDataArticle = (article: any, category: string = 'general'): NewsArticle => {
+  // Enhanced image handling with better validation for NewsData.io
   let imageUrl = '/ttttttt.jpg'; // Default fallback
   let imageSource = 'fallback';
   
-  // Check urlToImage first (most common in NewsAPI)
-  if (article.urlToImage && 
-      article.urlToImage !== null && 
-      article.urlToImage !== 'null' &&
-      typeof article.urlToImage === 'string' &&
-      article.urlToImage.startsWith('http') &&
-      article.urlToImage.length > 10) {
-    imageUrl = article.urlToImage;
-    imageSource = 'urlToImage';
+  // Check image_url (NewsData.io format)
+  if (article.image_url && 
+      article.image_url !== null && 
+      article.image_url !== 'null' &&
+      typeof article.image_url === 'string' &&
+      article.image_url.startsWith('http') &&
+      article.image_url.length > 10) {
+    imageUrl = article.image_url;
+    imageSource = 'image_url';
   } 
   // Check alternative image field
   else if (article.image && 
@@ -71,14 +71,14 @@ const transformNewsAPIArticle = (article: any, category: string = 'general'): Ne
   console.log(`🖼️ Image for "${article.title?.slice(0, 30)}" | Source: ${imageSource} | URL: ${imageUrl.slice(0, 60)}...`);
   
   return {
-    id: `${article.url?.slice(-20) || Math.random().toString(36)}`,
+    id: article.article_id || `${article.link?.slice(-20) || Math.random().toString(36)}`,
     title: article.title || 'Breaking News',
     description: article.description || 'Stay informed with the latest updates.',
-    url: article.url || '#',
+    url: article.link || '#',
     imageUrl: imageUrl,
-    publishedAt: article.publishedAt || new Date().toISOString(),
+    publishedAt: article.pubDate || new Date().toISOString(),
     source: {
-      name: article.source?.name || 'News Source'
+      name: article.source_name || 'News Source'
     },
     category: category
   };
@@ -130,13 +130,45 @@ const getFallbackNews = (category: string = 'general'): NewsArticle[] => [
 
 // Main NewsAPI class
 class NewsAPIService {
+  // Fetch news for all homepage categories dynamically
+  async getAllCategoriesNews(): Promise<{[key: string]: NewsArticle[]}> {
+    const categories = [
+      'world', 'crypto', 'technology', 'business', 
+      'entertainment', 'sports', 'health', 'politics', 
+      'local', 'artificial-intelligence'
+    ];
+
+    const results: {[key: string]: NewsArticle[]} = {};
+    
+    console.log('🚀 Fetching dynamic news for all categories...');
+    
+    // Fetch news for each category
+    await Promise.all(categories.map(async (category) => {
+      try {
+        console.log(`📰 Fetching ${category} news...`);
+        const articles = await this.getNewsByCategory(category, 4);
+        results[category] = articles;
+        console.log(`✅ Got ${articles.length} articles for ${category}`);
+      } catch (error) {
+        console.error(`❌ Error fetching ${category} news:`, error);
+        results[category] = this.getFallbackArticles(category).slice(0, 4);
+      }
+    }));
+
+    console.log('🎉 All categories news fetched:', Object.keys(results));
+    return results;
+  }
+
+  private getFallbackArticles(category: string): NewsArticle[] {
+    return getFallbackNews(category);
+  }
+
   private async fetchWithFallback(url: string, options: RequestInit = {}): Promise<any> {
     try {
-      console.log('🌐 Making API request to:', url);
+      console.log('🌐 Making API request to:', url.replace(NEWS_API_KEY, 'API_KEY_HIDDEN'));
       const response = await fetch(url, {
         ...options,
         headers: {
-          'X-API-Key': NEWS_API_KEY,
           'Content-Type': 'application/json',
           ...options.headers,
         },
@@ -151,10 +183,15 @@ class NewsAPIService {
       }
 
       const jsonData = await response.json();
-      console.log('✅ API response received successfully');
+      console.log('✅ API response received successfully:', {
+        status: jsonData.status,
+        totalResults: jsonData.totalResults,
+        resultsCount: jsonData.results?.length
+      });
       return jsonData;
     } catch (error) {
-      console.warn('⚠️ NewsAPI request failed, using fallback:', error);
+      console.error('❌ NewsData.io API request failed:', error);
+      console.log('🔍 Full error details:', JSON.stringify(error, null, 2));
       return null;
     }
   }
@@ -171,32 +208,47 @@ class NewsAPIService {
         'health': ['health', 'medical', 'healthcare', 'medicine', 'wellness'],
         'entertainment': ['entertainment', 'movies', 'music', 'celebrity', 'hollywood'],
         'crypto': ['cryptocurrency', 'bitcoin', 'blockchain', 'crypto', 'ethereum'],
-        'artificial-intelligence': ['artificial intelligence', 'AI', 'machine learning', 'deep learning', 'robotics']
+        'artificial-intelligence': ['artificial intelligence', 'AI', 'machine learning', 'deep learning', 'robotics'],
+        'politics': ['politics', 'political', 'government', 'congress', 'senate'],
+        'elections': ['elections', 'voting', 'campaign', 'ballot', 'primary'],
+        'policy': ['policy', 'legislation', 'bill', 'law', 'reform'],
+        'legislation': ['legislation', 'bill', 'congress', 'senate', 'house'],
+        'government': ['government', 'federal', 'administration', 'white house', 'congress']
       };
       
       const categoryQueries = queries[category as keyof typeof queries] || queries['general'];
       const randomQuery = categoryQueries[Math.floor(Math.random() * categoryQueries.length)];
       
       const urls = [
-        `${NEWS_API_BASE_URL}/everything?q=${encodeURIComponent(randomQuery)}&pageSize=${Math.min(limit * 2, 20)}&sortBy=publishedAt&language=en`,
-        `${NEWS_API_BASE_URL}/top-headlines?country=us&pageSize=${Math.min(limit * 2, 20)}`,
-        `${NEWS_API_BASE_URL}/everything?q=${encodeURIComponent(category)}&pageSize=${Math.min(limit * 2, 20)}&sortBy=publishedAt&language=en`,
-        `${NEWS_API_BASE_URL}/top-headlines?sources=bbc-news,cnn,reuters&pageSize=${Math.min(limit * 2, 20)}`
+        `${NEWS_API_BASE_URL}/news?apikey=${NEWS_API_KEY}&q=${encodeURIComponent(randomQuery)}&size=${Math.min(limit * 2, 10)}&language=en`,
+        `${NEWS_API_BASE_URL}/news?apikey=${NEWS_API_KEY}&country=us&size=${Math.min(limit * 2, 10)}&language=en`,
+        `${NEWS_API_BASE_URL}/news?apikey=${NEWS_API_KEY}&q=${encodeURIComponent(category)}&size=${Math.min(limit * 2, 10)}&language=en`,
+        `${NEWS_API_BASE_URL}/news?apikey=${NEWS_API_KEY}&language=en&size=${Math.min(limit * 2, 10)}`
       ];
       
       for (const url of urls) {
         console.log(`🔍 Trying ${category} news from:`, url);
         console.log('🔑 Using API key:', NEWS_API_KEY ? 'Present' : 'Missing');
         
+        console.log(`🌐 Attempting to fetch ${category} from: ${url.replace(NEWS_API_KEY, 'API_KEY_HIDDEN')}`);
         const data = await this.fetchWithFallback(url);
         
-        console.log(`📊 API response for ${category}:`, data);
+        console.log(`📊 API response for ${category}:`, {
+          status: data?.status,
+          totalResults: data?.totalResults,
+          resultsCount: data?.results?.length,
+          firstTitle: data?.results?.[0]?.title
+        });
         
-        if (data && data.articles && data.articles.length > 0) {
-          console.log(`✅ Found ${data.articles.length} articles for ${category} using ${url}`);
-          return data.articles
+        if (data && data.results && data.results.length > 0) {
+          console.log(`✅ Found ${data.results.length} articles for ${category}`);
+          const transformedArticles = data.results
             .slice(0, limit)
-            .map((article: any) => transformNewsAPIArticle(article, category));
+            .map((article: any) => transformNewsDataArticle(article, category));
+          console.log(`🔄 Transformed ${transformedArticles.length} articles for ${category}`);
+          return transformedArticles;
+        } else {
+          console.warn(`⚠️ No results for ${category} from ${url}`);
         }
       }
       
@@ -314,9 +366,7 @@ class NewsAPIService {
       if (data && data.articles && data.articles.length > 0) {
         const articles = data.articles
           .slice(0, limit)
-          .map((article: any) => transformNewsAPIArticle(article, 'search'));
-        
-        return { articles };
+            .map((article: any) => transformNewsDataArticle(article, 'search'));        return { articles };
       }
       
       return { articles: [] };

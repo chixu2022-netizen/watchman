@@ -1,57 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
+import { newsAPI } from '../services/newsAPI';
+import { NewsArticle } from '../types/news';
 import './Home.css'; // Use the same CSS as Home
 
-interface NewsArticle {
-  title: string;
-  urlToImage: string | null;
-  publishedAt: string;
-  url: string;
-}
+// Using NewsArticle from types/news.ts
 
 interface NewsData {
   worldNews: NewsArticle[];
-  politicsUpdates: NewsArticle[];
-  elections: NewsArticle[];
-  policy: NewsArticle[];
-  legislation: NewsArticle[];
-  governance: NewsArticle[];
+  worldUpdates: NewsArticle[];
+  europe: NewsArticle[];
+  asia: NewsArticle[];
+  africa: NewsArticle[];
+  americas: NewsArticle[];
   // Duplicate sections
   worldNews2: NewsArticle[];
-  politicsUpdates2: NewsArticle[];
-  elections2: NewsArticle[];
-  policy2: NewsArticle[];
-  legislation2: NewsArticle[];
-  governance2: NewsArticle[];
+  worldUpdates2: NewsArticle[];
+  europe2: NewsArticle[];
+  asia2: NewsArticle[];
+  africa2: NewsArticle[];
+  americas2: NewsArticle[];
   worldNews3: NewsArticle[];
-  politicsUpdates3: NewsArticle[];
-  elections3: NewsArticle[];
-  policy3: NewsArticle[];
-  legislation3: NewsArticle[];
-  governance3: NewsArticle[];
+  worldUpdates3: NewsArticle[];
+  europe3: NewsArticle[];
+  asia3: NewsArticle[];
+  africa3: NewsArticle[];
+  americas3: NewsArticle[];
 }
 
 const Politics: React.FC = () => {
   const [newsData, setNewsData] = useState<NewsData>({
     worldNews: [],
-    politicsUpdates: [],
-    elections: [],
-    policy: [],
-    legislation: [],
-    governance: [],
+    worldUpdates: [],
+    europe: [],
+    asia: [],
+    africa: [],
+    americas: [],
     // Duplicate sections
     worldNews2: [],
-    politicsUpdates2: [],
-    elections2: [],
-    policy2: [],
-    legislation2: [],
-    governance2: [],
+    worldUpdates2: [],
+    europe2: [],
+    asia2: [],
+    africa2: [],
+    americas2: [],
     worldNews3: [],
-    politicsUpdates3: [],
-    elections3: [],
-    policy3: [],
-    legislation3: [],
-    governance3: []
+    worldUpdates3: [],
+    europe3: [],
+    asia3: [],
+    africa3: [],
+    americas3: []
   });
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -74,39 +71,45 @@ const Politics: React.FC = () => {
   };
 
   const mockArticle = (title: string, timeAgo: string = '2 hours ago'): NewsArticle => ({
+    id: Math.random().toString(),
     title,
-    urlToImage: "/ttttttt.jpg",
+    description: 'World news description',
+    imageUrl: "/ttttttt.jpg",
     publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-    url: "#"
+    url: "#",
+    source: { name: 'World News' },
+    category: 'world'
   });
 
   const loadMoreArticles = async () => {
     setLoadingMore(true);
     
-    // Simulate loading time and add new section
     setTimeout(() => {
       const newSection = [
-        mockArticle('Breaking: Political reform bill passes senate'),
-        mockArticle('Election results show surprising voter turnout'),
-        mockArticle('Government announces new policy initiatives'),
-        mockArticle('Political leaders address national concerns')
+        mockArticle('Breaking: Global summit addresses climate change'),
+        mockArticle('International trade agreements reshape economy'),
+        mockArticle('World leaders meet for historic peace talks'),
+        mockArticle('Global health initiative launches worldwide')
       ];
       
       setAdditionalSections(prev => [...prev, newSection]);
       setLoadingMore(false);
     }, 1000);
   };
-
   useEffect(() => {
     const loadAllNews = async () => {
       setLoading(true);
       
       // Mock data to avoid API rate limits
       const mockArticle = (title: string, imageUrl: string = "/ttttttt.jpg"): NewsArticle => ({
+        id: Math.random().toString(),
         title,
-        urlToImage: imageUrl,
+        description: 'World news description',
+        imageUrl: imageUrl,
         publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-        url: "#"
+        url: "#",
+        source: { name: 'World News' },
+        category: 'world'
       });
 
       setTimeout(() => {
@@ -117,25 +120,25 @@ const Politics: React.FC = () => {
             mockArticle('Major acquisition deals reshape industry landscape', '/ttttttt.jpg'),
             mockArticle('International trade agreements boost economic growth', '/placeholders/placeholder2.svg')
           ],
-          politicsUpdates: [
+          worldUpdates: [
             mockArticle('Stock market reaches all-time high as investor confidence soars', '/wm01.jpeg'),
             mockArticle('Tech giants announce massive expansion plans for 2025', '/ttttttt.jpg'),
             mockArticle('Renewable energy sector attracts $50 billion in investments', '/placeholders/placeholder1.svg'),
             mockArticle('E-commerce platforms report 200% growth in mobile sales', '/placeholders/placeholder2.svg')
           ],
-          elections: [
+          europe: [
             mockArticle('S&P 500 breaks 5000 barrier amid strong corporate earnings', '/wm01.jpeg'),
-            mockArticle('Emerging elections show resilience despite global uncertainties', '/ttttttt.jpg')
+            mockArticle('Emerging europe show resilience despite global uncertainties', '/ttttttt.jpg')
           ],
-          policy: [
+          asia: [
             mockArticle('Central bank maintains interest rates to support growth', '/placeholders/placeholder1.svg'),
             mockArticle('Fintech companies revolutionize digital payment systems', '/placeholders/placeholder2.svg')
           ],
-          legislation: [
+          africa: [
             mockArticle('Unicorn startup raises $1 billion in Series C funding round', '/wm01.jpeg'),
             mockArticle('SaaS company achieves 500% revenue growth in 12 months', '/ttttttt.jpg')
           ],
-          governance: [
+          americas: [
             mockArticle('GDP growth exceeds expectations driven by consumer spending', '/placeholders/placeholder1.svg'),
             mockArticle('Employment rates reach historic highs across major economies', '/placeholders/placeholder2.svg')
           ],
@@ -146,25 +149,25 @@ const Politics: React.FC = () => {
             mockArticle('Corporate ESG initiatives drive long-term value creation', '/placeholders/placeholder1.svg'),
             mockArticle('Cross-border partnerships accelerate innovation cycles', '/placeholders/placeholder2.svg')
           ],
-          politicsUpdates2: [
+          worldUpdates2: [
             mockArticle('Retail giants transform stores into omnichannel experiences', '/wm01.jpeg'),
             mockArticle('Banking sector adopts blockchain for secure transactions', '/ttttttt.jpg'),
             mockArticle('Healthcare companies pioneer personalized medicine solutions', '/placeholders/placeholder1.svg'),
             mockArticle('Energy sector transitions to clean technology alternatives', '/placeholders/placeholder2.svg')
           ],
-          elections2: [
+          europe2: [
             mockArticle('Commodity prices stabilize as global demand normalizes', '/placeholders/placeholder1.svg'),
-            mockArticle('Real estate elections show strong fundamentals in urban areas', '/wm01.jpeg')
+            mockArticle('Real estate europe show strong fundamentals in urban areas', '/wm01.jpeg')
           ],
-          policy2: [
+          asia2: [
             mockArticle('Investment funds allocate billions to sustainable projects', '/ttttttt.jpg'),
             mockArticle('Corporate bonds offer attractive yields for income investors', '/placeholders/placeholder2.svg')
           ],
-          legislation2: [
+          africa2: [
             mockArticle('Health tech startup develops breakthrough medical devices', '/placeholders/placeholder1.svg'),
             mockArticle('EdTech platform reaches 10 million active learners globally', '/wm01.jpeg')
           ],
-          governance2: [
+          americas2: [
             mockArticle('Consumer confidence index reaches five-year peak levels', '/ttttttt.jpg'),
             mockArticle('Small business optimism drives entrepreneurship boom', '/placeholders/placeholder2.svg')
           ],
@@ -174,25 +177,25 @@ const Politics: React.FC = () => {
             mockArticle('Digital transformation accelerates across traditional industries', '/ttttttt.jpg'),
             mockArticle('Workforce development programs address skills gap challenges', '/placeholders/placeholder2.svg')
           ],
-          politicsUpdates3: [
+          worldUpdates3: [
             mockArticle('Aerospace industry launches next-generation satellite networks', '/placeholders/placeholder1.svg'),
             mockArticle('Food tech companies innovate sustainable protein alternatives', '/wm01.jpeg'),
             mockArticle('Automotive sector accelerates electric vehicle production', '/ttttttt.jpg'),
             mockArticle('Pharmaceutical giants collaborate on global health initiatives', '/placeholders/placeholder2.svg')
           ],
-          elections3: [
-            mockArticle('Currency elections adapt to changing monetary policy landscapes', '/wm01.jpeg'),
+          europe3: [
+            mockArticle('Currency europe adapt to changing monetary policy landscapes', '/wm01.jpeg'),
             mockArticle('Infrastructure investments create long-term economic value', '/placeholders/placeholder1.svg')
           ],
-          policy3: [
+          asia3: [
             mockArticle('Insurance industry leverages AI for risk assessment accuracy', '/ttttttt.jpg'),
             mockArticle('Pension funds diversify portfolios with alternative investments', '/placeholders/placeholder2.svg')
           ],
-          legislation3: [
+          africa3: [
             mockArticle('Climate tech startup secures funding for carbon capture solutions', '/placeholders/placeholder1.svg'),
             mockArticle('Logistics startup optimizes last-mile delivery with drones', '/wm01.jpeg')
           ],
-          governance3: [
+          americas3: [
             mockArticle('Regional economies benefit from infrastructure modernization', '/ttttttt.jpg'),
             mockArticle('Innovation hubs attract talent and investment capital globally', '/placeholders/placeholder2.svg')
           ]
@@ -201,6 +204,32 @@ const Politics: React.FC = () => {
       }, 1000); // Simulate loading time
     };
 
+  const mockArticle = (title: string, timeAgo: string = '2 hours ago'): NewsArticle => ({
+    id: Math.random().toString(),
+    title,
+    description: 'World news description',
+    imageUrl: "/ttttttt.jpg",
+    publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+    url: "#",
+    source: { name: 'World News' },
+    category: 'world'
+  });
+
+  const loadMoreArticles = async () => {
+    setLoadingMore(true);
+    
+    setTimeout(() => {
+      const newSection = [
+        mockArticle('Breaking: Global summit addresses climate change'),
+        mockArticle('International trade agreements reshape economy'),
+        mockArticle('World leaders meet for historic peace talks'),
+        mockArticle('Global health initiative launches worldwide')
+      ];
+      
+      setAdditionalSections(prev => [...prev, newSection]);
+      setLoadingMore(false);
+    }, 1000);
+  };
     loadAllNews();
   }, []);
 
@@ -208,7 +237,7 @@ const Politics: React.FC = () => {
     return (
       <div className="home">
         <div className="home__container" style={{ textAlign: 'center', padding: '50px' }}>
-          <p>Loading politics news...</p>
+          <p>Loading world news...</p>
         </div>
       </div>
     );
@@ -218,13 +247,13 @@ const Politics: React.FC = () => {
     <div className="home">
       <div className="home__container">
         {/* World News Section */}
-        <section id="world-news-section" className="world-section">          
-          <div id="world-cards-container" className="world-cards">            
+        <section className="world-section">          
+          <div className="world-cards">            
             {newsData.worldNews.map((article, index) => (
-              <article key={index} id={`world-card-${index + 1}`} className="world-card">
+              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                 <div className="world-card-image">
                   <img 
-                    src={article.urlToImage || "/ttttttt.jpg"} 
+                    src={article.imageUrl || "/ttttttt.jpg"} 
                     alt={article.title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -240,11 +269,11 @@ const Politics: React.FC = () => {
           </div>
         </section>
 
-        {/* Politics Updates Section */}
-        <section id="business-section" className="crypto-section">          
-          <div id="business-cards-container" className="crypto-cards">            
-            {newsData.politicsUpdates.map((article, index) => (
-              <article key={index} id={`business-card-${index + 1}`} className="crypto-card">
+        {/* World Updates Section */}
+        <section className="crypto-section">          
+          <div className="crypto-cards">            
+            {newsData.worldUpdates.map((article, index) => (
+              <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -255,21 +284,17 @@ const Politics: React.FC = () => {
         </section>
 
         {/* Categories Section */}
-        <section id="categories-section" className="categories-section">
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Markets Column */}
-            <div id="elections-column" className="category-column">
-              <h2 id="elections-header" className="category-header">
-                <a href="/elections" className="category-link">Markets</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              {newsData.elections.map((article: NewsArticle, index: number) => (
-                <article key={index} id={`elections-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+              {newsData.europe.map((article: NewsArticle, index: number) => (
+                <article key={index} className={`category-card ${index === 0 ? 'featured' : ''}`}>
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -286,22 +311,18 @@ const Politics: React.FC = () => {
             </div>
 
             {/* Finance Column */}
-            <div id="policy-column" className="category-column">
-              <h2 id="policy-header" className="category-header">
-                <a href="/policy" className="category-link">Finance</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              {newsData.policy.map((article: NewsArticle, index: number) => (
+              {newsData.asia.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`policy-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -318,22 +339,18 @@ const Politics: React.FC = () => {
             </div>
 
             {/* Startups Column */}
-            <div id="legislation-column" className="category-column">
-              <h2 id="legislation-header" className="category-header">
-                <a href="/legislation" className="category-link">Startups</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              {newsData.legislation.map((article: NewsArticle, index: number) => (
+              {newsData.africa.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`legislation-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -350,22 +367,18 @@ const Politics: React.FC = () => {
             </div>
 
             {/* Economy Column */}
-            <div id="governance-column" className="category-column">
-              <h2 id="governance-header" className="category-header">
-                <a href="/governance" className="category-link">Economy</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              {newsData.governance.map((article: NewsArticle, index: number) => (
+              {newsData.americas.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`governance-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -384,13 +397,13 @@ const Politics: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 1 - World News Section */}
-        <section id="world-news-section-2" className="world-section">          
-          <div id="world-cards-container-2" className="world-cards">            
+        <section className="world-section">          
+          <div className="world-cards">            
             {newsData.worldNews2.map((article: NewsArticle, index: number) => (
-              <article key={index} id={`world-card-2-${index + 1}`} className="world-card">
+              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                 <div className="world-card-image">
                   <img 
-                    src={article.urlToImage || "/ttttttt.jpg"} 
+                    src={article.imageUrl || "/ttttttt.jpg"} 
                     alt={article.title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -406,11 +419,11 @@ const Politics: React.FC = () => {
           </div>
         </section>
 
-        {/* DUPLICATE SET 1 - Politics Updates Section */}
-        <section id="business-section-2" className="crypto-section">          
-          <div id="business-cards-container-2" className="crypto-cards">            
-            {newsData.politicsUpdates2.map((article: NewsArticle, index: number) => (
-              <article key={index} id={`business-card-2-${index + 1}`} className="crypto-card">
+        {/* DUPLICATE SET 1 - World Updates Section */}
+        <section className="crypto-section">          
+          <div className="crypto-cards">            
+            {newsData.worldUpdates2.map((article: NewsArticle, index: number) => (
+              <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -421,20 +434,12 @@ const Politics: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 1 - Categories Section */}
-        <section id="categories-section-2" className="categories-section">
-          <span className="id-label">categories-section-2</span>
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Bitcoin Column */}
-            <div id="bitcoin-column-2" className="category-column">
-              <span className="id-label">bitcoin-column-2</span>
-              <h2 id="bitcoin-header-2" className="category-header">
-                <span className="id-label">bitcoin-header-2</span>
-                <a href="/bitcoin" className="category-link">Bitcoin</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="bitcoin-card-2-1" className="category-card featured">
-                <span className="id-label">bitcoin-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Bitcoin layer 2 development" />
                 </div>
@@ -444,24 +449,16 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="bitcoin-card-2-2" className="category-card">
-                <span className="id-label">bitcoin-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Taproot adoption reaches 80% among Bitcoin nodes</h3>
                 <p className="category-card-time">1.5 hours ago</p>
               </article>
             </div>
 
             {/* Ethereum Column */}
-            <div id="ethereum-column-2" className="category-column">
-              <span className="id-label">ethereum-column-2</span>
-              <h2 id="ethereum-header-2" className="category-header">
-                <span className="id-label">ethereum-header-2</span>
-                <a href="/ethereum" className="category-link">Ethereum</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="ethereum-card-2-1" className="category-card featured">
-                <span className="id-label">ethereum-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Ethereum sharding upgrade" />
                 </div>
@@ -471,24 +468,16 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="ethereum-card-2-2" className="category-card">
-                <span className="id-label">ethereum-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">EIP-4844 reduces transaction costs by 90% on rollups</h3>
                 <p className="category-card-time">2.5 hours ago</p>
               </article>
             </div>
 
             {/* DeFi Column */}
-            <div id="defi-column-2" className="category-column">
-              <span className="id-label">defi-column-2</span>
-              <h2 id="defi-header-2" className="category-header">
-                <span className="id-label">defi-header-2</span>
-                <a href="/defi" className="category-link">DeFi</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="defi-card-2-1" className="category-card featured">
-                <span className="id-label">defi-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Cross-chain DeFi protocol" />
                 </div>
@@ -498,24 +487,16 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="defi-card-2-2" className="category-card">
-                <span className="id-label">defi-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Algorithmic stablecoin maintains perfect peg for 6 months</h3>
                 <p className="category-card-time">3.5 hours ago</p>
               </article>
             </div>
 
             {/* NFTs Column */}
-            <div id="nfts-column-2" className="category-column">
-              <span className="id-label">nfts-column-2</span>
-              <h2 id="nfts-header-2" className="category-header">
-                <span className="id-label">nfts-header-2</span>
-                <a href="/nfts" className="category-link">NFTs</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="nfts-card-2-1" className="category-card featured">
-                <span className="id-label">nfts-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Dynamic NFT marketplace" />
                 </div>
@@ -525,8 +506,7 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="nfts-card-2-2" className="category-card">
-                <span className="id-label">nfts-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Music NFTs generate $50M in royalties for artists</h3>
                 <p className="category-card-time">4.2 hours ago</p>
               </article>
@@ -535,13 +515,11 @@ const Politics: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 2 - World News Section */}
-        <section id="world-news-section-3" className="world-section">
+        <section className="world-section">
           
-          <div id="world-cards-container-3" className="world-cards">
-            <span className="id-label">world-cards-container-3</span>
+          <div className="world-cards">
             
-            <article id="world-card-3-1" className="world-card">
-              <span className="id-label">world-card-3-1</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Crypto staking rewards" />
               </div>
@@ -551,8 +529,7 @@ const Politics: React.FC = () => {
               </div>
             </article>
 
-            <article id="world-card-3-2" className="world-card">
-              <span className="id-label">world-card-3-2</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Decentralized identity" />
               </div>
@@ -562,8 +539,7 @@ const Politics: React.FC = () => {
               </div>
             </article>
 
-            <article id="world-card-3-3" className="world-card">
-              <span className="id-label">world-card-3-3</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Crypto derivatives market" />
               </div>
@@ -573,8 +549,7 @@ const Politics: React.FC = () => {
               </div>
             </article>
 
-            <article id="world-card-3-4" className="world-card">
-              <span className="id-label">world-card-3-4</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Quantum-resistant blockchain" />
               </div>
@@ -587,37 +562,32 @@ const Politics: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 2 - Crypto Updates Section */}
-        <section id="crypto-section-3" className="crypto-section">
+        <section className="crypto-section">
           
-          <div id="crypto-cards-container-3" className="crypto-cards">
-            <span className="id-label">crypto-cards-container-3</span>
+          <div className="crypto-cards">
             
-            <article id="crypto-card-3-1" className="crypto-card">
-              <span className="id-label">crypto-card-3-1</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Cosmos ecosystem introduces interchain security for 50 zones</h3>
                 <p className="crypto-card-time">35 mins ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-2" className="crypto-card">
-              <span className="id-label">crypto-card-3-2</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Arbitrum One becomes fastest growing Layer 2 with 2M users</h3>
                 <p className="crypto-card-time">1 hour ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-3" className="crypto-card">
-              <span className="id-label">crypto-card-3-3</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Polkadot parachain auctions raise $2B for ecosystem projects</h3>
                 <p className="crypto-card-time">1.8 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-4" className="crypto-card">
-              <span className="id-label">crypto-card-3-4</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Binance Smart Chain upgrades consensus mechanism for efficiency</h3>
                 <p className="crypto-card-time">2.8 hours ago</p>
@@ -627,20 +597,12 @@ const Politics: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 2 - Categories Section */}
-        <section id="categories-section-3" className="categories-section">
-          <span className="id-label">categories-section-3</span>
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Bitcoin Column */}
-            <div id="bitcoin-column-3" className="category-column">
-              <span className="id-label">bitcoin-column-3</span>
-              <h2 id="bitcoin-header-3" className="category-header">
-                <span className="id-label">bitcoin-header-3</span>
-                <a href="/bitcoin" className="category-link">Bitcoin</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="bitcoin-card-3-1" className="category-card featured">
-                <span className="id-label">bitcoin-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Bitcoin ordinals growth" />
                 </div>
@@ -650,24 +612,16 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="bitcoin-card-3-2" className="category-card">
-                <span className="id-label">bitcoin-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">RGB protocol enables smart contracts on Bitcoin network</h3>
                 <p className="category-card-time">1.8 hours ago</p>
               </article>
             </div>
 
             {/* Ethereum Column */}
-            <div id="ethereum-column-3" className="category-column">
-              <span className="id-label">ethereum-column-3</span>
-              <h2 id="ethereum-header-3" className="category-header">
-                <span className="id-label">ethereum-header-3</span>
-                <a href="/ethereum" className="category-link">Ethereum</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="ethereum-card-3-1" className="category-card featured">
-                <span className="id-label">ethereum-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Ethereum validators growth" />
                 </div>
@@ -677,24 +631,16 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="ethereum-card-3-2" className="category-card">
-                <span className="id-label">ethereum-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Account abstraction wallets gain 2M users in one month</h3>
                 <p className="category-card-time">2.8 hours ago</p>
               </article>
             </div>
 
             {/* DeFi Column */}
-            <div id="defi-column-3" className="category-column">
-              <span className="id-label">defi-column-3</span>
-              <h2 id="defi-header-3" className="category-header">
-                <span className="id-label">defi-header-3</span>
-                <a href="/defi" className="category-link">DeFi</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="defi-card-3-1" className="category-card featured">
-                <span className="id-label">defi-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="DeFi insurance protocol" />
                 </div>
@@ -704,24 +650,16 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="defi-card-3-2" className="category-card">
-                <span className="id-label">defi-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Automated market makers process $50B weekly volume</h3>
                 <p className="category-card-time">3.8 hours ago</p>
               </article>
             </div>
 
             {/* NFTs Column */}
-            <div id="nfts-column-3" className="category-column">
-              <span className="id-label">nfts-column-3</span>
-              <h2 id="nfts-header-3" className="category-header">
-                <span className="id-label">nfts-header-3</span>
-                <a href="/nfts" className="category-link">NFTs</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="nfts-card-3-1" className="category-card featured">
-                <span className="id-label">nfts-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="NFT fractionalization" />
                 </div>
@@ -731,8 +669,7 @@ const Politics: React.FC = () => {
                 </div>
               </article>
 
-              <article id="nfts-card-3-2" className="category-card">
-                <span className="id-label">nfts-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Virtual real estate NFTs generate $25M in monthly sales</h3>
                 <p className="category-card-time">4.5 hours ago</p>
               </article>
@@ -744,20 +681,19 @@ const Politics: React.FC = () => {
         {additionalSections.map((sectionArticles: NewsArticle[], sectionIndex: number) => (
           <section 
             key={sectionIndex} 
-            id={`additional-news-section-${sectionIndex + 1}`} 
+            
             className="world-section"
           >
-            <div id={`additional-cards-container-${sectionIndex + 1}`} className="world-cards">
+            <div className="world-cards">
               {sectionArticles.map((article: NewsArticle, articleIndex: number) => (
                 <article 
                   key={articleIndex} 
-                  id={`additional-card-${sectionIndex + 1}-${articleIndex + 1}`} 
+                  
                   className="world-card"
                 >
-                  <span className="id-label">{`additional-card-${sectionIndex + 1}-${articleIndex + 1}`}</span>
                   <div className="world-card-image">
                     <img 
-                      src={article.urlToImage || "/ttttttt.jpg"} 
+                      src={article.imageUrl || "/ttttttt.jpg"} 
                       alt={article.title}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/ttttttt.jpg";

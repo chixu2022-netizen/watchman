@@ -1,25 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
 import StockTicker from '../components/StockTicker';
-import { HomepageNewsData } from '../types/news';
-// import { newsAPI } from '../services/newsAPI'; // Temporarily disabled due to CORS
-import { mockNewsAPI } from '../services/mockNewsData'; // Using mock data for testing
+import { HomepageNewsData, NewsArticle } from '../types/news';
+import { newsAPI } from '../services/newsAPI'; // Using real NewsAPI for dynamic content
+import { mockNewsAPI } from '../services/mockNewsData'; // Fallback only
 import './Home.css';
 
 function Home() {
   const [newsData, setNewsData] = useState<HomepageNewsData | null>(null);
+  const [dynamicNews, setDynamicNews] = useState<{[key: string]: NewsArticle[]}>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHomePageNews = async () => {
       try {
-        console.log('🚀 Fetching homepage news from mock data...');
+        console.log('🚀 Fetching dynamic news from NewsAPI for all categories...');
+        
+        // Fetch dynamic news for all categories
+        const allCategoriesNews = await newsAPI.getAllCategoriesNews();
+        console.log('📰 Dynamic news data received:', allCategoriesNews);
+        setDynamicNews(allCategoriesNews);
+        
+        // Also fetch the homepage structure (for fallback)
         const data = await mockNewsAPI.getHomepageNews();
-        console.log('📰 Mock news data received:', data);
         setNewsData(data);
+        
       } catch (error) {
-        console.error('❌ Error fetching homepage news:', error);
-        // Keep loading false so fallback content shows
+        console.error('❌ Error fetching dynamic news, using fallback:', error);
+        // Use mock data as fallback
+        const data = await mockNewsAPI.getHomepageNews();
+        setNewsData(data);
       } finally {
         setLoading(false);
       }
@@ -28,24 +38,36 @@ function Home() {
     fetchHomePageNews();
   }, []);
 
-  // Fallback to static content if API fails or is loading
-  const worldNews = newsData?.worldNews || [];
+  // Use dynamic news data when available, fallback to mock data
+  const worldNews = dynamicNews.world || newsData?.worldNews || [];
+  const cryptoNews = dynamicNews.crypto || newsData?.categoryNews || [];
+  const technologyNews = dynamicNews.technology || newsData?.categories?.technology || [];
+  const businessNews = dynamicNews.business || newsData?.categories?.business || [];
+  const sportsNews = dynamicNews.sports || newsData?.categories?.sports || [];
+  const entertainmentNews = dynamicNews.entertainment || newsData?.categories?.entertainment || [];
+  const healthNews = dynamicNews.health || [];
+  const politicsNews = dynamicNews.politics || [];
+  const localNews = dynamicNews.local || [];
+  const aiNews = dynamicNews['artificial-intelligence'] || [];
 
   // Debug info for testing  
-  const hasApiData = newsData && worldNews.length > 0;
-  const debugInfo = `API Status: ${hasApiData ? '� TOP STORIES (Mock)' : loading ? 'LOADING...' : 'FALLBACK'} | Articles: ${worldNews.length} | First Title: ${worldNews[0]?.title?.slice(0, 30) || 'none'} | Updated: ${new Date().toLocaleTimeString()}`;
+  const hasDynamicData = Object.keys(dynamicNews).length > 0;
+  const debugInfo = `Dynamic API Status: ${hasDynamicData ? '🔥 LIVE NEWS' : loading ? 'LOADING...' : 'FALLBACK'} | Categories: ${Object.keys(dynamicNews).length} | World: ${worldNews.length} | Updated: ${new Date().toLocaleTimeString()}`;
   
   // Enhanced debugging
-  console.log('🔍 Homepage Debug - TOP STORIES from each category:', {
+  console.log('🔍 Homepage Debug - DYNAMIC NEWS from each category:', {
     loading,
-    hasNewsData: !!newsData,
+    hasDynamicData,
+    dynamicCategories: Object.keys(dynamicNews),
     worldNewsCount: worldNews.length,
-    businessNewsCount: newsData?.categories?.business?.length || 0,
-    sportsNewsCount: newsData?.categories?.sports?.length || 0,
-    entertainmentNewsCount: newsData?.categories?.entertainment?.length || 0,
-    firstBusinessImage: newsData?.categories?.business?.[0]?.imageUrl,
-    topStoriesActive: true,
-    topStoriesLogic: 'Homepage shows curated top stories from each category'
+    cryptoNewsCount: cryptoNews.length,
+    technologyNewsCount: technologyNews.length,
+    businessNewsCount: businessNews.length,
+    sportsNewsCount: sportsNews.length,
+    entertainmentNewsCount: entertainmentNews.length,
+    healthNewsCount: healthNews.length,
+    politicsNewsCount: politicsNews.length,
+    topStoriesLogic: 'Homepage shows LIVE hottest news from each category via NewsAPI'
   });
   
   return (
@@ -53,19 +75,16 @@ function Home() {
       <StockTicker />
       <div className="home__container">
         {/* Duplicated Technology Section with Sidebar Layout - NEW AT TOP */}
-        <div id="tech-sidebar-layout-new" className="tech-sidebar-layout">
-          <span className="id-label">tech-sidebar-layout-new</span>
+        <div className="tech-sidebar-layout">
           
           {/* Technology Section - DUPLICATED */}
-          <section id="technology-news-section-new" className="technology-section">
+          <section className="technology-section">
             <div className="technology-header">
-              <h2 id="technology-title-new" className="technology-title">
-                <span className="id-label">technology-title-new</span>
+              <h2 className="technology-title">
               </h2>
             </div>
             
-            <div id="technology-cards-container-new" className="technology-cards">
-              <span className="id-label">technology-cards-container-new</span>
+            <div className="technology-cards">
               
               <article className="featured-article">
                 <div className="featured-content">
@@ -93,29 +112,24 @@ function Home() {
           </section>
 
           {/* Sidebar - 30% width - DUPLICATED */}
-          <aside id="tech-sidebar-new" className="tech-sidebar">
-            <span className="id-label">tech-sidebar-new</span>
+          <aside className="tech-sidebar">
             
-            <article id="sidebar-news-new-1" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-new-1</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">Hollywood comes to Kimmel&apos;s defense after ABC pulls late-night show</h3>
               <p className="sidebar-news-time">2 hours ago</p>
             </article>
 
-            <article id="sidebar-news-new-2" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-new-2</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">Unresolved questions hang over case against Charlie Kirk&apos;s accused killer</h3>
               <p className="sidebar-news-time">8 hours ago</p>
             </article>
 
-            <article id="sidebar-news-new-3" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-new-3</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">White House readies executive order on political violence as liberal groups sound warning</h3>
               <p className="sidebar-news-time">9 hours ago</p>
             </article>
 
-            <article id="sidebar-news-new-4" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-new-4</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">Markets respond to Federal Reserve&apos;s latest interest rate decision</h3>
               <p className="sidebar-news-time">10 hours ago</p>
             </article>
@@ -123,16 +137,14 @@ function Home() {
         </div>
 
         {/* World News Section */}
-        <section id="world-news-section" className="world-section">
+        <section className="world-section">
           <div className="world-header">
-            <h2 id="world-title" className="world-title">
+            <h2 className="world-title">
               <a href="/world" className="world-link">World &gt;</a>
-              <span className="id-label">world-title</span>
             </h2>
           </div>
           
-          <div id="world-cards-container" className="world-cards">
-            <span className="id-label">world-cards-container</span>
+          <div className="world-cards">
             
             {loading ? (
               // Loading state
@@ -197,7 +209,6 @@ function Home() {
               return combinedArticles.slice(0, 4);
             })().map((article, index) => (
               <article key={article.id} id={`world-card-${index + 1}`} className="world-card">
-                <span className="id-label">world-card-{index + 1}</span>
                 <div className="world-card-image">
                   <img src={article.imageUrl || '/ttttttt.jpg'} alt={article.title} />
                 </div>
@@ -224,8 +235,7 @@ function Home() {
             )) : (
               // Fallback static content
               <>
-                <article id="world-card-1" className="world-card">
-                  <span className="id-label">world-card-1</span>
+                <article className="world-card">
                   <div className="world-card-image">
                     <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
                   </div>
@@ -235,8 +245,7 @@ function Home() {
                   </div>
                 </article>
 
-                <article id="world-card-2" className="world-card">
-                  <span className="id-label">world-card-2</span>
+                <article className="world-card">
                   <div className="world-card-image">
                     <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
                   </div>
@@ -246,8 +255,7 @@ function Home() {
                   </div>
                 </article>
 
-                <article id="world-card-3" className="world-card">
-                  <span className="id-label">world-card-3</span>
+                <article className="world-card">
                   <div className="world-card-image">
                     <img src="/ttttttt.jpg" alt="France protests strikes" />
                   </div>
@@ -257,8 +265,7 @@ function Home() {
                   </div>
                 </article>
 
-                <article id="world-card-4" className="world-card">
-                  <span className="id-label">world-card-4</span>
+                <article className="world-card">
                   <div className="world-card-image">
                     <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
                   </div>
@@ -273,24 +280,21 @@ function Home() {
         </section>
 
         {/* Crypto Section - NOW DYNAMIC */}
-        <section id="crypto-section" className="crypto-section">
+        <section className="crypto-section">
           <div className="crypto-header">
-            <h2 id="crypto-title" className="crypto-title">
+            <h2 className="crypto-title">
               <a href="/crypto" className="crypto-link">Crypto &gt;</a>
-              <span className="id-label">crypto-title</span>
             </h2>
           </div>
           
-          <div id="crypto-cards-container" className="crypto-cards">
-            <span className="id-label">crypto-cards-container</span>
+          <div className="crypto-cards">
             
             {loading ? (
               <div style={{textAlign: 'center', padding: '1rem', color: '#666'}}>
                 Loading crypto news...
               </div>
-            ) : (newsData?.categoryNews?.length || 0) > 0 ? newsData!.categoryNews!.slice(0, 4).map((article, index) => (
+            ) : cryptoNews.length > 0 ? cryptoNews.slice(0, 4).map((article, index) => (
               <article key={article.id} id={`crypto-card-${index + 1}`} className="crypto-card">
-                <span className="id-label">crypto-card-{index + 1}</span>
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">
@@ -314,32 +318,28 @@ function Home() {
             )) : (
               // Static fallback - only show if no API data
               <>
-                <article id="crypto-card-1" className="crypto-card">
-                  <span className="id-label">crypto-card-1</span>
+                <article className="crypto-card">
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">Bitcoin Reaches New All-Time High Amid Institutional Adoption</h3>
                     <p className="crypto-card-time">1 hour ago</p>
                   </div>
                 </article>
 
-                <article id="crypto-card-2" className="crypto-card">
-                  <span className="id-label">crypto-card-2</span>
+                <article className="crypto-card">
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">Ethereum 2.0 Upgrade Shows Promising Results</h3>
                     <p className="crypto-card-time">3 hours ago</p>
                   </div>
                 </article>
 
-                <article id="crypto-card-3" className="crypto-card">
-                  <span className="id-label">crypto-card-3</span>
+                <article className="crypto-card">
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">Central Bank Digital Currencies Gain Global Momentum</h3>
                     <p className="crypto-card-time">5 hours ago</p>
                   </div>
                 </article>
 
-                <article id="crypto-card-4" className="crypto-card">
-                  <span className="id-label">crypto-card-4</span>
+                <article className="crypto-card">
                   <div className="crypto-card-content">
                     <h3 className="crypto-card-title">DeFi Protocol Launches Revolutionary Yield Farming Solution</h3>
                     <p className="crypto-card-time">8 hours ago</p>
@@ -351,20 +351,17 @@ function Home() {
         </section>
 
         {/* Technology Section with Sidebar Layout */}
-        <div id="tech-sidebar-layout" className="tech-sidebar-layout">
-          <span className="id-label">tech-sidebar-layout</span>
+        <div className="tech-sidebar-layout">
           
           {/* Technology Section - NOW DYNAMIC */}
-          <section id="technology-news-section" className="technology-section">
+          <section className="technology-section">
             <div className="technology-header">
-              <h2 id="technology-title" className="technology-title">
+              <h2 className="technology-title">
                 <a href="/technology" className="technology-link">Technology &gt;</a>
-                <span className="id-label">technology-title</span>
               </h2>
             </div>
             
-            <div id="technology-cards-container" className="technology-cards">
-              <span className="id-label">technology-cards-container</span>
+            <div className="technology-cards">
               
               <article className="featured-article">
                 <div className="featured-content">
@@ -392,29 +389,24 @@ function Home() {
           </section>
 
           {/* Sidebar - 30% width */}
-          <aside id="tech-sidebar" className="tech-sidebar">
-            <span className="id-label">tech-sidebar</span>
+          <aside className="tech-sidebar">
             
-            <article id="sidebar-news-1" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-1</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">Hollywood comes to Kimmel&apos;s defense after ABC pulls late-night show</h3>
               <p className="sidebar-news-time">2 hours ago</p>
             </article>
 
-            <article id="sidebar-news-2" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-2</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">Unresolved questions hang over case against Charlie Kirk&apos;s accused killer</h3>
               <p className="sidebar-news-time">8 hours ago</p>
             </article>
 
-            <article id="sidebar-news-3" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-3</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">White House readies executive order on political violence as liberal groups sound warning</h3>
               <p className="sidebar-news-time">9 hours ago</p>
             </article>
 
-            <article id="sidebar-news-4" className="sidebar-news-item">
-              <span className="id-label">sidebar-news-4</span>
+            <article className="sidebar-news-item">
               <h3 className="sidebar-news-title">Markets respond to Federal Reserve&apos;s latest interest rate decision</h3>
               <p className="sidebar-news-time">10 hours ago</p>
             </article>
@@ -422,14 +414,11 @@ function Home() {
         </div>
 
         {/* Categories Section */}
-        <section id="categories-section" className="categories-section">
-          <span className="id-label">categories-section</span>
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Business Column */}
-            <div id="business-column" className="category-column">
-              <span className="id-label">business-column</span>
-              <h2 id="business-header" className="category-header">
-                <span className="id-label">business-header</span>
+            <div className="category-column">
+              <h2 className="category-header">
                 <a href="/business" className="category-link">Business</a>
                 <span className="arrow-symbol">›</span>
               </h2>
@@ -438,9 +427,8 @@ function Home() {
                 <div className="loading-placeholder">
                   Loading business news...
                 </div>
-              ) : (newsData?.categories?.business?.length || 0) > 0 ? newsData!.categories!.business!.slice(0, 2).map((article, index) => (
+              ) : businessNews.length > 0 ? businessNews.slice(0, 2).map((article, index) => (
                 <article key={article.id} id={`business-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
-                  <span className="id-label">business-card-{index + 1}</span>
                   {index === 0 && (
                     <div className="category-card-image">
                       {article.imageUrl ? (
@@ -472,8 +460,7 @@ function Home() {
               )) : (
                 // Static fallback - only show if no API data
                 <>
-                  <article id="business-card-1" className="category-card featured">
-                    <span className="id-label">business-card-1</span>
+                  <article className="category-card featured">
                     <div className="category-card-image">
                       <img src="/ttttttt.jpg" alt="Luxury brands challenge" />
                     </div>
@@ -483,8 +470,7 @@ function Home() {
                     </div>
                   </article>
 
-                  <article id="business-card-2" className="category-card">
-                    <span className="id-label">business-card-2</span>
+                  <article className="category-card">
                     <h3 className="category-card-title">UK retail sales rise by more than expected in August, ONS says</h3>
                     <p className="category-card-time">10 hours ago</p>
                   </article>
@@ -493,10 +479,8 @@ function Home() {
             </div>
 
             {/* Sports Column */}
-            <div id="sports-column" className="category-column">
-              <span className="id-label">sports-column</span>
-              <h2 id="sports-header" className="category-header">
-                <span className="id-label">sports-header</span>
+            <div className="category-column">
+              <h2 className="category-header">
                 <a href="/sports" className="category-link">Sports</a>
                 <span className="arrow-symbol">›</span>
               </h2>
@@ -505,9 +489,8 @@ function Home() {
                 <div className="loading-placeholder">
                   Loading sports news...
                 </div>
-              ) : (newsData?.categories?.sports?.length || 0) > 0 ? newsData!.categories!.sports!.slice(0, 2).map((article, index) => (
+              ) : sportsNews.length > 0 ? sportsNews.slice(0, 2).map((article, index) => (
                 <article key={article.id} id={`sports-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
-                  <span className="id-label">sports-card-{index + 1}</span>
                   {index === 0 && (
                     <div className="category-card-image">
                       {article.imageUrl ? (
@@ -539,8 +522,7 @@ function Home() {
               )) : (
                 // Static fallback - only show if no API data
                 <>
-                  <article id="sports-card-1" className="category-card featured">
-                    <span className="id-label">sports-card-1</span>
+                  <article className="category-card featured">
                     <div className="category-card-image">
                       <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
                     </div>
@@ -550,8 +532,7 @@ function Home() {
                     </div>
                   </article>
 
-                  <article id="sports-card-2" className="category-card">
-                    <span className="id-label">sports-card-2</span>
+                  <article className="category-card">
                     <h3 className="category-card-title">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
                     <p className="category-card-time">10 hours ago</p>
                   </article>
@@ -560,16 +541,13 @@ function Home() {
             </div>
 
             {/* AI Column */}
-            <div id="ai-column" className="category-column">
-              <span className="id-label">ai-column</span>
-              <h2 id="ai-header" className="category-header">
-                <span className="id-label">ai-header</span>
+            <div className="category-column">
+              <h2 className="category-header">
                 <a href="/ai" className="category-link">AI</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="ai-card-1" className="category-card featured">
-                <span className="id-label">ai-card-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Apple AI blood pressure" />
                 </div>
@@ -579,18 +557,15 @@ function Home() {
                 </div>
               </article>
 
-              <article id="ai-card-2" className="category-card">
-                <span className="id-label">ai-card-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">China&apos;s Huawei co-develops DeepSeek model, improves censoring</h3>
                 <p className="category-card-time">4 hours ago</p>
               </article>
             </div>
 
             {/* Entertainment Column */}
-            <div id="entertainment-column" className="category-column">
-              <span className="id-label">entertainment-column</span>
-              <h2 id="entertainment-header" className="category-header">
-                <span className="id-label">entertainment-header</span>
+            <div className="category-column">
+              <h2 className="category-header">
                 <a href="/entertainment" className="category-link">Entertainment</a>
                 <span className="arrow-symbol">›</span>
               </h2>
@@ -599,9 +574,8 @@ function Home() {
                 <div className="loading-placeholder">
                   Loading entertainment news...
                 </div>
-              ) : (newsData?.categories?.entertainment?.length || 0) > 0 ? newsData!.categories!.entertainment!.slice(0, 2).map((article, index) => (
+              ) : entertainmentNews.length > 0 ? entertainmentNews.slice(0, 2).map((article, index) => (
                 <article key={article.id} id={`entertainment-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
-                  <span className="id-label">entertainment-card-{index + 1}</span>
                   {index === 0 && (
                     <div className="category-card-image">
                       {article.imageUrl ? (
@@ -633,8 +607,7 @@ function Home() {
               )) : (
                 // Static fallback - only show if no API data
                 <>
-                  <article id="entertainment-card-1" className="category-card featured">
-                    <span className="id-label">entertainment-card-1</span>
+                  <article className="category-card featured">
                     <div className="category-card-image">
                       <img src="/ttttttt.jpg" alt="Taiwan arms show" />
                     </div>
@@ -644,8 +617,7 @@ function Home() {
                     </div>
                   </article>
 
-                  <article id="entertainment-card-2" className="category-card">
-                    <span className="id-label">entertainment-card-2</span>
+                  <article className="category-card">
                     <h3 className="category-card-title">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
                     <p className="category-card-time">September 18, 2025</p>
                   </article>
@@ -656,43 +628,37 @@ function Home() {
         </section>
 
         {/* Crypto Section 2 */}
-        <section id="crypto-section-2" className="crypto-section-2">
+        <section className="crypto-section-2">
           <div className="crypto-header-2">
-            <h2 id="crypto-title-2" className="crypto-title-2">
+            <h2 className="crypto-title-2">
               <a href="/crypto" className="crypto-link-2">Crypto &gt;</a>
-              <span className="id-label">crypto-title-2</span>
             </h2>
           </div>
           
-          <div id="crypto-cards-container-2" className="crypto-cards-2">
-            <span className="id-label">crypto-cards-container-2</span>
+          <div className="crypto-cards-2">
             
-            <article id="crypto-card-2-1" className="crypto-card-2">
-              <span className="id-label">crypto-card-2-1</span>
+            <article className="crypto-card-2">
               <div className="crypto-card-content-2">
                 <h3 className="crypto-card-title-2">Wall St steadies with indexes on track for weekly gains; FedEx jumps</h3>
                 <p className="crypto-card-time-2">31 mins ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-2-2" className="crypto-card-2">
-              <span className="id-label">crypto-card-2-2</span>
+            <article className="crypto-card-2">
               <div className="crypto-card-content-2">
                 <h3 className="crypto-card-title-2">Pound, gilts hit by surge in UK borrowing</h3>
                 <p className="crypto-card-time-2">7 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-2-3" className="crypto-card-2">
-              <span className="id-label">crypto-card-2-3</span>
+            <article className="crypto-card-2">
               <div className="crypto-card-content-2">
                 <h3 className="crypto-card-title-2">EU ministers reach &apos;compromise&apos; on digital euro roadmap</h3>
                 <p className="crypto-card-time-2">2 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-2-4" className="crypto-card-2">
-              <span className="id-label">crypto-card-2-4</span>
+            <article className="crypto-card-2">
               <div className="crypto-card-content-2">
                 <h3 className="crypto-card-title-2">Adani Group stocks rise as SEBI&apos;s dismissal signals end to Hindenburg overhang</h3>
                 <p className="crypto-card-time-2">4 hours ago</p>
@@ -702,16 +668,12 @@ function Home() {
         </section>
 
         {/* Categories Section 2 */}
-        <section id="categories-section-2" className="categories-section-2">
-          <span className="id-label">categories-section-2</span>
-          <div id="categories-grid-2" className="categories-grid-2">
-            <span className="id-label">categories-grid-2</span>
+        <section className="categories-section-2">
+          <div className="categories-grid-2">
             
             {/* Business Column 2 */}
-            <div id="business-column-2" className="category-column-2">
-              <span className="id-label">business-column-2</span>
-              <h2 id="business-header-2" className="category-header-2">
-                <span className="id-label">business-header-2</span>
+            <div className="category-column-2">
+              <h2 className="category-header-2">
                 <a href="/business" className="category-link-2">Business</a>
                 <span className="arrow-symbol">›</span>
               </h2>
@@ -720,9 +682,8 @@ function Home() {
                 <div className="loading-placeholder">
                   Loading more business news...
                 </div>
-              ) : (newsData?.categories?.business?.length || 0) > 2 ? newsData!.categories!.business!.slice(2, 4).map((article, index) => (
+              ) : businessNews.length > 2 ? businessNews.slice(2, 4).map((article, index) => (
                 <article key={article.id} id={`business-card-2-${index + 1}`} className={`category-card-2 ${index === 0 ? 'featured' : ''}`}>
-                  <span className="id-label">business-card-2-{index + 1}</span>
                   {index === 0 && (
                     <div className="category-card-image-2">
                       {article.imageUrl ? (
@@ -754,8 +715,7 @@ function Home() {
               )) : (
                 // Static fallback - only show if not enough API data
                 <>
-                  <article id="business-card-2-1" className="category-card-2 featured">
-                    <span className="id-label">business-card-2-1</span>
+                  <article className="category-card-2 featured">
                     <div className="category-card-image-2">
                       <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
                     </div>
@@ -765,8 +725,7 @@ function Home() {
                     </div>
                   </article>
 
-                  <article id="business-card-2-2" className="category-card-2">
-                    <span className="id-label">business-card-2-2</span>
+                  <article className="category-card-2">
                     <h3 className="category-card-title-2">UK retail sales rise by more than expected in August, ONS says</h3>
                     <p className="category-card-time-2">10 hours ago</p>
                   </article>
@@ -775,10 +734,8 @@ function Home() {
             </div>
 
             {/* Sports Column 2 */}
-            <div id="sports-column-2" className="category-column-2">
-              <span className="id-label">sports-column-2</span>
-              <h2 id="sports-header-2" className="category-header-2">
-                <span className="id-label">sports-header-2</span>
+            <div className="category-column-2">
+              <h2 className="category-header-2">
                 <a href="/sports" className="category-link-2">Sports</a>
                 <span className="arrow-symbol">›</span>
               </h2>
@@ -787,9 +744,8 @@ function Home() {
                 <div className="loading-placeholder">
                   Loading more sports news...
                 </div>
-              ) : (newsData?.categories?.sports?.length || 0) > 2 ? newsData!.categories!.sports!.slice(2, 4).map((article, index) => (
+              ) : sportsNews.length > 2 ? sportsNews.slice(2, 4).map((article, index) => (
                 <article key={article.id} id={`sports-card-2-${index + 1}`} className={`category-card-2 ${index === 0 ? 'featured' : ''}`}>
-                  <span className="id-label">sports-card-2-{index + 1}</span>
                   {index === 0 && (
                     <div className="category-card-image-2">
                       {article.imageUrl ? (
@@ -821,8 +777,7 @@ function Home() {
               )) : (
                 // Static fallback - only show if not enough API data
                 <>
-                  <article id="sports-card-2-1" className="category-card-2 featured">
-                    <span className="id-label">sports-card-2-1</span>
+                  <article className="category-card-2 featured">
                     <div className="category-card-image-2">
                       <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
                     </div>
@@ -832,8 +787,7 @@ function Home() {
                     </div>
                   </article>
 
-                  <article id="sports-card-2-2" className="category-card-2">
-                    <span className="id-label">sports-card-2-2</span>
+                  <article className="category-card-2">
                     <h3 className="category-card-title-2">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
                     <p className="category-card-time-2">10 hours ago</p>
                   </article>
@@ -842,16 +796,13 @@ function Home() {
             </div>
 
             {/* AI Column 2 */}
-            <div id="ai-column-2" className="category-column-2">
-              <span className="id-label">ai-column-2</span>
-              <h2 id="ai-header-2" className="category-header-2">
-                <span className="id-label">ai-header-2</span>
+            <div className="category-column-2">
+              <h2 className="category-header-2">
                 <a href="/ai" className="category-link-2">AI</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="ai-card-2-1" className="category-card-2 featured">
-                <span className="id-label">ai-card-2-1</span>
+              <article className="category-card-2 featured">
                 <div className="category-card-image-2">
                   <img src="/ttttttt.jpg" alt="OpenAI notification feature" />
                 </div>
@@ -861,18 +812,15 @@ function Home() {
                 </div>
               </article>
 
-              <article id="ai-card-2-2" className="category-card-2">
-                <span className="id-label">ai-card-2-2</span>
+              <article className="category-card-2">
                 <h3 className="category-card-title-2">China&apos;s Huawei co-develops DeepSeek model, improves censoring</h3>
                 <p className="category-card-time-2">4 hours ago</p>
               </article>
             </div>
 
             {/* Entertainment Column 2 */}
-            <div id="entertainment-column-2" className="category-column-2">
-              <span className="id-label">entertainment-column-2</span>
-              <h2 id="entertainment-header-2" className="category-header-2">
-                <span className="id-label">entertainment-header-2</span>
+            <div className="category-column-2">
+              <h2 className="category-header-2">
                 <a href="/entertainment" className="category-link-2">Entertainment</a>
                 <span className="arrow-symbol">›</span>
               </h2>
@@ -883,7 +831,6 @@ function Home() {
                 </div>
               ) : (newsData?.categories?.entertainment?.length || 0) > 2 ? newsData!.categories!.entertainment!.slice(2, 4).map((article, index) => (
                 <article key={article.id} id={`entertainment-card-2-${index + 1}`} className={`category-card-2 ${index === 0 ? 'featured' : ''}`}>
-                  <span className="id-label">entertainment-card-2-{index + 1}</span>
                   {index === 0 && (
                     <div className="category-card-image-2">
                       {article.imageUrl ? (
@@ -915,8 +862,7 @@ function Home() {
               )) : (
                 // Static fallback - only show if not enough API data
                 <>
-                  <article id="entertainment-card-2-1" className="category-card-2 featured">
-                    <span className="id-label">entertainment-card-2-1</span>
+                  <article className="category-card-2 featured">
                     <div className="category-card-image-2">
                       <img src="/ttttttt.jpg" alt="Taiwan arms show" />
                     </div>
@@ -926,8 +872,7 @@ function Home() {
                     </div>
                   </article>
 
-                  <article id="entertainment-card-2-2" className="category-card-2">
-                    <span className="id-label">entertainment-card-2-2</span>
+                  <article className="category-card-2">
                     <h3 className="category-card-title-2">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
                     <p className="category-card-time-2">September 18, 2025</p>
                   </article>
@@ -938,20 +883,17 @@ function Home() {
         </section>
 
         {/* Technology Section with Sidebar Layout 2 */}
-        <div id="tech-sidebar-layout-2" className="tech-sidebar-layout-2">
-          <span className="id-label">tech-sidebar-layout-2</span>
+        <div className="tech-sidebar-layout-2">
           
           {/* Technology Section 2 - 2x2 Grid */}
-          <section id="technology-news-section-2" className="technology-section-2">
+          <section className="technology-section-2">
             <div className="technology-header-2">
-              <h2 id="technology-title-2" className="technology-title-2">
+              <h2 className="technology-title-2">
                 <a href="/technology" className="technology-link-2">Technology &gt;</a>
-                <span className="id-label">technology-title-2</span>
               </h2>
             </div>
             
-            <div id="technology-cards-container-2" className="technology-cards-2">
-              <span className="id-label">technology-cards-container-2</span>
+            <div className="technology-cards-2">
               
               <article className="featured-article-2">
                 <div className="featured-content-2">
@@ -979,29 +921,24 @@ function Home() {
           </section>
 
           {/* Sidebar 2 - 30% width */}
-          <aside id="tech-sidebar-2" className="tech-sidebar-2">
-            <span className="id-label">tech-sidebar-2</span>
+          <aside className="tech-sidebar-2">
             
-            <article id="sidebar-news-2-1" className="sidebar-news-item-2">
-              <span className="id-label">sidebar-news-2-1</span>
+            <article className="sidebar-news-item-2">
               <h3 className="sidebar-news-title-2">Hollywood comes to Kimmel&apos;s defense after ABC pulls late-night show</h3>
               <p className="sidebar-news-time-2">2 hours ago</p>
             </article>
 
-            <article id="sidebar-news-2-2" className="sidebar-news-item-2">
-              <span className="id-label">sidebar-news-2-2</span>
+            <article className="sidebar-news-item-2">
               <h3 className="sidebar-news-title-2">Unresolved questions hang over case against Charlie Kirk&apos;s accused killer</h3>
               <p className="sidebar-news-time-2">8 hours ago</p>
             </article>
 
-            <article id="sidebar-news-2-3" className="sidebar-news-item-2">
-              <span className="id-label">sidebar-news-2-3</span>
+            <article className="sidebar-news-item-2">
               <h3 className="sidebar-news-title-2">White House readies executive order on political violence as liberal groups sound warning</h3>
               <p className="sidebar-news-time-2">9 hours ago</p>
             </article>
 
-            <article id="sidebar-news-2-4" className="sidebar-news-item-2">
-              <span className="id-label">sidebar-news-2-4</span>
+            <article className="sidebar-news-item-2">
               <h3 className="sidebar-news-title-2">Markets respond to Federal Reserve&apos;s latest interest rate decision</h3>
               <p className="sidebar-news-time-2">10 hours ago</p>
             </article>
@@ -1009,43 +946,37 @@ function Home() {
         </div>
 
         {/* Crypto Section 3 */}
-        <section id="crypto-section-3" className="crypto-section-3">
+        <section className="crypto-section-3">
           <div className="crypto-header-3">
-            <h2 id="crypto-title-3" className="crypto-title-3">
+            <h2 className="crypto-title-3">
               <a href="/crypto" className="crypto-link-3">Crypto &gt;</a>
-              <span className="id-label">crypto-title-3</span>
             </h2>
           </div>
           
-          <div id="crypto-cards-container-3" className="crypto-cards-3">
-            <span className="id-label">crypto-cards-container-3</span>
+          <div className="crypto-cards-3">
             
-            <article id="crypto-card-3-1" className="crypto-card-3">
-              <span className="id-label">crypto-card-3-1</span>
+            <article className="crypto-card-3">
               <div className="crypto-card-content-3">
                 <h3 className="crypto-card-title-3">Wall St steadies with indexes on track for weekly gains; FedEx jumps</h3>
                 <p className="crypto-card-time-3">31 mins ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-2" className="crypto-card-3">
-              <span className="id-label">crypto-card-3-2</span>
+            <article className="crypto-card-3">
               <div className="crypto-card-content-3">
                 <h3 className="crypto-card-title-3">Pound, gilts hit by surge in UK borrowing</h3>
                 <p className="crypto-card-time-3">7 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-3" className="crypto-card-3">
-              <span className="id-label">crypto-card-3-3</span>
+            <article className="crypto-card-3">
               <div className="crypto-card-content-3">
                 <h3 className="crypto-card-title-3">EU ministers reach &apos;compromise&apos; on digital euro roadmap</h3>
                 <p className="crypto-card-time-3">2 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-4" className="crypto-card-3">
-              <span className="id-label">crypto-card-3-4</span>
+            <article className="crypto-card-3">
               <div className="crypto-card-content-3">
                 <h3 className="crypto-card-title-3">Adani Group stocks rise as SEBI&apos;s dismissal signals end to Hindenburg overhang</h3>
                 <p className="crypto-card-time-3">4 hours ago</p>
@@ -1055,22 +986,17 @@ function Home() {
         </section>
 
         {/* Categories Section 3 */}
-        <section id="categories-section-3" className="categories-section-3">
-          <span className="id-label">categories-section-3</span>
-          <div id="categories-grid-3" className="categories-grid-3">
-            <span className="id-label">categories-grid-3</span>
+        <section className="categories-section-3">
+          <div className="categories-grid-3">
             
             {/* Business Column 3 */}
-            <div id="business-column-3" className="category-column-3">
-              <span className="id-label">business-column-3</span>
-              <h2 id="business-header-3" className="category-header-3">
-                <span className="id-label">business-header-3</span>
+            <div className="category-column-3">
+              <h2 className="category-header-3">
                 <a href="/business" className="category-link-3">Business</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="business-card-3-1" className="category-card-3 featured">
-                <span className="id-label">business-card-3-1</span>
+              <article className="category-card-3 featured">
                 <div className="category-card-image-3">
                   <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
                 </div>
@@ -1080,24 +1006,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="business-card-3-2" className="category-card-3">
-                <span className="id-label">business-card-3-2</span>
+              <article className="category-card-3">
                 <h3 className="category-card-title-3">UK retail sales rise by more than expected in August, ONS says</h3>
                 <p className="category-card-time-3">10 hours ago</p>
               </article>
             </div>
 
             {/* Sports Column 3 */}
-            <div id="sports-column-3" className="category-column-3">
-              <span className="id-label">sports-column-3</span>
-              <h2 id="sports-header-3" className="category-header-3">
-                <span className="id-label">sports-header-3</span>
+            <div className="category-column-3">
+              <h2 className="category-header-3">
                 <a href="/sports" className="category-link-3">Sports</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="sports-card-3-1" className="category-card-3 featured">
-                <span className="id-label">sports-card-3-1</span>
+              <article className="category-card-3 featured">
                 <div className="category-card-image-3">
                   <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
                 </div>
@@ -1107,24 +1029,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="sports-card-3-2" className="category-card-3">
-                <span className="id-label">sports-card-3-2</span>
+              <article className="category-card-3">
                 <h3 className="category-card-title-3">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
                 <p className="category-card-time-3">10 hours ago</p>
               </article>
             </div>
 
             {/* AI Column 3 */}
-            <div id="ai-column-3" className="category-column-3">
-              <span className="id-label">ai-column-3</span>
-              <h2 id="ai-header-3" className="category-header-3">
-                <span className="id-label">ai-header-3</span>
+            <div className="category-column-3">
+              <h2 className="category-header-3">
                 <a href="/ai" className="category-link-3">AI</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="ai-card-3-1" className="category-card-3 featured">
-                <span className="id-label">ai-card-3-1</span>
+              <article className="category-card-3 featured">
                 <div className="category-card-image-3">
                   <img src="/ttttttt.jpg" alt="OpenAI notification feature" />
                 </div>
@@ -1134,24 +1052,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="ai-card-3-2" className="category-card-3">
-                <span className="id-label">ai-card-3-2</span>
+              <article className="category-card-3">
                 <h3 className="category-card-title-3">China&apos;s Huawei co-develops DeepSeek model, improves censoring</h3>
                 <p className="category-card-time-3">4 hours ago</p>
               </article>
             </div>
 
             {/* Entertainment Column 3 */}
-            <div id="entertainment-column-3" className="category-column-3">
-              <span className="id-label">entertainment-column-3</span>
-              <h2 id="entertainment-header-3" className="category-header-3">
-                <span className="id-label">entertainment-header-3</span>
+            <div className="category-column-3">
+              <h2 className="category-header-3">
                 <a href="/entertainment" className="category-link-3">Entertainment</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="entertainment-card-3-1" className="category-card-3 featured">
-                <span className="id-label">entertainment-card-3-1</span>
+              <article className="category-card-3 featured">
                 <div className="category-card-image-3">
                   <img src="/ttttttt.jpg" alt="Taiwan arms show" />
                 </div>
@@ -1161,8 +1075,7 @@ function Home() {
                 </div>
               </article>
 
-              <article id="entertainment-card-3-2" className="category-card-3">
-                <span className="id-label">entertainment-card-3-2</span>
+              <article className="category-card-3">
                 <h3 className="category-card-title-3">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
                 <p className="category-card-time-3">September 18, 2025</p>
               </article>
@@ -1171,19 +1084,16 @@ function Home() {
         </section>
 
         {/* World News Section 2 */}
-        <section id="world-news-section-2" className="world-section-2">
+        <section className="world-section-2">
           <div className="world-header-2">
-            <h2 id="world-title-2" className="world-title-2">
+            <h2 className="world-title-2">
               <a href="/world" className="world-link-2">World &gt;</a>
-              <span className="id-label">world-title-2</span>
             </h2>
           </div>
           
-          <div id="world-cards-container-2" className="world-cards-2">
-            <span className="id-label">world-cards-container-2</span>
+          <div className="world-cards-2">
             
-            <article id="world-card-2-1" className="world-card-2">
-              <span className="id-label">world-card-2-1</span>
+            <article className="world-card-2">
               <div className="world-card-image-2">
                 <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
               </div>
@@ -1193,8 +1103,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="world-card-2-2" className="world-card-2">
-              <span className="id-label">world-card-2-2</span>
+            <article className="world-card-2">
               <div className="world-card-image-2">
                 <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
               </div>
@@ -1204,8 +1113,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="world-card-2-3" className="world-card-2">
-              <span className="id-label">world-card-2-3</span>
+            <article className="world-card-2">
               <div className="world-card-image-2">
                 <img src="/ttttttt.jpg" alt="France protests strikes" />
               </div>
@@ -1215,8 +1123,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="world-card-2-4" className="world-card-2">
-              <span className="id-label">world-card-2-4</span>
+            <article className="world-card-2">
               <div className="world-card-image-2">
                 <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
               </div>
@@ -1229,43 +1136,37 @@ function Home() {
         </section>
 
         {/* Crypto Section 4 */}
-        <section id="crypto-section-4" className="crypto-section-4">
+        <section className="crypto-section-4">
           <div className="crypto-header-4">
-            <h2 id="crypto-title-4" className="crypto-title-4">
+            <h2 className="crypto-title-4">
               <a href="/crypto" className="crypto-link-4">Crypto &gt;</a>
-              <span className="id-label">crypto-title-4</span>
             </h2>
           </div>
           
-          <div id="crypto-cards-container-4" className="crypto-cards-4">
-            <span className="id-label">crypto-cards-container-4</span>
+          <div className="crypto-cards-4">
             
-            <article id="crypto-card-4-1" className="crypto-card-4">
-              <span className="id-label">crypto-card-4-1</span>
+            <article className="crypto-card-4">
               <div className="crypto-card-content-4">
                 <h3 className="crypto-card-title-4">Wall St steadies with indexes on track for weekly gains; FedEx jumps</h3>
                 <p className="crypto-card-time-4">31 mins ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-4-2" className="crypto-card-4">
-              <span className="id-label">crypto-card-4-2</span>
+            <article className="crypto-card-4">
               <div className="crypto-card-content-4">
                 <h3 className="crypto-card-title-4">Pound, gilts hit by surge in UK borrowing</h3>
                 <p className="crypto-card-time-4">7 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-4-3" className="crypto-card-4">
-              <span className="id-label">crypto-card-4-3</span>
+            <article className="crypto-card-4">
               <div className="crypto-card-content-4">
                 <h3 className="crypto-card-title-4">EU ministers reach &apos;compromise&apos; on digital euro roadmap</h3>
                 <p className="crypto-card-time-4">2 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-4-4" className="crypto-card-4">
-              <span className="id-label">crypto-card-4-4</span>
+            <article className="crypto-card-4">
               <div className="crypto-card-content-4">
                 <h3 className="crypto-card-title-4">Adani Group stocks rise as SEBI&apos;s dismissal signals end to Hindenburg overhang</h3>
                 <p className="crypto-card-time-4">4 hours ago</p>
@@ -1275,20 +1176,17 @@ function Home() {
         </section>
 
         {/* Technology Section with Sidebar Layout 3 */}
-        <div id="tech-sidebar-layout-3" className="tech-sidebar-layout-3">
-          <span className="id-label">tech-sidebar-layout-3</span>
+        <div className="tech-sidebar-layout-3">
           
           {/* Technology Section 3 - 2x2 Grid */}
-          <section id="technology-news-section-3" className="technology-section-3">
+          <section className="technology-section-3">
             <div className="technology-header-3">
-              <h2 id="technology-title-3" className="technology-title-3">
+              <h2 className="technology-title-3">
                 <a href="/technology" className="technology-link-3">Technology &gt;</a>
-                <span className="id-label">technology-title-3</span>
               </h2>
             </div>
             
-            <div id="technology-cards-container-3" className="technology-cards-3">
-              <span className="id-label">technology-cards-container-3</span>
+            <div className="technology-cards-3">
               
               <article className="featured-article-3">
                 <div className="featured-content-3">
@@ -1316,29 +1214,24 @@ function Home() {
           </section>
 
           {/* Sidebar 3 - 30% width */}
-          <aside id="tech-sidebar-3" className="tech-sidebar-3">
-            <span className="id-label">tech-sidebar-3</span>
+          <aside className="tech-sidebar-3">
             
-            <article id="sidebar-news-3-1" className="sidebar-news-item-3">
-              <span className="id-label">sidebar-news-3-1</span>
+            <article className="sidebar-news-item-3">
               <h3 className="sidebar-news-title-3">Hollywood comes to Kimmel&apos;s defense after ABC pulls late-night show</h3>
               <p className="sidebar-news-time-3">2 hours ago</p>
             </article>
 
-            <article id="sidebar-news-3-2" className="sidebar-news-item-3">
-              <span className="id-label">sidebar-news-3-2</span>
+            <article className="sidebar-news-item-3">
               <h3 className="sidebar-news-title-3">Unresolved questions hang over case against Charlie Kirk&apos;s accused killer</h3>
               <p className="sidebar-news-time-3">8 hours ago</p>
             </article>
 
-            <article id="sidebar-news-3-3" className="sidebar-news-item-3">
-              <span className="id-label">sidebar-news-3-3</span>
+            <article className="sidebar-news-item-3">
               <h3 className="sidebar-news-title-3">White House readies executive order on political violence as liberal groups sound warning</h3>
               <p className="sidebar-news-time-3">9 hours ago</p>
             </article>
 
-            <article id="sidebar-news-3-4" className="sidebar-news-item-3">
-              <span className="id-label">sidebar-news-3-4</span>
+            <article className="sidebar-news-item-3">
               <h3 className="sidebar-news-title-3">Markets respond to Federal Reserve&apos;s latest interest rate decision</h3>
               <p className="sidebar-news-time-3">10 hours ago</p>
             </article>
@@ -1346,22 +1239,17 @@ function Home() {
         </div>
 
         {/* Categories Section 4 */}
-        <section id="categories-section-4" className="categories-section-4">
-          <span className="id-label">categories-section-4</span>
-          <div id="categories-grid-4" className="categories-grid-4">
-            <span className="id-label">categories-grid-4</span>
+        <section className="categories-section-4">
+          <div className="categories-grid-4">
             
             {/* Business Column 4 */}
-            <div id="business-column-4" className="category-column-4">
-              <span className="id-label">business-column-4</span>
-              <h2 id="business-header-4" className="category-header-4">
-                <span className="id-label">business-header-4</span>
+            <div className="category-column-4">
+              <h2 className="category-header-4">
                 <a href="/business" className="category-link-4">Business</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="business-card-4-1" className="category-card-4 featured">
-                <span className="id-label">business-card-4-1</span>
+              <article className="category-card-4 featured">
                 <div className="category-card-image-4">
                   <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
                 </div>
@@ -1371,24 +1259,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="business-card-4-2" className="category-card-4">
-                <span className="id-label">business-card-4-2</span>
+              <article className="category-card-4">
                 <h3 className="category-card-title-4">UK retail sales rise by more than expected in August, ONS says</h3>
                 <p className="category-card-time-4">10 hours ago</p>
               </article>
             </div>
 
             {/* Sports Column 4 */}
-            <div id="sports-column-4" className="category-column-4">
-              <span className="id-label">sports-column-4</span>
-              <h2 id="sports-header-4" className="category-header-4">
-                <span className="id-label">sports-header-4</span>
+            <div className="category-column-4">
+              <h2 className="category-header-4">
                 <a href="/sports" className="category-link-4">Sports</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="sports-card-4-1" className="category-card-4 featured">
-                <span className="id-label">sports-card-4-1</span>
+              <article className="category-card-4 featured">
                 <div className="category-card-image-4">
                   <img src="/ttttttt.jpg" alt="Canada Haisla LNG" />
                 </div>
@@ -1398,24 +1282,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="sports-card-4-2" className="category-card-4">
-                <span className="id-label">sports-card-4-2</span>
+              <article className="category-card-4">
                 <h3 className="category-card-title-4">Exclusive: China snaps up Australian canola after trade spat with Canada</h3>
                 <p className="category-card-time-4">10 hours ago</p>
               </article>
             </div>
 
             {/* AI Column 4 */}
-            <div id="ai-column-4" className="category-column-4">
-              <span className="id-label">ai-column-4</span>
-              <h2 id="ai-header-4" className="category-header-4">
-                <span className="id-label">ai-header-4</span>
+            <div className="category-column-4">
+              <h2 className="category-header-4">
                 <a href="/ai" className="category-link-4">AI</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="ai-card-4-1" className="category-card-4 featured">
-                <span className="id-label">ai-card-4-1</span>
+              <article className="category-card-4 featured">
                 <div className="category-card-image-4">
                   <img src="/ttttttt.jpg" alt="OpenAI notification feature" />
                 </div>
@@ -1425,24 +1305,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="ai-card-4-2" className="category-card-4">
-                <span className="id-label">ai-card-4-2</span>
+              <article className="category-card-4">
                 <h3 className="category-card-title-4">China&apos;s Huawei co-develops DeepSeek model, improves censoring</h3>
                 <p className="category-card-time-4">4 hours ago</p>
               </article>
             </div>
 
             {/* Entertainment Column 4 */}
-            <div id="entertainment-column-4" className="category-column-4">
-              <span className="id-label">entertainment-column-4</span>
-              <h2 id="entertainment-header-4" className="category-header-4">
-                <span className="id-label">entertainment-header-4</span>
+            <div className="category-column-4">
+              <h2 className="category-header-4">
                 <a href="/entertainment" className="category-link-4">Entertainment</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="entertainment-card-4-1" className="category-card-4 featured">
-                <span className="id-label">entertainment-card-4-1</span>
+              <article className="category-card-4 featured">
                 <div className="category-card-image-4">
                   <img src="/ttttttt.jpg" alt="Taiwan arms show" />
                 </div>
@@ -1452,8 +1328,7 @@ function Home() {
                 </div>
               </article>
 
-              <article id="entertainment-card-4-2" className="category-card-4">
-                <span className="id-label">entertainment-card-4-2</span>
+              <article className="category-card-4">
                 <h3 className="category-card-title-4">Small US defense stocks soar on rush for next-gen battlefield tech</h3>
                 <p className="category-card-time-4">September 18, 2025</p>
               </article>
@@ -1462,19 +1337,16 @@ function Home() {
         </section>
 
         {/* World News Section 3 */}
-        <section id="world-news-section-3" className="world-section-3">
+        <section className="world-section-3">
           <div className="world-header-3">
-            <h2 id="world-title-3" className="world-title-3">
+            <h2 className="world-title-3">
               <a href="/world" className="world-link-3">World &gt;</a>
-              <span className="id-label">world-title-3</span>
             </h2>
           </div>
           
-          <div id="world-cards-container-3" className="world-cards-3">
-            <span className="id-label">world-cards-container-3</span>
+          <div className="world-cards-3">
             
-            <article id="world-card-3-1" className="world-card-3">
-              <span className="id-label">world-card-3-1</span>
+            <article className="world-card-3">
               <div className="world-card-image-3">
                 <img src="/ttttttt.jpg" alt="Saudi Arabia Pakistan defense meeting" />
               </div>
@@ -1484,8 +1356,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="world-card-3-2" className="world-card-3">
-              <span className="id-label">world-card-3-2</span>
+            <article className="world-card-3">
               <div className="world-card-image-3">
                 <img src="/ttttttt.jpg" alt="Starmer Trump meeting" />
               </div>
@@ -1495,8 +1366,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="world-card-3-3" className="world-card-3">
-              <span className="id-label">world-card-3-3</span>
+            <article className="world-card-3">
               <div className="world-card-image-3">
                 <img src="/ttttttt.jpg" alt="France protests strikes" />
               </div>
@@ -1506,8 +1376,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="world-card-3-4" className="world-card-3">
-              <span className="id-label">world-card-3-4</span>
+            <article className="world-card-3">
               <div className="world-card-image-3">
                 <img src="/ttttttt.jpg" alt="Australia grain industry beetle threat" />
               </div>
@@ -1520,43 +1389,37 @@ function Home() {
         </section>
 
         {/* Entertainment Section 5 (Duplicated from Crypto Section 4) */}
-        <section id="entertainment-section-5" className="entertainment-section-5">
+        <section className="entertainment-section-5">
           <div className="entertainment-header-5">
-            <h2 id="entertainment-title-5" className="entertainment-title-5">
+            <h2 className="entertainment-title-5">
               <a href="/entertainment" className="entertainment-link-5">Entertainment &gt;</a>
-              <span className="id-label">entertainment-title-5</span>
             </h2>
           </div>
           
-          <div id="entertainment-cards-container-5" className="entertainment-cards-5">
-            <span className="id-label">entertainment-cards-container-5</span>
+          <div className="entertainment-cards-5">
             
-            <article id="entertainment-card-5-1" className="entertainment-card-5">
-              <span className="id-label">entertainment-card-5-1</span>
+            <article className="entertainment-card-5">
               <div className="entertainment-card-content-5">
                 <h3 className="entertainment-card-title-5">New Marvel movie breaks box office records in opening weekend</h3>
                 <p className="entertainment-card-time-5">31 mins ago</p>
               </div>
             </article>
 
-            <article id="entertainment-card-5-2" className="entertainment-card-5">
-              <span className="id-label">entertainment-card-5-2</span>
+            <article className="entertainment-card-5">
               <div className="entertainment-card-content-5">
                 <h3 className="entertainment-card-title-5">Taylor Swift announces surprise album during concert tour</h3>
                 <p className="entertainment-card-time-5">7 hours ago</p>
               </div>
             </article>
 
-            <article id="entertainment-card-5-3" className="entertainment-card-5">
-              <span className="id-label">entertainment-card-5-3</span>
+            <article className="entertainment-card-5">
               <div className="entertainment-card-content-5">
                 <h3 className="entertainment-card-title-5">Netflix original series wins Emmy for best drama</h3>
                 <p className="entertainment-card-time-5">2 hours ago</p>
               </div>
             </article>
 
-            <article id="entertainment-card-5-4" className="entertainment-card-5">
-              <span className="id-label">entertainment-card-5-4</span>
+            <article className="entertainment-card-5">
               <div className="entertainment-card-content-5">
                 <h3 className="entertainment-card-title-5">Hollywood actors reach new contract agreement after negotiations</h3>
                 <p className="entertainment-card-time-5">4 hours ago</p>
@@ -1566,19 +1429,16 @@ function Home() {
         </section>
 
         {/* Local News Section 4 (Duplicated from World News Section 3) */}
-        <section id="local-news-section-4" className="local-section-4">
+        <section className="local-section-4">
           <div className="local-header-4">
-            <h2 id="local-title-4" className="local-title-4">
+            <h2 className="local-title-4">
               <a href="/local" className="local-link-4">Local &gt;</a>
-              <span className="id-label">local-title-4</span>
             </h2>
           </div>
           
-          <div id="local-cards-container-4" className="local-cards-4">
-            <span className="id-label">local-cards-container-4</span>
+          <div className="local-cards-4">
             
-            <article id="local-card-4-1" className="local-card-4">
-              <span className="id-label">local-card-4-1</span>
+            <article className="local-card-4">
               <div className="local-card-image-4">
                 <img src="/ttttttt.jpg" alt="City council budget meeting" />
               </div>
@@ -1588,8 +1448,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="local-card-4-2" className="local-card-4">
-              <span className="id-label">local-card-4-2</span>
+            <article className="local-card-4">
               <div className="local-card-image-4">
                 <img src="/ttttttt.jpg" alt="Local school district announcement" />
               </div>
@@ -1599,8 +1458,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="local-card-4-3" className="local-card-4">
-              <span className="id-label">local-card-4-3</span>
+            <article className="local-card-4">
               <div className="local-card-image-4">
                 <img src="/ttttttt.jpg" alt="Community park renovation" />
               </div>
@@ -1610,8 +1468,7 @@ function Home() {
               </div>
             </article>
 
-            <article id="local-card-4-4" className="local-card-4">
-              <span className="id-label">local-card-4-4</span>
+            <article className="local-card-4">
               <div className="local-card-image-4">
                 <img src="/ttttttt.jpg" alt="Local business expansion" />
               </div>
@@ -1624,22 +1481,17 @@ function Home() {
         </section>
 
         {/* Health Categories Section 5 (Duplicated from Categories Section 4) */}
-        <section id="health-categories-section-5" className="health-categories-section-5">
-          <span className="id-label">health-categories-section-5</span>
-          <div id="health-categories-grid-5" className="health-categories-grid-5">
-            <span className="id-label">health-categories-grid-5</span>
+        <section className="health-categories-section-5">
+          <div className="health-categories-grid-5">
             
             {/* Health Column 5 */}
-            <div id="health-column-5" className="health-category-column-5">
-              <span className="id-label">health-column-5</span>
-              <h2 id="health-header-5" className="health-category-header-5">
-                <span className="id-label">health-header-5</span>
+            <div className="health-category-column-5">
+              <h2 className="health-category-header-5">
                 <a href="/health" className="health-category-link-5">Health</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="health-card-5-1" className="health-category-card-5 featured">
-                <span className="id-label">health-card-5-1</span>
+              <article className="health-category-card-5 featured">
                 <div className="health-category-card-image-5">
                   <img src="/ttttttt.jpg" alt="Medical breakthrough research" />
                 </div>
@@ -1649,24 +1501,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="health-card-5-2" className="health-category-card-5">
-                <span className="id-label">health-card-5-2</span>
+              <article className="health-category-card-5">
                 <h3 className="health-category-card-title-5">CDC updates vaccination guidelines for fall season</h3>
                 <p className="health-category-card-time-5">10 hours ago</p>
               </article>
             </div>
 
             {/* Politics Column 5 */}
-            <div id="politics-column-5" className="health-category-column-5">
-              <span className="id-label">politics-column-5</span>
-              <h2 id="politics-header-5" className="health-category-header-5">
-                <span className="id-label">politics-header-5</span>
+            <div className="health-category-column-5">
+              <h2 className="health-category-header-5">
                 <a href="/politics" className="health-category-link-5">Politics</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="politics-card-5-1" className="health-category-card-5 featured">
-                <span className="id-label">politics-card-5-1</span>
+              <article className="health-category-card-5 featured">
                 <div className="health-category-card-image-5">
                   <img src="/ttttttt.jpg" alt="Congressional hearing session" />
                 </div>
@@ -1676,24 +1524,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="politics-card-5-2" className="health-category-card-5">
-                <span className="id-label">politics-card-5-2</span>
+              <article className="health-category-card-5">
                 <h3 className="health-category-card-title-5">Senate committee reviews new climate policy proposals</h3>
                 <p className="health-category-card-time-5">10 hours ago</p>
               </article>
             </div>
 
             {/* Business Column 5 */}
-            <div id="business-column-5" className="health-category-column-5">
-              <span className="id-label">business-column-5</span>
-              <h2 id="business-header-5" className="health-category-header-5">
-                <span className="id-label">business-header-5</span>
+            <div className="health-category-column-5">
+              <h2 className="health-category-header-5">
                 <a href="/business" className="health-category-link-5">Business</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="business-card-5-1" className="health-category-card-5 featured">
-                <span className="id-label">business-card-5-1</span>
+              <article className="health-category-card-5 featured">
                 <div className="health-category-card-image-5">
                   <img src="/ttttttt.jpg" alt="Stock market trends" />
                 </div>
@@ -1703,24 +1547,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="business-card-5-2" className="health-category-card-5">
-                <span className="id-label">business-card-5-2</span>
+              <article className="health-category-card-5">
                 <h3 className="health-category-card-title-5">Federal Reserve considers interest rate adjustments next quarter</h3>
                 <p className="health-category-card-time-5">4 hours ago</p>
               </article>
             </div>
 
             {/* Technology Column 5 */}
-            <div id="technology-column-5" className="health-category-column-5">
-              <span className="id-label">technology-column-5</span>
-              <h2 id="technology-header-5" className="health-category-header-5">
-                <span className="id-label">technology-header-5</span>
+            <div className="health-category-column-5">
+              <h2 className="health-category-header-5">
                 <a href="/technology" className="health-category-link-5">Technology</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="technology-card-5-1" className="health-category-card-5 featured">
-                <span className="id-label">technology-card-5-1</span>
+              <article className="health-category-card-5 featured">
                 <div className="health-category-card-image-5">
                   <img src="/ttttttt.jpg" alt="AI innovation showcase" />
                 </div>
@@ -1730,8 +1570,7 @@ function Home() {
                 </div>
               </article>
 
-              <article id="technology-card-5-2" className="health-category-card-5">
-                <span className="id-label">technology-card-5-2</span>
+              <article className="health-category-card-5">
                 <h3 className="health-category-card-title-5">Google announces breakthrough in quantum computing development</h3>
                 <p className="health-category-card-time-5">September 18, 2025</p>
               </article>
@@ -1745,22 +1584,17 @@ function Home() {
         </div>
 
         {/* Health Categories Section 6 (Duplicated from Health Categories Section 5) */}
-        <section id="health-categories-section-6" className="health-categories-section-6">
-          <span className="id-label">health-categories-section-6</span>
-          <div id="health-categories-grid-6" className="health-categories-grid-6">
-            <span className="id-label">health-categories-grid-6</span>
+        <section className="health-categories-section-6">
+          <div className="health-categories-grid-6">
             
             {/* Health Column 6 */}
-            <div id="health-column-6" className="health-category-column-6">
-              <span className="id-label">health-column-6</span>
-              <h2 id="health-header-6" className="health-category-header-6">
-                <span className="id-label">health-header-6</span>
+            <div className="health-category-column-6">
+              <h2 className="health-category-header-6">
                 <a href="/health" className="health-category-link-6">Health</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="health-card-6-1" className="health-category-card-6 featured">
-                <span className="id-label">health-card-6-1</span>
+              <article className="health-category-card-6 featured">
                 <div className="health-category-card-image-6">
                   <img src="/ttttttt.jpg" alt="Medical breakthrough research" />
                 </div>
@@ -1770,24 +1604,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="health-card-6-2" className="health-category-card-6">
-                <span className="id-label">health-card-6-2</span>
+              <article className="health-category-card-6">
                 <h3 className="health-category-card-title-6">CDC updates vaccination guidelines for fall season</h3>
                 <p className="health-category-card-time-6">10 hours ago</p>
               </article>
             </div>
 
             {/* Politics Column 6 */}
-            <div id="politics-column-6" className="health-category-column-6">
-              <span className="id-label">politics-column-6</span>
-              <h2 id="politics-header-6" className="health-category-header-6">
-                <span className="id-label">politics-header-6</span>
+            <div className="health-category-column-6">
+              <h2 className="health-category-header-6">
                 <a href="/politics" className="health-category-link-6">Politics</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="politics-card-6-1" className="health-category-card-6 featured">
-                <span className="id-label">politics-card-6-1</span>
+              <article className="health-category-card-6 featured">
                 <div className="health-category-card-image-6">
                   <img src="/ttttttt.jpg" alt="Congressional hearing session" />
                 </div>
@@ -1797,24 +1627,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="politics-card-6-2" className="health-category-card-6">
-                <span className="id-label">politics-card-6-2</span>
+              <article className="health-category-card-6">
                 <h3 className="health-category-card-title-6">Senate committee reviews new climate policy proposals</h3>
                 <p className="health-category-card-time-6">10 hours ago</p>
               </article>
             </div>
 
             {/* Business Column 6 */}
-            <div id="business-column-6" className="health-category-column-6">
-              <span className="id-label">business-column-6</span>
-              <h2 id="business-header-6" className="health-category-header-6">
-                <span className="id-label">business-header-6</span>
+            <div className="health-category-column-6">
+              <h2 className="health-category-header-6">
                 <a href="/business" className="health-category-link-6">Business</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="business-card-6-1" className="health-category-card-6 featured">
-                <span className="id-label">business-card-6-1</span>
+              <article className="health-category-card-6 featured">
                 <div className="health-category-card-image-6">
                   <img src="/ttttttt.jpg" alt="Stock market trends" />
                 </div>
@@ -1824,24 +1650,20 @@ function Home() {
                 </div>
               </article>
 
-              <article id="business-card-6-2" className="health-category-card-6">
-                <span className="id-label">business-card-6-2</span>
+              <article className="health-category-card-6">
                 <h3 className="health-category-card-title-6">Federal Reserve considers interest rate adjustments next quarter</h3>
                 <p className="health-category-card-time-6">4 hours ago</p>
               </article>
             </div>
 
             {/* Technology Column 6 */}
-            <div id="technology-column-6" className="health-category-column-6">
-              <span className="id-label">technology-column-6</span>
-              <h2 id="technology-header-6" className="health-category-header-6">
-                <span className="id-label">technology-header-6</span>
+            <div className="health-category-column-6">
+              <h2 className="health-category-header-6">
                 <a href="/technology" className="health-category-link-6">Technology</a>
                 <span className="arrow-symbol">›</span>
               </h2>
               
-              <article id="technology-card-6-1" className="health-category-card-6 featured">
-                <span className="id-label">technology-card-6-1</span>
+              <article className="health-category-card-6 featured">
                 <div className="health-category-card-image-6">
                   <img src="/ttttttt.jpg" alt="AI innovation showcase" />
                 </div>
@@ -1851,8 +1673,7 @@ function Home() {
                 </div>
               </article>
 
-              <article id="technology-card-6-2" className="health-category-card-6">
-                <span className="id-label">technology-card-6-2</span>
+              <article className="health-category-card-6">
                 <h3 className="health-category-card-title-6">Google announces breakthrough in quantum computing development</h3>
                 <p className="health-category-card-time-6">September 18, 2025</p>
               </article>

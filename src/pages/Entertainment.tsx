@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
+import { newsAPI } from '../services/newsAPI';
+import { NewsArticle } from '../types/news';
 import './Home.css'; // Use the same CSS as Home
 
-interface NewsArticle {
-  title: string;
-  urlToImage: string | null;
-  publishedAt: string;
-  url: string;
-}
+// Using NewsArticle from types/news.ts
 
 interface NewsData {
   worldNews: NewsArticle[];
@@ -74,10 +71,14 @@ const Entertainment: React.FC = () => {
   };
 
   const mockArticle = (title: string, timeAgo: string = '2 hours ago'): NewsArticle => ({
+    id: Math.random().toString(),
     title,
-    urlToImage: "/ttttttt.jpg",
+    description: 'Entertainment news description',
+    imageUrl: "/ttttttt.jpg",
     publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-    url: "#"
+    url: "#",
+    source: { name: 'Entertainment News' },
+    category: 'entertainment'
   });
 
   const loadMoreArticles = async () => {
@@ -103,10 +104,14 @@ const Entertainment: React.FC = () => {
       
       // Mock data to avoid API rate limits
       const mockArticle = (title: string, imageUrl: string = "/ttttttt.jpg"): NewsArticle => ({
+        id: Math.random().toString(),
         title,
-        urlToImage: imageUrl,
+        description: 'Entertainment news description',
+        imageUrl: imageUrl,
         publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-        url: "#"
+        url: "#",
+        source: { name: 'Entertainment News' },
+        category: 'entertainment'
       });
 
       setTimeout(() => {
@@ -218,13 +223,13 @@ const Entertainment: React.FC = () => {
     <div className="home">
       <div className="home__container">
         {/* World News Section */}
-        <section id="world-news-section" className="world-section">          
-          <div id="world-cards-container" className="world-cards">            
+        <section className="world-section">          
+          <div className="world-cards">            
             {newsData.worldNews.map((article, index) => (
-              <article key={index} id={`world-card-${index + 1}`} className="world-card">
+              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                 <div className="world-card-image">
                   <img 
-                    src={article.urlToImage || "/ttttttt.jpg"} 
+                    src={article.imageUrl || "/ttttttt.jpg"} 
                     alt={article.title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -241,10 +246,10 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* Entertainment Updates Section */}
-        <section id="business-section" className="crypto-section">          
-          <div id="business-cards-container" className="crypto-cards">            
+        <section className="crypto-section">          
+          <div className="crypto-cards">            
             {newsData.entertainmentUpdates.map((article, index) => (
-              <article key={index} id={`business-card-${index + 1}`} className="crypto-card">
+              <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -255,21 +260,17 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* Categories Section */}
-        <section id="categories-section" className="categories-section">
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Markets Column */}
-            <div id="movies-column" className="category-column">
-              <h2 id="movies-header" className="category-header">
-                <a href="/movies" className="category-link">Markets</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.movies.map((article: NewsArticle, index: number) => (
-                <article key={index} id={`movies-card-${index + 1}`} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+                <article key={index} className={`category-card ${index === 0 ? 'featured' : ''}`}>
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -286,22 +287,18 @@ const Entertainment: React.FC = () => {
             </div>
 
             {/* Finance Column */}
-            <div id="music-column" className="category-column">
-              <h2 id="music-header" className="category-header">
-                <a href="/music" className="category-link">Finance</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.music.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`music-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -318,22 +315,18 @@ const Entertainment: React.FC = () => {
             </div>
 
             {/* Startups Column */}
-            <div id="gaming-column" className="category-column">
-              <h2 id="gaming-header" className="category-header">
-                <a href="/gaming" className="category-link">Startups</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.gaming.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`gaming-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -350,22 +343,18 @@ const Entertainment: React.FC = () => {
             </div>
 
             {/* Economy Column */}
-            <div id="celebrities-column" className="category-column">
-              <h2 id="celebrities-header" className="category-header">
-                <a href="/celebrities" className="category-link">Economy</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
               {newsData.celebrities.map((article: NewsArticle, index: number) => (
                 <article 
                   key={index} 
-                  id={`celebrities-card-${index + 1}`} 
+                  
                   className={`category-card ${index === 0 ? 'featured' : ''}`}
                 >
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.urlToImage || "/ttttttt.jpg"} 
+                        src={article.imageUrl || "/ttttttt.jpg"} 
                         alt={article.title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -384,13 +373,13 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 1 - World News Section */}
-        <section id="world-news-section-2" className="world-section">          
-          <div id="world-cards-container-2" className="world-cards">            
+        <section className="world-section">          
+          <div className="world-cards">            
             {newsData.worldNews2.map((article: NewsArticle, index: number) => (
-              <article key={index} id={`world-card-2-${index + 1}`} className="world-card">
+              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                 <div className="world-card-image">
                   <img 
-                    src={article.urlToImage || "/ttttttt.jpg"} 
+                    src={article.imageUrl || "/ttttttt.jpg"} 
                     alt={article.title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/ttttttt.jpg";
@@ -407,10 +396,10 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 1 - Entertainment Updates Section */}
-        <section id="business-section-2" className="crypto-section">          
-          <div id="business-cards-container-2" className="crypto-cards">            
+        <section className="crypto-section">          
+          <div className="crypto-cards">            
             {newsData.entertainmentUpdates2.map((article: NewsArticle, index: number) => (
-              <article key={index} id={`business-card-2-${index + 1}`} className="crypto-card">
+              <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
                   <p className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</p>
@@ -421,20 +410,12 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 1 - Categories Section */}
-        <section id="categories-section-2" className="categories-section">
-          <span className="id-label">categories-section-2</span>
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Bitcoin Column */}
-            <div id="bitcoin-column-2" className="category-column">
-              <span className="id-label">bitcoin-column-2</span>
-              <h2 id="bitcoin-header-2" className="category-header">
-                <span className="id-label">bitcoin-header-2</span>
-                <a href="/bitcoin" className="category-link">Bitcoin</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="bitcoin-card-2-1" className="category-card featured">
-                <span className="id-label">bitcoin-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Bitcoin layer 2 development" />
                 </div>
@@ -444,24 +425,16 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="bitcoin-card-2-2" className="category-card">
-                <span className="id-label">bitcoin-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Taproot adoption reaches 80% among Bitcoin nodes</h3>
                 <p className="category-card-time">1.5 hours ago</p>
               </article>
             </div>
 
             {/* Ethereum Column */}
-            <div id="ethereum-column-2" className="category-column">
-              <span className="id-label">ethereum-column-2</span>
-              <h2 id="ethereum-header-2" className="category-header">
-                <span className="id-label">ethereum-header-2</span>
-                <a href="/ethereum" className="category-link">Ethereum</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="ethereum-card-2-1" className="category-card featured">
-                <span className="id-label">ethereum-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Ethereum sharding upgrade" />
                 </div>
@@ -471,24 +444,16 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="ethereum-card-2-2" className="category-card">
-                <span className="id-label">ethereum-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">EIP-4844 reduces transaction costs by 90% on rollups</h3>
                 <p className="category-card-time">2.5 hours ago</p>
               </article>
             </div>
 
             {/* DeFi Column */}
-            <div id="defi-column-2" className="category-column">
-              <span className="id-label">defi-column-2</span>
-              <h2 id="defi-header-2" className="category-header">
-                <span className="id-label">defi-header-2</span>
-                <a href="/defi" className="category-link">DeFi</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="defi-card-2-1" className="category-card featured">
-                <span className="id-label">defi-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Cross-chain DeFi protocol" />
                 </div>
@@ -498,24 +463,16 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="defi-card-2-2" className="category-card">
-                <span className="id-label">defi-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Algorithmic stablecoin maintains perfect peg for 6 months</h3>
                 <p className="category-card-time">3.5 hours ago</p>
               </article>
             </div>
 
             {/* NFTs Column */}
-            <div id="nfts-column-2" className="category-column">
-              <span className="id-label">nfts-column-2</span>
-              <h2 id="nfts-header-2" className="category-header">
-                <span className="id-label">nfts-header-2</span>
-                <a href="/nfts" className="category-link">NFTs</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="nfts-card-2-1" className="category-card featured">
-                <span className="id-label">nfts-card-2-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Dynamic NFT marketplace" />
                 </div>
@@ -525,8 +482,7 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="nfts-card-2-2" className="category-card">
-                <span className="id-label">nfts-card-2-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Music NFTs generate $50M in royalties for artists</h3>
                 <p className="category-card-time">4.2 hours ago</p>
               </article>
@@ -535,13 +491,11 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 2 - World News Section */}
-        <section id="world-news-section-3" className="world-section">
+        <section className="world-section">
           
-          <div id="world-cards-container-3" className="world-cards">
-            <span className="id-label">world-cards-container-3</span>
+          <div className="world-cards">
             
-            <article id="world-card-3-1" className="world-card">
-              <span className="id-label">world-card-3-1</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Crypto staking rewards" />
               </div>
@@ -551,8 +505,7 @@ const Entertainment: React.FC = () => {
               </div>
             </article>
 
-            <article id="world-card-3-2" className="world-card">
-              <span className="id-label">world-card-3-2</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Decentralized identity" />
               </div>
@@ -562,8 +515,7 @@ const Entertainment: React.FC = () => {
               </div>
             </article>
 
-            <article id="world-card-3-3" className="world-card">
-              <span className="id-label">world-card-3-3</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Crypto derivatives market" />
               </div>
@@ -573,8 +525,7 @@ const Entertainment: React.FC = () => {
               </div>
             </article>
 
-            <article id="world-card-3-4" className="world-card">
-              <span className="id-label">world-card-3-4</span>
+            <article className="world-card">
               <div className="world-card-image">
                 <img src="/ttttttt.jpg" alt="Quantum-resistant blockchain" />
               </div>
@@ -587,37 +538,32 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 2 - Crypto Updates Section */}
-        <section id="crypto-section-3" className="crypto-section">
+        <section className="crypto-section">
           
-          <div id="crypto-cards-container-3" className="crypto-cards">
-            <span className="id-label">crypto-cards-container-3</span>
+          <div className="crypto-cards">
             
-            <article id="crypto-card-3-1" className="crypto-card">
-              <span className="id-label">crypto-card-3-1</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Cosmos ecosystem introduces interchain security for 50 zones</h3>
                 <p className="crypto-card-time">35 mins ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-2" className="crypto-card">
-              <span className="id-label">crypto-card-3-2</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Arbitrum One becomes fastest growing Layer 2 with 2M users</h3>
                 <p className="crypto-card-time">1 hour ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-3" className="crypto-card">
-              <span className="id-label">crypto-card-3-3</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Polkadot parachain auctions raise $2B for ecosystem projects</h3>
                 <p className="crypto-card-time">1.8 hours ago</p>
               </div>
             </article>
 
-            <article id="crypto-card-3-4" className="crypto-card">
-              <span className="id-label">crypto-card-3-4</span>
+            <article className="crypto-card">
               <div className="crypto-card-content">
                 <h3 className="crypto-card-title">Binance Smart Chain upgrades consensus mechanism for efficiency</h3>
                 <p className="crypto-card-time">2.8 hours ago</p>
@@ -627,20 +573,12 @@ const Entertainment: React.FC = () => {
         </section>
 
         {/* DUPLICATE SET 2 - Categories Section */}
-        <section id="categories-section-3" className="categories-section">
-          <span className="id-label">categories-section-3</span>
+        <section className="categories-section">
           <div className="categories-grid">
             {/* Bitcoin Column */}
-            <div id="bitcoin-column-3" className="category-column">
-              <span className="id-label">bitcoin-column-3</span>
-              <h2 id="bitcoin-header-3" className="category-header">
-                <span className="id-label">bitcoin-header-3</span>
-                <a href="/bitcoin" className="category-link">Bitcoin</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="bitcoin-card-3-1" className="category-card featured">
-                <span className="id-label">bitcoin-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Bitcoin ordinals growth" />
                 </div>
@@ -650,24 +588,16 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="bitcoin-card-3-2" className="category-card">
-                <span className="id-label">bitcoin-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">RGB protocol enables smart contracts on Bitcoin network</h3>
                 <p className="category-card-time">1.8 hours ago</p>
               </article>
             </div>
 
             {/* Ethereum Column */}
-            <div id="ethereum-column-3" className="category-column">
-              <span className="id-label">ethereum-column-3</span>
-              <h2 id="ethereum-header-3" className="category-header">
-                <span className="id-label">ethereum-header-3</span>
-                <a href="/ethereum" className="category-link">Ethereum</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="ethereum-card-3-1" className="category-card featured">
-                <span className="id-label">ethereum-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="Ethereum validators growth" />
                 </div>
@@ -677,24 +607,16 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="ethereum-card-3-2" className="category-card">
-                <span className="id-label">ethereum-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Account abstraction wallets gain 2M users in one month</h3>
                 <p className="category-card-time">2.8 hours ago</p>
               </article>
             </div>
 
             {/* DeFi Column */}
-            <div id="defi-column-3" className="category-column">
-              <span className="id-label">defi-column-3</span>
-              <h2 id="defi-header-3" className="category-header">
-                <span className="id-label">defi-header-3</span>
-                <a href="/defi" className="category-link">DeFi</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="defi-card-3-1" className="category-card featured">
-                <span className="id-label">defi-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="DeFi insurance protocol" />
                 </div>
@@ -704,24 +626,16 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="defi-card-3-2" className="category-card">
-                <span className="id-label">defi-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Automated market makers process $50B weekly volume</h3>
                 <p className="category-card-time">3.8 hours ago</p>
               </article>
             </div>
 
             {/* NFTs Column */}
-            <div id="nfts-column-3" className="category-column">
-              <span className="id-label">nfts-column-3</span>
-              <h2 id="nfts-header-3" className="category-header">
-                <span className="id-label">nfts-header-3</span>
-                <a href="/nfts" className="category-link">NFTs</a>
-                <span className="arrow-symbol">›</span>
-              </h2>
+            <div className="category-column">
               
-              <article id="nfts-card-3-1" className="category-card featured">
-                <span className="id-label">nfts-card-3-1</span>
+              <article className="category-card featured">
                 <div className="category-card-image">
                   <img src="/ttttttt.jpg" alt="NFT fractionalization" />
                 </div>
@@ -731,8 +645,7 @@ const Entertainment: React.FC = () => {
                 </div>
               </article>
 
-              <article id="nfts-card-3-2" className="category-card">
-                <span className="id-label">nfts-card-3-2</span>
+              <article className="category-card">
                 <h3 className="category-card-title">Virtual real estate NFTs generate $25M in monthly sales</h3>
                 <p className="category-card-time">4.5 hours ago</p>
               </article>
@@ -744,20 +657,19 @@ const Entertainment: React.FC = () => {
         {additionalSections.map((sectionArticles: NewsArticle[], sectionIndex: number) => (
           <section 
             key={sectionIndex} 
-            id={`additional-news-section-${sectionIndex + 1}`} 
+            
             className="world-section"
           >
-            <div id={`additional-cards-container-${sectionIndex + 1}`} className="world-cards">
+            <div className="world-cards">
               {sectionArticles.map((article: NewsArticle, articleIndex: number) => (
                 <article 
                   key={articleIndex} 
-                  id={`additional-card-${sectionIndex + 1}-${articleIndex + 1}`} 
+                  
                   className="world-card"
                 >
-                  <span className="id-label">{`additional-card-${sectionIndex + 1}-${articleIndex + 1}`}</span>
                   <div className="world-card-image">
                     <img 
-                      src={article.urlToImage || "/ttttttt.jpg"} 
+                      src={article.imageUrl || "/ttttttt.jpg"} 
                       alt={article.title}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/ttttttt.jpg";
