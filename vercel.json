@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "api/fetch-news.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "env": {
+    "REACT_APP_SUPABASE_URL": "https://nzugwnffhegzbtwfjffn.supabase.co",
+    "REACT_APP_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56dWd3bmZmaGVnemJ0d2ZqZmZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0OTEwNDAsImV4cCI6MjA3NTA2NzA0MH0.uZGrNeoURbL8IzVW2saPpGJq3ovHAv7SvdVrF1NkxMQ",
+    "REACT_APP_NEWSDATA_API_KEY": "pub_d46b571620df42fe81341ffb2f6c8236"
+  },
+  "crons": [
+    {
+      "path": "/api/fetch-news?category=politics",
+      "schedule": "0 */2 * * *"
+    }
+  ]
+}

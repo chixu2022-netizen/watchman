@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
-import { newsAPI } from '../services/newsAPI';
+import { simpleNewsService } from '../services/simpleNews';
 import { NewsArticle } from '../types/news';
 import './Home.css'; // Use the same CSS as Home
 

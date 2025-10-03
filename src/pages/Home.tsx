@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
 import StockTicker from '../components/StockTicker';
+import { TestNewsButton } from '../components/TestDatabase';
+import { TestingDashboard } from '../components/TestingDashboard';
 import { HomepageNewsData, NewsArticle } from '../types/news';
 import { newsAPI } from '../services/newsAPI'; // Using real NewsAPI for dynamic content
 import { mockNewsAPI } from '../services/mockNewsData'; // Fallback only
@@ -73,6 +75,10 @@ function Home() {
   return (
     <div className="home">
       <StockTicker />
+      
+      {/* Testing Dashboard - Remove after testing */}
+      <TestingDashboard />
+      
       <div className="home__container">
         {/* Duplicated Technology Section with Sidebar Layout - NEW AT TOP */}
         <div className="tech-sidebar-layout">

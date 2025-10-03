@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
-import { supabaseDatabaseService } from '../services/supabaseDatabase';
+import { simpleNewsService } from '../services/simpleNews';
 import { NewsArticle } from '../types/news';
 import './Home.css';
 
@@ -27,7 +27,7 @@ const Politics: React.FC = () => {
         console.log('🏛️ Loading politics news...');
         
         // Get politics news from database-first service
-        const articles = await supabaseDatabaseService.getNewsByCategory('politics', 30);
+        const articles = await simpleNewsService.getNewsByCategory('politics', 30);
         setPoliticsNews(articles);
         
         console.log(`✅ Loaded ${articles.length} politics articles`);
@@ -112,13 +112,10 @@ const Politics: React.FC = () => {
           </h2>
           <div className="world-cards">
             {politicsNews.slice(0, 8).map((article, index) => (
-              <div 
+              <article 
                 key={article.id} 
                 className="world-card" 
                 onClick={() => window.open(article.url, '_blank')}
-                onKeyDown={(e) => e.key === 'Enter' && window.open(article.url, '_blank')}
-                tabIndex={0}
-                role="button"
                 style={{ cursor: 'pointer' }}
               >
                 <div className="world-card-image">
@@ -138,7 +135,7 @@ const Politics: React.FC = () => {
                     <span className="world-card-time">{formatTimeAgo(article.publishedAt)}</span>
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </section>
@@ -151,13 +148,10 @@ const Politics: React.FC = () => {
             </h3>
             <div className="crypto-cards">
               {politicsNews.slice(8, 16).map((article, index) => (
-                <div 
+                <article 
                   key={article.id} 
                   className="crypto-card"
                   onClick={() => window.open(article.url, '_blank')}
-                  onKeyDown={(e) => e.key === 'Enter' && window.open(article.url, '_blank')}
-                  tabIndex={0}
-                  role="button"
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="crypto-card-content">
@@ -168,7 +162,7 @@ const Politics: React.FC = () => {
                       <span className="crypto-card-time">{formatTimeAgo(article.publishedAt)}</span>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           </section>
@@ -184,13 +178,10 @@ const Politics: React.FC = () => {
               {[0, 1, 2, 3].map(columnIndex => (
                 <div key={columnIndex} className="category-column">
                   {politicsNews.slice(16 + columnIndex * 3, 16 + (columnIndex + 1) * 3).map((article, index) => (
-                    <div 
+                    <article 
                       key={article.id}
                       className={`category-card ${index === 0 ? 'featured' : ''}`}
                       onClick={() => window.open(article.url, '_blank')}
-                      onKeyDown={(e) => e.key === 'Enter' && window.open(article.url, '_blank')}
-                      tabIndex={0}
-                      role="button"
                       style={{ cursor: 'pointer' }}
                     >
                       {index === 0 && (
@@ -208,7 +199,7 @@ const Politics: React.FC = () => {
                         <h3 className="category-card-title">{article.title}</h3>
                         <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
                       </div>
-                    </div>
+                    </article>
                   ))}
                 </div>
               ))}

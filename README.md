@@ -21,11 +21,41 @@ Developer tools:
 
 - eslint, prettier, eslint-config-prettier, eslint-plugin-react, eslint-plugin-react-hooks, eslint-plugin-jsx-a11y
 
-# Getting Started with Create React App
+# 📰 Watchman News - Modern News Aggregator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A responsive React TypeScript news application with real-time news from NewsData.io API.
 
-## Available Scripts
+## 🌟 Features
+
+- **Clean Category Pages**: Politics, Health, Sports, Technology, Business, Entertainment
+- **Real-time News**: Integrated with NewsData.io API
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Performance Optimized**: Frontend caching and lazy loading
+- **Production Ready**: Deployed on Netlify with CI/CD
+
+## 🚀 Live Demo
+
+**Production Site**: [Your Netlify URL here]
+
+## 🛠 Tech Stack
+
+- **Frontend**: React 18 + TypeScript
+- **Styling**: Tailwind CSS + Custom CSS
+- **API**: NewsData.io
+- **Deployment**: Netlify
+- **Build Tool**: Create React App
+
+## 📱 Pages
+
+- **Home**: Featured news and highlights
+- **Politics**: Political news only (no subcategories)
+- **Health**: Health and medical news only
+- **Sports**: Sports coverage
+- **Technology**: Tech industry news
+- **Business**: Financial and business news
+- **Entertainment**: Celebrity and entertainment news
+
+## 💻 Local Development
 
 In the project directory, you can run:
 

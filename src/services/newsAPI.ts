@@ -1,8 +1,14 @@
 import { NewsArticle, HomepageNewsData } from '../types/news';
+import { databaseService } from './database';
+import { newsFetcherService } from './newsFetcher';
 
-// NewsData.io configuration
-const NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY || 'pub_d46b571620df42fe81341ffb2f6c8236'; // NewsData.io API key
+// Database-first approach with API fallback
+const USE_DATABASE = true; // Set to false for API-only mode
+
+// NewsData.io configuration (fallback)
+const NEWS_API_KEY = process.env.REACT_APP_NEWSDATA_API_KEY || 'pub_d46b571620df42fe81341ffb2f6c8236';
 console.log('🔧 Environment check - API Key loaded:', NEWS_API_KEY ? `${NEWS_API_KEY.slice(0, 8)}...` : 'MISSING');
+console.log('🔧 Database mode:', USE_DATABASE ? 'ENABLED' : 'DISABLED');
 const NEWS_API_BASE_URL = 'https://newsdata.io/api/1';
 
 // These are kept commented for potential future use when backend proxy is implemented

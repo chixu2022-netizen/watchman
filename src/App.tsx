@@ -13,6 +13,7 @@ import World from './pages/World';
 import Local from './pages/Local';
 import Health from './pages/Health';
 import Politics from './pages/Politics';
+import Admin from './pages/Admin';
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="/local" element={<Local />} />
             <Route path="/health" element={<Health />} />
             <Route path="/politics" element={<Politics />} />
+            <Route path="/admin" element={<Admin />} />
             {/* More routes will be added for other category pages */}
           </Routes>
         </main>
