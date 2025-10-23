@@ -1,442 +1,632 @@
 import React, { useState, useEffect } from 'react';
-import { supabaseDatabaseService } from '../services/supabaseDatabase';
-import { newsFetcherService } from '../services/newsFetcher';
+import StatsCard from '../components/Admin/StatsCard';
+import ActivityLogs from '../components/Admin/ActivityLogs';
+import ArticleTable from '../components/Admin/ArticleTable';
+import AnalyticsDashboard from '../components/Admin/AnalyticsDashboard';
+import { adminService, AdminStats } from '../services/adminService';
 import { NewsArticle } from '../types/news';
-i          <button
-            onClick={() => fetchRealNews('politics')}
-            disabled={loading}
-            style={{
-              background: '#00c851',
-              color: 'white',
-              padding: '15px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'wait' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
-          >
-            🚀 Fetch REAL Politics News
-          </button>
+import Footer from '../components/Footer';
 
-          <button
-            onClick={() => fetchCategoryNews('politics')}
-            disabled={loading}
-            style={{
-              background: '#7c4dff',
-              color: 'white',
-              padding: '15px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'wait' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
-          >
-            🏛️ Fetch Mock Politics News
-          </button>s';
-
-const Admin: React.FC = () => {
-  const [isConnected, setIsConnected] = useState<boolean | null>(null);
-  const [stats, setStats] = useState<{ [key: string]: number }>({});
-  const [logs, setLogs] = useState<string[]>([]);
+const AdminNew: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'articles' | 'analytics' | 'system'>('dashboard');
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
-  const [testArticles, setTestArticles] = useState<NewsArticle[]>([]);
+  const [articlesLoading, setArticlesLoading] = useState(false);
 
-  const addLog = (message: string) => {
-    const timestamp = new Date().toLocaleTimeString();
-    setLogs(prev => [`[${timestamp}] ${message}`, ...prev.slice(0, 9)]);
-  };
-
-  // Test database connection
-  const testConnection = async () => {
-    setLoading(true);
-    addLog('Testing database connection...');
-    
-    try {
-      const connected = await supabaseDatabaseService.testConnection();
-      setIsConnected(connected);
-      
-      if (connected) {
-        addLog('✅ Database connection successful!');
-        
-        // Get stats
-        const currentStats = await supabaseDatabaseService.getArticleStats();
-        setStats(currentStats);
-        addLog(`📊 Database stats: ${JSON.stringify(currentStats)}`);
-      } else {
-        addLog('❌ Database connection failed');
-      }
-    } catch (error) {
-      addLog(`❌ Connection error: ${error}`);
-      setIsConnected(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch fresh news using serverless function (REAL NEWS!)
-  const fetchRealNews = async (category: string) => {
-    setLoading(true);
-    addLog(`🚀 Fetching REAL ${category} news from serverless function...`);
-    
-    try {
-      // Try serverless function first (for deployed version)
-      let response;
-      try {
-        response = await fetch(`/api/fetch-news?category=${category}`);
-      } catch (e) {
-        // Fallback to mock articles for local development
-        addLog(`⚠️ Serverless function not available (local dev), using mock data`);
-        const articles = await newsFetcherService.fetchCategoryNews(category);
-        
-        if (articles.length > 0) {
-          await supabaseDatabaseService.insertNewsArticles(articles);
-          addLog(`✅ Stored ${articles.length} mock ${category} articles`);
-        }
-        return;
-      }
-      
-      if (response.ok) {
-        const result = await response.json();
-        addLog(`✅ ${result.message}`);
-        
-        // Update stats
-        const currentStats = await supabaseDatabaseService.getArticleStats();
-        setStats(currentStats);
-        
-        // Refresh articles display
-        const articles = await supabaseDatabaseService.getNewsByCategory(category, 5);
-        if (category === 'politics') {
-          setTestArticles(articles);
-        }
-      } else {
-        throw new Error(`Serverless function failed: ${response.status}`);
-      }
-    } catch (error) {
-      addLog(`❌ Error fetching real ${category} news: ${error}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fallback: Fetch fresh news for specific category (mock data)
-  const fetchCategoryNews = async (category: string) => {
-    setLoading(true);
-    addLog(`🔄 Fetching fresh ${category} news...`);
-    
-    try {
-      const articles = await newsFetcherService.fetchCategoryNews(category);
-      
-      if (articles.length > 0) {
-        // Store in database
-        await supabaseDatabaseService.insertNewsArticles(articles);
-        addLog(`✅ Fetched and stored ${articles.length} ${category} articles`);
-        
-        // Update stats
-        const currentStats = await supabaseDatabaseService.getArticleStats();
-        setStats(currentStats);
-        
-        if (category === 'politics') {
-          setTestArticles(articles.slice(0, 5));
-        }
-      } else {
-        addLog(`⚠️ No ${category} articles fetched`);
-      }
-    } catch (error) {
-      addLog(`❌ Error fetching ${category}: ${error}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch all categories
-  const fetchAllNews = async () => {
-    setLoading(true);
-    addLog('🚀 Fetching ALL news categories...');
-    
-    try {
-      await newsFetcherService.fetchAndStoreAllNews();
-      addLog('✅ All categories fetched successfully!');
-      
-      // Update stats
-      const currentStats = await supabaseDatabaseService.getArticleStats();
-      setStats(currentStats);
-      addLog(`📊 Updated stats: ${JSON.stringify(currentStats)}`);
-    } catch (error) {
-      addLog(`❌ Error fetching all news: ${error}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Test politics page data
-  const testPoliticsPage = async () => {
-    setLoading(true);
-    addLog('🏛️ Testing Politics page data...');
-    
-    try {
-      const articles = await supabaseDatabaseService.getNewsByCategory('politics', 10);
-      setTestArticles(articles);
-      addLog(`✅ Politics page: ${articles.length} articles loaded`);
-      
-      if (articles.length > 0) {
-        addLog(`📄 First article: "${articles[0].title}"`);
-      }
-    } catch (error) {
-      addLog(`❌ Politics page test failed: ${error}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Clean old articles
-  const cleanOldArticles = async () => {
-    setLoading(true);
-    addLog('🗑️ Cleaning old articles...');
-    
-    try {
-      await supabaseDatabaseService.cleanOldArticles();
-      addLog('✅ Old articles cleaned');
-      
-      // Update stats
-      const currentStats = await supabaseDatabaseService.getArticleStats();
-      setStats(currentStats);
-    } catch (error) {
-      addLog(`❌ Error cleaning articles: ${error}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Load initial stats
   useEffect(() => {
-    addLog('🎯 Admin panel loaded. Test database connection first.');
+    loadStats();
   }, []);
+
+  // Load articles when switching to articles tab
+  useEffect(() => {
+    if (activeTab === 'articles' && articles.length === 0) {
+      loadArticles();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
+
+  const loadStats = async () => {
+    setLoading(true);
+    try {
+      const data = await adminService.getAdminStats();
+      setStats(data);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadArticles = async () => {
+    setArticlesLoading(true);
+    try {
+      const data = await adminService.getFilteredArticles({ limit: 100 });
+      setArticles(data);
+    } catch (error) {
+      console.error('Error loading articles:', error);
+    } finally {
+      setArticlesLoading(false);
+    }
+  };
+
+  const handleFetchCategory = async (category: string) => {
+    setLoading(true);
+    try {
+      await adminService.fetchCategoryNews(category, 20);
+      await loadStats();
+    } catch (error) {
+      console.error('Error fetching category:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFetchAll = async () => {
+    setLoading(true);
+    try {
+      await adminService.fetchAllCategories();
+      await loadStats();
+    } catch (error) {
+      console.error('Error fetching all:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearCache = () => {
+    if (window.confirm('Clear all caches? This will force fresh API calls.')) {
+      adminService.clearAllCaches();
+      loadStats();
+    }
+  };
+
+  const handleCleanOld = async () => {
+    if (window.confirm('Clean articles older than 7 days?')) {
+      setLoading(true);
+      try {
+        await adminService.cleanOldArticles(7);
+        await loadStats();
+      } catch (error) {
+        console.error('Error cleaning:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleRefreshCategory = async (category: string) => {
+    setLoading(true);
+    try {
+      await adminService.refreshCategory(category);
+      await loadStats();
+    } catch (error) {
+      console.error('Error refreshing:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteArticle = async (articleId: string) => {
+    try {
+      await adminService.deleteArticle(articleId);
+      // Reload articles
+      await loadArticles();
+    } catch (error) {
+      console.error('Error deleting article:', error);
+    }
+  };
+
+  const categories = [
+    'politics', 'health', 'sports', 'technology',
+    'business', 'entertainment', 'world', 'crypto'
+  ];
+
+  const quotaPercentage = stats ? adminService.getQuotaPercentage() : 0;
+  const cacheHitRate = stats ? adminService.getCacheHitRate() : 0;
 
   return (
     <div className="home">
-      <div className="home__container">
-        <div style={{ 
+      <div className="home__container" style={{ padding: '20px' }}>
+        {/* Header */}
+        <div style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          padding: '30px',
-          borderRadius: '10px',
+          padding: '40px 30px',
+          borderRadius: '16px',
           marginBottom: '30px',
-          textAlign: 'center'
+          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)'
         }}>
-          <h1>🛠️ Watchman News - Admin Panel</h1>
-          <p>Backend control for your news aggregator</p>
-          <div style={{ 
-            display: 'inline-block',
-            background: isConnected === true ? '#28a745' : isConnected === false ? '#dc3545' : '#6c757d',
-            padding: '5px 15px',
-            borderRadius: '20px',
-            fontSize: '14px',
-            marginTop: '10px'
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '20px'
           }}>
-            Database: {isConnected === true ? '🟢 Connected' : isConnected === false ? '🔴 Disconnected' : '⚪ Unknown'}
+            <div>
+              <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: 700 }}>
+                🛠️ Watchman Admin Dashboard
+              </h1>
+              <p style={{ margin: 0, opacity: 0.9, fontSize: '16px' }}>
+                Complete control center for your news aggregator
+              </p>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                background: stats?.databaseConnected ? 'rgba(40, 167, 69, 0.3)' : 'rgba(220, 53, 69, 0.3)',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontSize: '14px',
+                fontWeight: 600,
+                border: `2px solid ${stats?.databaseConnected ? '#28a745' : '#dc3545'}`
+              }}>
+                {stats?.databaseConnected ? '🟢 Database Connected' : '🔴 Database Offline'}
+              </div>
+              
+              <button
+                onClick={loadStats}
+                disabled={loading}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  border: '2px solid white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                🔄 Refresh
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Control Panel */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: '15px',
-          marginBottom: '30px'
-        }}>
-          <button
-            onClick={testConnection}
-            disabled={loading}
-            style={{
-              background: '#007bff',
-              color: 'white',
-              padding: '15px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'wait' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
-          >
-            🔌 Test Database Connection
-          </button>
-
-          <button
-            onClick={() => fetchCategoryNews('politics')}
-            disabled={loading}
-            style={{
-              background: '#28a745',
-              color: 'white',
-              padding: '15px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'wait' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
-          >
-            🏛️ Fetch Politics News
-          </button>
-
-          <button
-            onClick={fetchAllNews}
-            disabled={loading}
-            style={{
-              background: '#fd7e14',
-              color: 'white',
-              padding: '15px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'wait' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
-          >
-            🚀 Fetch ALL News
-          </button>
-
-          <button
-            onClick={testPoliticsPage}
-            disabled={loading}
-            style={{
-              background: '#6f42c1',
-              color: 'white',
-              padding: '15px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'wait' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
-          >
-            🧪 Test Politics Page
-          </button>
-
-          <button
-            onClick={cleanOldArticles}
-            disabled={loading}
-            style={{
-              background: '#dc3545',
-              color: 'white',
-              padding: '15px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'wait' : 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
-            }}
-          >
-            🗑️ Clean Old Articles
-          </button>
-        </div>
-
-        {/* Statistics */}
+        {/* Tabs Navigation */}
         <div style={{
-          background: '#f8f9fa',
-          padding: '20px',
-          borderRadius: '8px',
-          marginBottom: '30px'
-        }}>
-          <h3>📊 Database Statistics</h3>
-          {Object.keys(stats).length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px' }}>
-              {Object.entries(stats).map(([category, count]) => (
-                <div key={category} style={{
-                  background: 'white',
-                  padding: '15px',
-                  borderRadius: '5px',
-                  textAlign: 'center',
-                  border: '1px solid #dee2e6'
-                }}>
-                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#007bff' }}>{count}</div>
-                  <div style={{ fontSize: '12px', color: '#666', textTransform: 'capitalize' }}>{category}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p style={{ color: '#666', fontStyle: 'italic' }}>No data yet. Test database connection first.</p>
-          )}
-        </div>
-
-        {/* Activity Logs */}
-        <div style={{
-          background: '#000',
-          color: '#00ff00',
-          padding: '20px',
-          borderRadius: '8px',
-          fontFamily: 'monospace',
+          display: 'flex',
+          gap: '8px',
           marginBottom: '30px',
-          maxHeight: '300px',
-          overflowY: 'auto'
+          borderBottom: '2px solid #e0e0e0',
+          paddingBottom: '0'
         }}>
-          <h3 style={{ color: '#00ff00', marginBottom: '15px' }}>📋 Activity Logs</h3>
-          {logs.length === 0 ? (
-            <p style={{ opacity: 0.7 }}>No activity yet...</p>
-          ) : (
-            logs.map((log, index) => (
-              <div key={index} style={{ marginBottom: '5px', fontSize: '13px' }}>
-                {log}
-              </div>
-            ))
-          )}
+          {[
+            { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+            { id: 'articles', label: '📰 Articles', icon: '📰' },
+            { id: 'analytics', label: '📈 Analytics', icon: '📈' },
+            { id: 'system', label: '⚙️ System', icon: '⚙️' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                background: activeTab === tab.id ? 'white' : 'transparent',
+                color: activeTab === tab.id ? '#667eea' : '#666',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '8px 8px 0 0',
+                cursor: 'pointer',
+                fontSize: '15px',
+                fontWeight: 600,
+                borderBottom: activeTab === tab.id ? '3px solid #667eea' : '3px solid transparent',
+                transition: 'all 0.3s'
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Test Articles Preview */}
-        {testArticles.length > 0 && (
-          <div style={{
-            background: 'white',
-            padding: '20px',
-            borderRadius: '8px',
-            border: '1px solid #dee2e6'
-          }}>
-            <h3>📰 Test Articles Preview</h3>
-            {testArticles.map((article, index) => (
-              <div key={article.id} style={{
-                padding: '15px',
-                borderBottom: index < testArticles.length - 1 ? '1px solid #eee' : 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '15px'
+        {/* Dashboard Tab */}
+        {activeTab === 'dashboard' && (
+          <div>
+            {/* Stats Cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '20px',
+              marginBottom: '30px'
+            }}>
+              <StatsCard
+                title="Total Articles"
+                value={stats?.totalArticles || 0}
+                icon="📰"
+                color="#667eea"
+                subtitle="In database"
+                loading={loading}
+              />
+              
+              <StatsCard
+                title="API Quota Used"
+                value={`${quotaPercentage}%`}
+                icon="📊"
+                color={quotaPercentage > 80 ? '#dc3545' : quotaPercentage > 50 ? '#ffc107' : '#28a745'}
+                subtitle={`${stats?.quotaStatus.remaining || 0} / ${stats?.quotaStatus.limit || 200} remaining`}
+                loading={loading}
+              />
+              
+              <StatsCard
+                title="Cache Hit Rate"
+                value={`${cacheHitRate}%`}
+                icon="⚡"
+                color="#17a2b8"
+                subtitle="Categories cached"
+                loading={loading}
+              />
+              
+              <StatsCard
+                title="Active Categories"
+                value={stats ? Object.keys(stats.articlesByCategory).length : 0}
+                icon="📂"
+                color="#fd7e14"
+                subtitle="With articles"
+                loading={loading}
+              />
+            </div>
+
+            {/* Category Breakdown */}
+            <div style={{
+              background: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              marginBottom: '30px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', fontWeight: 600 }}>
+                📂 Articles by Category
+              </h3>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                gap: '16px'
               }}>
-                <img 
-                  src={article.imageUrl || '/ttttttt.jpg'} 
-                  alt={article.title}
-                  style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '5px' }}
-                  onError={(e) => { (e.target as HTMLImageElement).src = '/ttttttt.jpg'; }}
-                />
-                <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: '0 0 5px 0', fontSize: '14px', lineHeight: '1.4' }}>{article.title}</h4>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>
-                    {article.source.name} • {new Date(article.publishedAt).toLocaleString()}
-                  </p>
-                </div>
+                {stats && Object.entries(stats.articlesByCategory).map(([category, count]) => (
+                  <div
+                    key={category}
+                    style={{
+                      background: '#f8f9fa',
+                      padding: '16px',
+                      borderRadius: '10px',
+                      border: '1px solid #e0e0e0',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '8px'
+                    }}>
+                      <span style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        textTransform: 'capitalize',
+                        color: '#495057'
+                      }}>
+                        {category}
+                      </span>
+                      <span style={{
+                        background: '#667eea',
+                        color: 'white',
+                        padding: '4px 10px',
+                        borderRadius: '12px',
+                        fontSize: '13px',
+                        fontWeight: 700
+                      }}>
+                        {count}
+                      </span>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleRefreshCategory(category)}
+                      disabled={loading}
+                      style={{
+                        width: '100%',
+                        background: 'white',
+                        color: '#667eea',
+                        border: '1px solid #667eea',
+                        padding: '6px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        fontWeight: 600
+                      }}
+                    >
+                      🔄 Refresh
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Activity Logs */}
+            <ActivityLogs autoRefresh={true} refreshInterval={2000} />
           </div>
         )}
 
-        {/* Loading Indicator */}
+        {/* Articles Tab */}
+        {activeTab === 'articles' && (
+          <div>
+            <ArticleTable
+              articles={articles}
+              loading={articlesLoading}
+              onDelete={handleDeleteArticle}
+              onRefresh={loadArticles}
+            />
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <AnalyticsDashboard stats={stats} />
+        )}
+
+        {/* System Tab */}
+        {activeTab === 'system' && (
+          <div>
+            {/* Quick Actions */}
+            <div style={{
+              background: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              marginBottom: '30px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', fontWeight: 600 }}>
+                ⚡ Quick Actions
+              </h3>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '12px'
+              }}>
+                <button
+                  onClick={handleFetchAll}
+                  disabled={loading}
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '16px',
+                    borderRadius: '10px',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                  }}
+                >
+                  🚀 Fetch All Categories
+                </button>
+
+                <button
+                  onClick={handleClearCache}
+                  disabled={loading}
+                  style={{
+                    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '16px',
+                    borderRadius: '10px',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 12px rgba(245, 87, 108, 0.3)'
+                  }}
+                >
+                  🗑️ Clear All Caches
+                </button>
+
+                <button
+                  onClick={handleCleanOld}
+                  disabled={loading}
+                  style={{
+                    background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '16px',
+                    borderRadius: '10px',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 12px rgba(250, 112, 154, 0.3)'
+                  }}
+                >
+                  🧹 Clean Old Articles
+                </button>
+
+                <button
+                  onClick={loadStats}
+                  disabled={loading}
+                  style={{
+                    background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                    color: '#333',
+                    border: 'none',
+                    padding: '16px',
+                    borderRadius: '10px',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 12px rgba(168, 237, 234, 0.3)'
+                  }}
+                >
+                  🔄 Refresh Dashboard
+                </button>
+              </div>
+            </div>
+
+            {/* Fetch by Category */}
+            <div style={{
+              background: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              marginBottom: '30px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', fontWeight: 600 }}>
+                📡 Fetch News by Category
+              </h3>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                gap: '10px'
+              }}>
+                {categories.map(category => (
+                  <button
+                    key={category}
+                    onClick={() => handleFetchCategory(category)}
+                    disabled={loading}
+                    style={{
+                      background: 'white',
+                      color: '#667eea',
+                      border: '2px solid #667eea',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      textTransform: 'capitalize',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#667eea';
+                      e.currentTarget.style.color = 'white';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'white';
+                      e.currentTarget.style.color = '#667eea';
+                    }}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Cache Status */}
+            <div style={{
+              background: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              marginBottom: '30px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', fontWeight: 600 }}>
+                💾 Cache Status
+              </h3>
+              
+              {stats && Object.keys(stats.cacheStats).length > 0 ? (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: '12px'
+                }}>
+                  {Object.entries(stats.cacheStats).map(([category, info]) => (
+                    <div
+                      key={category}
+                      style={{
+                        background: '#f8f9fa',
+                        padding: '14px',
+                        borderRadius: '8px',
+                        border: '1px solid #e0e0e0'
+                      }}
+                    >
+                      <div style={{
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        textTransform: 'capitalize',
+                        marginBottom: '6px',
+                        color: '#495057'
+                      }}>
+                        {category}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#666' }}>
+                        {info.articles} articles • Age: {info.age}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '40px',
+                  color: '#666',
+                  fontSize: '14px'
+                }}>
+                  No cache data available
+                </div>
+              )}
+            </div>
+
+            {/* Activity Logs */}
+            <ActivityLogs autoRefresh={true} refreshInterval={2000} />
+          </div>
+        )}
+
+        {/* Loading Overlay */}
         {loading && (
           <div style={{
             position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            background: 'rgba(0,0,0,0.8)',
-            color: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            textAlign: 'center',
-            zIndex: 1000
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            backdropFilter: 'blur(4px)'
           }}>
-            <div style={{ fontSize: '24px', marginBottom: '10px' }}>⏳</div>
-            <div>Processing...</div>
+            <div style={{
+              background: 'white',
+              padding: '40px',
+              borderRadius: '16px',
+              textAlign: 'center',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+            }}>
+              <div style={{
+                fontSize: '48px',
+                marginBottom: '16px',
+                animation: 'spin 2s linear infinite'
+              }}>
+                ⏳
+              </div>
+              <div style={{
+                fontSize: '18px',
+                fontWeight: 600,
+                color: '#333'
+              }}>
+                Processing...
+              </div>
+            </div>
           </div>
         )}
       </div>
+
+      <Footer />
+
+      {/* Add spin animation */}
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 };
 
-export default Admin;
+export default AdminNew;

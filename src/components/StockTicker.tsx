@@ -12,7 +12,6 @@ interface StockData {
 const StockTicker: React.FC = () => {
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Free API key for Alpha Vantage (demo key - replace with your own)
   const API_KEY = 'demo'; // Replace with your actual API key from https://www.alphavantage.co/support/#api-key
@@ -71,10 +70,8 @@ const StockTicker: React.FC = () => {
 
       const results = await Promise.all(stockPromises);
       setStocks(results);
-      setError(null);
     } catch (error) {
       console.error('Error fetching stock data:', error);
-      setError('Failed to fetch market data');
       
       // Fallback to mock data
       setStocks([
@@ -97,6 +94,7 @@ const StockTicker: React.FC = () => {
     const interval = setInterval(fetchStockData, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatPrice = (price: number) => {

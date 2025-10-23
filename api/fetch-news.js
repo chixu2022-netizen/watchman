@@ -1,9 +1,20 @@
 // Vercel serverless function to fetch real news (bypasses CORS)
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://nzugwnffhegzbtwfjffn.supabase.co';
-const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56dWd3bmZmaGVnemJ0d2ZqZmZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0OTEwNDAsImV4cCI6MjA3NTA2NzA0MH0.uZGrNeoURbL8IzVW2saPpGJq3ovHAv7SvdVrF1NkxMQ';
-const newsApiKey = process.env.REACT_APP_NEWSDATA_API_KEY || 'pub_d46b571620df42fe81341ffb2f6c8236';
+// Get credentials from environment variables (secure)
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const newsApiKey = process.env.REACT_APP_NEWSDATA_API_KEY;
+
+// Validate required environment variables
+if (!supabaseUrl || !supabaseKey || !newsApiKey) {
+  console.error('❌ Missing required environment variables');
+  console.error('Required:', {
+    supabaseUrl: !!supabaseUrl,
+    supabaseKey: !!supabaseKey,
+    newsApiKey: !!newsApiKey
+  });
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 

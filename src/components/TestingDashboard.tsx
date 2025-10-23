@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
-import { simpleNewsService } from '../services/simpleNews';
+import { optimizedNewsService } from '../services/optimizedNewsService';
 import { NewsArticle } from '../types/news';
+import { ENV } from '../config/environment';
+
+// Only show in development mode
+if (!ENV.enableTestingDashboard) {
+  console.log('🔒 Testing Dashboard disabled in production');
+}
 
 export const TestingDashboard: React.FC = () => {
   const [testResults, setTestResults] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [currentTest, setCurrentTest] = useState<string>('');
+
+  // Don't render in production (after hooks)
+  if (!ENV.enableTestingDashboard) {
+    return null;
+  }
 
   const addResult = (message: string) => {
     setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
@@ -22,7 +33,7 @@ export const TestingDashboard: React.FC = () => {
     
     try {
       const startTime = Date.now();
-      const articles = await simpleNewsService.getNewsByCategory(category, 10);
+      const articles = await optimizedNewsService.getNewsByCategory(category, 10);
       const endTime = Date.now();
       const loadTime = endTime - startTime;
       
@@ -70,11 +81,18 @@ export const TestingDashboard: React.FC = () => {
     addResult(`⚡ Average load time: ${Math.round(avgLoadTime)}ms`);
     
     // Cache stats
-    const cacheStats = simpleNewsService.getStats();
+    const stats = optimizedNewsService.getStats();
+    const cacheStats = stats.cache;
+    const quotaStatus = stats.quota;
     addResult('💾 Cache Statistics:');
-    Object.entries(cacheStats).forEach(([cat, count]) => {
-      addResult(`   ${cat}: ${count} cached articles`);
+    Object.entries(cacheStats).forEach(([cat, info]: [string, any]) => {
+      addResult(`   ${cat}: ${info.articles} articles (${info.age} old)`);
     });
+    
+    addResult('📊 API Quota Status:');
+    addResult(`   Used: ${quotaStatus.used}/${quotaStatus.limit}`);
+    addResult(`   Remaining: ${quotaStatus.remaining}`);
+    addResult(`   Resets in: ${quotaStatus.resetIn} hours`);
     
     setCurrentTest('Tests completed!');
     setIsRunning(false);
@@ -87,15 +105,18 @@ export const TestingDashboard: React.FC = () => {
     addResult('🔄 Starting preload of all categories');
     
     try {
-      await simpleNewsService.preloadAllCategories();
+      await optimizedNewsService.preloadCriticalCategories();
       addResult('✅ All categories preloaded successfully!');
       addResult('🚀 Your site will now be super fast!');
       
-      const stats = simpleNewsService.getStats();
+      const finalStats = optimizedNewsService.getStats();
       addResult('💾 Final cache status:');
-      Object.entries(stats).forEach(([cat, count]) => {
-        addResult(`   ${cat}: ${count} articles ready`);
+      Object.entries(finalStats.cache).forEach(([cat, info]: [string, any]) => {
+        addResult(`   ${cat}: ${info.articles} articles ready`);
       });
+      
+      addResult('📊 API Quota:');
+      addResult(`   Remaining: ${finalStats.quota.remaining}/${finalStats.quota.limit}`);
       
     } catch (error) {
       addResult(`❌ Preload failed: ${error}`);
@@ -107,7 +128,7 @@ export const TestingDashboard: React.FC = () => {
 
   // Clear cache
   const clearCache = () => {
-    simpleNewsService.clearCache();
+    optimizedNewsService.clearCache();
     addResult('🗑️ Cache cleared - next requests will fetch fresh data');
   };
 

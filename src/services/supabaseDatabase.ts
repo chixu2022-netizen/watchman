@@ -1,15 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 import { NewsArticle } from '../types/news';
+import { ENV } from '../config/environment';
 
-// Supabase configuration - HARDCODED (working version)
-const supabaseUrl = 'https://nzugwnffhegzbtwfjffn.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56dWd3bmZmaGVnemJ0d2ZqZmZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0OTEwNDAsImV4cCI6MjA3NTA2NzA0MH0.uZGrNeoURbL8IzVW2saPpGJq3ovHAv7SvdVrF1NkxMQ';
+// Supabase configuration - Using environment variables (SECURE)
+const supabaseUrl = ENV.supabaseUrl;
+const supabaseKey = ENV.supabaseAnonKey;
 
-console.log('� Using HARDCODED credentials (guaranteed to work)');
+// Validate configuration
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Supabase configuration missing! Check your .env file.');
+  console.error('Required: REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY');
+}
 
-// Create Supabase client
-const supabase = createClient(supabaseUrl, supabaseKey);
-console.log('✅ Supabase client created');
+// Create Supabase client (only if credentials exist)
+const supabase = (supabaseUrl && supabaseKey) 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
+
+if (supabase) {
+  console.log('✅ Supabase client created successfully');
+} else {
+  console.warn('⚠️ Supabase client not created - check environment variables');
+}
 
 export interface DatabaseNewsArticle {
   id: string;
@@ -25,15 +37,19 @@ export interface DatabaseNewsArticle {
 }
 
 class SupabaseDatabaseService {
-  // Generate mock articles when database is not available
+  async createNewsTable(): Promise<void> {
+    console.log('ℹ️ Table creation should be done via Supabase dashboard');
+    console.log('See database-setup.sql for the schema');
+  }
+
   private getMockArticles(category: string, limit: number): NewsArticle[] {
     const mockArticles: NewsArticle[] = [];
     
     for (let i = 1; i <= limit; i++) {
       mockArticles.push({
         id: `mock-${category}-${i}`,
-        title: `Mock ${category} news article ${i} - Database not configured`,
-        description: `This is a mock ${category} article. Set up Supabase database for real news.`,
+        title: `Mock ${category} news article ${i}`,
+        description: `This is a mock ${category} article.`,
         imageUrl: '/ttttttt.jpg',
         publishedAt: new Date(Date.now() - i * 3600000).toISOString(),
         url: '#',
@@ -45,40 +61,9 @@ class SupabaseDatabaseService {
     return mockArticles;
   }
 
-  // Create news table (run once during setup)
-  async createNewsTable(): Promise<void> {
-    try {
-      // Note: Table creation is usually done via Supabase dashboard
-      // This is just for reference - you'll create the table in Supabase UI
-      console.log('✅ Use Supabase dashboard to create table with this schema:');
-      console.log(`
-        CREATE TABLE news_articles (
-          id TEXT PRIMARY KEY,
-          title TEXT NOT NULL,
-          description TEXT,
-          image_url TEXT,
-          published_at TIMESTAMP NOT NULL,
-          url TEXT,
-          source TEXT,
-          category TEXT NOT NULL,
-          created_at TIMESTAMP DEFAULT NOW(),
-          is_active BOOLEAN DEFAULT TRUE
-        );
-        
-        -- Add indexes for better performance
-        CREATE INDEX idx_category ON news_articles(category);
-        CREATE INDEX idx_published_at ON news_articles(published_at);
-        CREATE INDEX idx_is_active ON news_articles(is_active);
-      `);
-    } catch (error) {
-      console.error('❌ Error with table setup:', error);
-    }
-  }
-
-  // Insert multiple news articles
   async insertNewsArticles(articles: NewsArticle[]): Promise<void> {
     if (!supabase) {
-      console.warn('⚠️ Supabase not configured. Set up database credentials in .env.local');
+      console.warn('⚠️ Supabase not configured');
       return;
     }
     
@@ -95,28 +80,24 @@ class SupabaseDatabaseService {
         is_active: true
       }));
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('news_articles')
         .upsert(supabaseArticles, { 
           onConflict: 'id',
           ignoreDuplicates: false 
         });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log(`✅ Inserted ${articles.length} articles successfully`);
+      console.log(`✅ Inserted ${articles.length} articles`);
     } catch (error) {
       console.error('❌ Error inserting articles:', error);
       throw error;
     }
   }
 
-  // Get news articles by category
   async getNewsByCategory(category: string, limit: number = 20): Promise<NewsArticle[]> {
     if (!supabase) {
-      console.warn('⚠️ Supabase not configured. Using mock data.');
       return this.getMockArticles(category, limit);
     }
     
@@ -129,9 +110,7 @@ class SupabaseDatabaseService {
         .order('published_at', { ascending: false })
         .limit(limit);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       return (data || []).map((row: DatabaseNewsArticle) => ({
         id: row.id,
@@ -144,15 +123,13 @@ class SupabaseDatabaseService {
         category: row.category
       }));
     } catch (error) {
-      console.error(`❌ Error fetching ${category} news:`, error);
+      console.error(`❌ Error fetching ${category}:`, error);
       throw error;
     }
   }
 
-  // Get latest news (all categories)
   async getLatestNews(limit: number = 50): Promise<NewsArticle[]> {
     if (!supabase) {
-      console.warn('⚠️ Supabase not configured. Using mock data.');
       return this.getMockArticles('general', limit);
     }
     
@@ -164,9 +141,7 @@ class SupabaseDatabaseService {
         .order('published_at', { ascending: false })
         .limit(limit);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       return (data || []).map((row: DatabaseNewsArticle) => ({
         id: row.id,
@@ -184,37 +159,28 @@ class SupabaseDatabaseService {
     }
   }
 
-  // Clean old articles (older than specified days)
   async cleanOldArticles(daysOld: number = 7): Promise<void> {
-    if (!supabase) {
-      console.warn('⚠️ Supabase not configured. Cannot clean old articles.');
-      return;
-    }
+    if (!supabase) return;
     
     try {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysOld);
 
       const { error } = await supabase
         .from('news_articles')
         .update({ is_active: false })
-        .lt('published_at', sevenDaysAgo.toISOString());
+        .lt('published_at', cutoffDate.toISOString());
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log('✅ Cleaned old articles successfully');
+      console.log('✅ Cleaned old articles');
     } catch (error) {
-      console.error('❌ Error cleaning old articles:', error);
+      console.error('❌ Error cleaning:', error);
     }
   }
 
-  // Get article count by category
   async getArticleStats(): Promise<{ [key: string]: number }> {
-    if (!supabase) {
-      return {};
-    }
+    if (!supabase) return {};
     
     try {
       const { data, error } = await supabase
@@ -222,9 +188,7 @@ class SupabaseDatabaseService {
         .select('category')
         .eq('is_active', true);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       const stats: { [key: string]: number } = {};
       (data || []).forEach((row: any) => {
@@ -233,33 +197,29 @@ class SupabaseDatabaseService {
 
       return stats;
     } catch (error) {
-      console.error('❌ Error fetching article stats:', error);
+      console.error('❌ Error fetching stats:', error);
       return {};
     }
   }
 
-  // Test database connection
   async testConnection(): Promise<boolean> {
-    if (!supabase) {
-      console.warn('⚠️ Supabase not configured. Cannot test connection.');
-      return false;
-    }
+    if (!supabase) return false;
     
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('news_articles')
         .select('count')
         .limit(1);
 
       if (error) {
-        console.error('❌ Database connection failed:', error);
+        console.error('❌ Connection failed:', error);
         return false;
       }
 
-      console.log('✅ Database connection successful');
+      console.log('✅ Database connected');
       return true;
     } catch (error) {
-      console.error('❌ Database connection test failed:', error);
+      console.error('❌ Connection test failed:', error);
       return false;
     }
   }

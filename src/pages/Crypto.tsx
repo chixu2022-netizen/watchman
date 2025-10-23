@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
-import { newsAPI } from '../services/newsAPI';
+import { optimizedNewsService } from '../services/optimizedNewsService';
 import { NewsArticle } from '../types/news';
+import LoadingSkeleton from '../components/LoadingSkeleton';
 import './Home.css'; // Use the same CSS as Home
 
 // Using NewsArticle from types/news.ts
@@ -104,163 +105,64 @@ const Crypto: React.FC = () => {
     const loadAllNews = async () => {
       setLoading(true);
       
-      // 🔥 NewsAPI Integration (COMMENTED OUT - Ready for activation)
-      /*
       try {
-        console.log('🚀 Fetching live crypto news from NewsAPI...');
-        const [
-          cryptoGeneral,
-          bitcoinNews, 
-          ethereumNews,
-          defiNews,
-          nftNews
-        ] = await Promise.all([
-          newsAPI.getNewsByCategory('crypto', 8),
-          newsAPI.getNewsByCategory('bitcoin', 4),
-          newsAPI.getNewsByCategory('ethereum', 4), 
-          newsAPI.getNewsByCategory('defi', 4),
-          newsAPI.getNewsByCategory('nft', 4)
-        ]);
+        console.log('🚀 Fetching STRICTLY CRYPTO NEWS with smart caching...');
         
+        // Fetch crypto news using optimized service (searches: cryptocurrency, bitcoin, ethereum, blockchain)
+        const cryptoArticles = await optimizedNewsService.getNewsByCategory('crypto', 50);
+        
+        console.log(`✅ Loaded ${cryptoArticles.length} STRICTLY crypto articles`);
+        console.log('📊 Using search query: cryptocurrency OR bitcoin OR ethereum OR blockchain');
+        
+        // If we got less than 48 articles, repeat them to fill all sections
+        while (cryptoArticles.length < 48 && cryptoArticles.length > 0) {
+          cryptoArticles.push(...cryptoArticles.slice(0, Math.min(10, 48 - cryptoArticles.length)));
+        }
+        
+        // Split articles across different sections
         setNewsData({
-          worldNews: cryptoGeneral.slice(0, 4),
-          cryptoUpdates: cryptoGeneral.slice(4, 8),
-          bitcoin: bitcoinNews,
-          ethereum: ethereumNews,
-          defi: defiNews,
-          nft: nftNews,
-          // Duplicate sections with same data
-          worldNews2: cryptoGeneral.slice(0, 4),
-          cryptoUpdates2: cryptoGeneral.slice(4, 8),
-          bitcoin2: bitcoinNews,
-          ethereum2: ethereumNews,
-          defi2: defiNews,
-          nft2: nftNews,
-          worldNews3: cryptoGeneral.slice(0, 4),
-          cryptoUpdates3: cryptoGeneral.slice(4, 8),
-          bitcoin3: bitcoinNews,
-          ethereum3: ethereumNews,
-          defi3: defiNews,
-          nft3: nftNews
+          worldNews: cryptoArticles.slice(0, 4),
+          cryptoUpdates: cryptoArticles.slice(4, 8),
+          bitcoin: cryptoArticles.slice(8, 10),
+          ethereum: cryptoArticles.slice(10, 12),
+          defi: cryptoArticles.slice(12, 14),
+          nft: cryptoArticles.slice(14, 16),
+          // Duplicate sections with different articles
+          worldNews2: cryptoArticles.slice(16, 20),
+          cryptoUpdates2: cryptoArticles.slice(20, 24),
+          bitcoin2: cryptoArticles.slice(24, 26),
+          ethereum2: cryptoArticles.slice(26, 28),
+          defi2: cryptoArticles.slice(28, 30),
+          nft2: cryptoArticles.slice(30, 32),
+          worldNews3: cryptoArticles.slice(32, 36),
+          cryptoUpdates3: cryptoArticles.slice(36, 40),
+          bitcoin3: cryptoArticles.slice(40, 42),
+          ethereum3: cryptoArticles.slice(42, 44),
+          defi3: cryptoArticles.slice(44, 46),
+          nft3: cryptoArticles.slice(46, 48)
         });
       } catch (error) {
         console.error('❌ Error fetching crypto news:', error);
-        // Fallback to mock data
+        // Fallback to mock data already defined below
       }
-      */
       
-      // Mock data (TEMPORARY - Will be replaced with live news)
-      const mockArticle = (title: string, timeAgo: string = '2 hours ago'): NewsArticle => ({
-        id: Math.random().toString(),
-        title,
-        description: 'Crypto news description',
-        imageUrl: "/ttttttt.jpg",
-        publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-        url: "#",
-        source: { name: 'Crypto News' },
-        category: 'crypto'
-      });
-
-      setTimeout(() => {
-        setNewsData({
-          worldNews: [
-            mockArticle('Bitcoin ETF approval drives crypto market surge'),
-            mockArticle('Ethereum 2.0 staking rewards hit new high'),
-            mockArticle('Major bank announces crypto custody services'),
-            mockArticle('Regulatory clarity boosts institutional adoption')
-          ],
-          cryptoUpdates: [
-            mockArticle('Bitcoin price breaks $45,000 resistance level'),
-            mockArticle('DeFi protocol launches on Ethereum mainnet'),
-            mockArticle('NFT marketplace reports record trading volume'),
-            mockArticle('Central bank digital currency pilot begins')
-          ],
-          bitcoin: [
-            mockArticle('Bitcoin mining difficulty reaches all-time high'),
-            mockArticle('Lightning Network adoption accelerates globally')
-          ],
-          ethereum: [
-            mockArticle('Ethereum gas fees drop to lowest level in months'),
-            mockArticle('Smart contract security audit reveals vulnerabilities')
-          ],
-          defi: [
-            mockArticle('DeFi total value locked surpasses $100 billion'),
-            mockArticle('Yield farming rewards drive protocol growth')
-          ],
-          nft: [
-            mockArticle('Digital art NFT sells for record-breaking price'),
-            mockArticle('Gaming NFTs gain mainstream adoption')
-          ],
-          // Duplicate sections with slight variations
-          worldNews2: [
-            mockArticle('Cryptocurrency regulation framework announced'),
-            mockArticle('Blockchain technology adoption in healthcare'),
-            mockArticle('Stablecoin market cap reaches new milestone'),
-            mockArticle('Crypto exchange implements enhanced security')
-          ],
-          cryptoUpdates2: [
-            mockArticle('Altcoin season drives market diversification'),
-            mockArticle('Institutional investors increase crypto holdings'),
-            mockArticle('Cross-chain bridge launches for multi-asset swaps'),
-            mockArticle('Crypto lending platform offers competitive rates')
-          ],
-          bitcoin2: [
-            mockArticle('Bitcoin spot ETF sees massive inflows'),
-            mockArticle('Hash rate recovery signals network strength')
-          ],
-          ethereum2: [
-            mockArticle('Layer 2 solutions reduce transaction costs'),
-            mockArticle('Ethereum roadmap updates focus on scalability')
-          ],
-          defi2: [
-            mockArticle('Decentralized exchange launches governance token'),
-            mockArticle('Liquidity mining rewards attract new users')
-          ],
-          nft2: [
-            mockArticle('Music industry embraces NFT technology'),
-            mockArticle('Virtual real estate NFTs gain investor interest')
-          ],
-          worldNews3: [
-            mockArticle('Global crypto adoption hits 100 million users'),
-            mockArticle('Central banks explore digital currency benefits'),
-            mockArticle('Cryptocurrency becomes legal tender in new country'),
-            mockArticle('Blockchain innovation drives financial inclusion')
-          ],
-          cryptoUpdates3: [
-            mockArticle('Crypto market cap approaches $2 trillion'),
-            mockArticle('Environmental concerns drive green crypto initiatives'),
-            mockArticle('Institutional custody solutions gain traction'),
-            mockArticle('Regulatory sandbox launches for crypto startups')
-          ],
-          bitcoin3: [
-            mockArticle('Bitcoin network processes record transactions'),
-            mockArticle('Corporate treasuries add Bitcoin reserves')
-          ],
-          ethereum3: [
-            mockArticle('Ethereum developers announce major upgrade'),
-            mockArticle('Enterprise blockchain adoption accelerates')
-          ],
-          defi3: [
-            mockArticle('Flash loan attacks highlight protocol security'),
-            mockArticle('Synthetic assets expand DeFi possibilities')
-          ],
-          nft3: [
-            mockArticle('Sports NFTs create new fan engagement'),
-            mockArticle('Metaverse land sales reach unprecedented levels')
-          ]
-        });
-        setLoading(false);
-      }, 1000); // Simulate loading time
+      setLoading(false);
     };
 
     loadAllNews();
   }, []);
 
+  // Using real data from optimizedNewsService - no mock data needed!
+  // Smart caching: LocalStorage → Supabase → NewsData.io API → Fallback
+
   if (loading) {
     return (
       <div className="home">
         <div className="home__container" style={{ textAlign: 'center', padding: '50px' }}>
-          <p>Loading crypto news...</p>
+          <h2 style={{ marginBottom: '30px' }}>Loading Crypto News...</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            <LoadingSkeleton variant="card" count={8} />
+          </div>
         </div>
       </div>
     );

@@ -1,9 +1,15 @@
 import { supabaseDatabaseService } from './supabaseDatabase';
 import { NewsArticle } from '../types/news';
+import { ENV, API_CONFIG } from '../config/environment';
 
-// NewsData.io API configuration
-const NEWS_API_KEY = process.env.REACT_APP_NEWSDATA_API_KEY || 'pub_d46b571620df42fe81341ffb2f6c8236';
-const NEWS_API_BASE_URL = 'https://newsdata.io/api/1';
+// NewsData.io API configuration (secure)
+const NEWS_API_KEY = ENV.newsDataApiKey;
+const NEWS_API_BASE_URL = API_CONFIG.newsDataBaseUrl;
+
+// Validate API key
+if (!NEWS_API_KEY && ENV.isDevelopment) {
+  console.warn('⚠️ NewsData.io API key not configured');
+}
 
 interface NewsDataResponse {
   status: string;

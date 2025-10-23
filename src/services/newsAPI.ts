@@ -1,15 +1,23 @@
 import { NewsArticle, HomepageNewsData } from '../types/news';
-import { databaseService } from './database';
-import { newsFetcherService } from './newsFetcher';
+import { ENV, API_CONFIG } from '../config/environment';
 
 // Database-first approach with API fallback
-const USE_DATABASE = true; // Set to false for API-only mode
+const USE_DATABASE = ENV.useDatabaseCache;
 
-// NewsData.io configuration (fallback)
-const NEWS_API_KEY = process.env.REACT_APP_NEWSDATA_API_KEY || 'pub_d46b571620df42fe81341ffb2f6c8236';
-console.log('🔧 Environment check - API Key loaded:', NEWS_API_KEY ? `${NEWS_API_KEY.slice(0, 8)}...` : 'MISSING');
-console.log('🔧 Database mode:', USE_DATABASE ? 'ENABLED' : 'DISABLED');
-const NEWS_API_BASE_URL = 'https://newsdata.io/api/1';
+// NewsData.io configuration (secure)
+const NEWS_API_KEY = ENV.newsDataApiKey;
+const NEWS_API_BASE_URL = API_CONFIG.newsDataBaseUrl;
+
+// Validate API key
+if (!NEWS_API_KEY) {
+  console.error('❌ NewsData.io API key missing! Set REACT_APP_NEWSDATA_API_KEY in .env');
+} else if (ENV.isDevelopment) {
+  console.log('🔧 NewsData.io API configured:', `${NEWS_API_KEY.slice(0, 8)}...`);
+}
+
+if (ENV.isDevelopment) {
+  console.log('🔧 Database cache mode:', USE_DATABASE ? 'ENABLED' : 'DISABLED');
+}
 
 // These are kept commented for potential future use when backend proxy is implemented
 // interface NewsAPIResponse {

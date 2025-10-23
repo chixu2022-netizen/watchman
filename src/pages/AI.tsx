@@ -1,211 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
-import { newsAPI } from '../services/newsAPI';
+import { optimizedNewsService } from '../services/optimizedNewsService';
 import { NewsArticle } from '../types/news';
-import './Home.css'; // Use the same CSS as Home
-
-// Using NewsArticle from types/news.ts
+import LoadingSkeleton from '../components/LoadingSkeleton';
+import './Home.css';
 
 interface NewsData {
   worldNews: NewsArticle[];
-  techUpdates: NewsArticle[];
-  ai: NewsArticle[];
-  blockchain: NewsArticle[];
-  hardware: NewsArticle[];
-  startups: NewsArticle[];
-  // Duplicate sections
+  updates: NewsArticle[];
+  sub1: NewsArticle[];
+  sub2: NewsArticle[];
+  sub3: NewsArticle[];
+  sub4: NewsArticle[];
   worldNews2: NewsArticle[];
-  techUpdates2: NewsArticle[];
-  ai2: NewsArticle[];
-  blockchain2: NewsArticle[];
-  hardware2: NewsArticle[];
-  startups2: NewsArticle[];
+  updates2: NewsArticle[];
+  sub1_2: NewsArticle[];
+  sub2_2: NewsArticle[];
+  sub3_2: NewsArticle[];
+  sub4_2: NewsArticle[];
   worldNews3: NewsArticle[];
-  techUpdates3: NewsArticle[];
-  ai3: NewsArticle[];
-  blockchain3: NewsArticle[];
-  hardware3: NewsArticle[];
-  startups3: NewsArticle[];
+  updates3: NewsArticle[];
+  sub1_3: NewsArticle[];
+  sub2_3: NewsArticle[];
+  sub3_3: NewsArticle[];
+  sub4_3: NewsArticle[];
 }
 
 const AI: React.FC = () => {
   const [newsData, setNewsData] = useState<NewsData>({
-    worldNews: [],
-    techUpdates: [],
-    ai: [],
-    blockchain: [],
-    hardware: [],
-    startups: [],
-    // Duplicate sections
-    worldNews2: [],
-    techUpdates2: [],
-    ai2: [],
-    blockchain2: [],
-    hardware2: [],
-    startups2: [],
-    worldNews3: [],
-    techUpdates3: [],
-    ai3: [],
-    blockchain3: [],
-    hardware3: [],
-    startups3: []
+    worldNews: [], updates: [], sub1: [], sub2: [], sub3: [], sub4: [],
+    worldNews2: [], updates2: [], sub1_2: [], sub2_2: [], sub3_2: [], sub4_2: [],
+    worldNews3: [], updates3: [], sub1_3: [], sub2_3: [], sub3_3: [], sub4_3: []
   });
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [additionalSections, setAdditionalSections] = useState<NewsArticle[][]>([]);
 
-
-
   const formatTimeAgo = (dateString: string): string => {
     const now = new Date();
-    const publishedDate = new Date(dateString);
-    const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
+    const published = new Date(dateString);
+    const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} mins ago`;
-    } else if (diffInMinutes < 1440) {
-      const hours = Math.floor(diffInMinutes / 60);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else {
-      const days = Math.floor(diffInMinutes / 1440);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    }
+    if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`;
+    return `${Math.floor(diffInMinutes / 1440)} days ago`;
   };
-
-  const mockArticle = (title: string, timeAgo: string = '2 hours ago'): NewsArticle => ({
-    id: Math.random().toString(),
-    title,
-    description: 'AI news description',
-    imageUrl: "/ttttttt.jpg",
-    publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-    url: "#",
-    source: { name: 'AI News' },
-    category: 'ai'
-  });
 
   const loadMoreArticles = async () => {
     setLoadingMore(true);
-    
-    // Simulate loading time and add new section
-    setTimeout(() => {
-      const newSection = [
-        mockArticle('Breaking: AI breakthrough in machine learning'),
-        mockArticle('Neural networks achieve new performance milestone'),
-        mockArticle('AI ethics framework announced by tech leaders'),
-        mockArticle('Artificial intelligence transforms healthcare')
-      ];
-      
-      setAdditionalSections(prev => [...prev, newSection]);
-      setLoadingMore(false);
-    }, 1000);
+    const moreArticles = await optimizedNewsService.getNewsByCategory('technology', 4);
+    setAdditionalSections(prev => [...prev, moreArticles]);
+    setLoadingMore(false);
   };
 
   useEffect(() => {
     const loadAllNews = async () => {
       setLoading(true);
       
-      // Mock data to avoid API rate limits
-      const mockArticle = (title: string, imageUrl: string = "/ttttttt.jpg"): NewsArticle => ({
-        id: Math.random().toString(),
-        title,
-        description: 'AI news description',
-        imageUrl: imageUrl,
-        publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-        url: "#",
-        source: { name: 'AI News' },
-        category: 'ai'
-      });
-
-      setTimeout(() => {
+      try {
+        console.log('📰 Fetching STRICTLY POLITICS NEWS with smart caching...');
+        const articles = await optimizedNewsService.getNewsByCategory('technology', 50);
+        console.log(`✅ Loaded ${articles.length} technology articles`);
+        
+        while (articles.length < 48 && articles.length > 0) {
+          articles.push(...articles.slice(0, Math.min(10, 48 - articles.length)));
+        }
+        
         setNewsData({
-          worldNews: [
-            mockArticle('OpenAI GPT-5 achieves breakthrough in artificial general intelligence', '/wm01.jpeg'),
-            mockArticle('Google DeepMind solves complex protein folding challenges', '/placeholders/placeholder1.svg'),
-            mockArticle('Meta announces AI-powered universal language translator', '/ttttttt.jpg'),
-            mockArticle('Microsoft integrates advanced AI copilots across all products', '/placeholders/placeholder2.svg')
-          ],
-          techUpdates: [
-            mockArticle('ChatGPT reaches 500 million monthly active users worldwide', '/wm01.jpeg'),
-            mockArticle('AI-powered drug discovery reduces development time by 70%', '/ttttttt.jpg'),
-            mockArticle('Autonomous vehicles achieve 99.9% safety record in testing', '/placeholders/placeholder1.svg'),
-            mockArticle('Neural networks demonstrate creative problem-solving abilities', '/placeholders/placeholder2.svg')
-          ],
-          ai: [
-            mockArticle('Advanced AI model demonstrates human-level reasoning in complex tasks', '/wm01.jpeg'),
-            mockArticle('Machine learning breakthrough enables real-time language translation', '/ttttttt.jpg')
-          ],
-          blockchain: [
-            mockArticle('Computer vision AI achieves 99.9% accuracy in medical imaging', '/placeholders/placeholder1.svg'),
-            mockArticle('Natural language processing models pass advanced comprehension tests', '/placeholders/placeholder2.svg')
-          ],
-          hardware: [
-            mockArticle('NVIDIA unveils revolutionary AI chips with 10x performance boost', '/wm01.jpeg'),
-            mockArticle('Quantum-AI hybrid processors demonstrate unprecedented capabilities', '/ttttttt.jpg')
-          ],
-          startups: [
-            mockArticle('AI robotics startup secures $500M for humanoid assistant development', '/placeholders/placeholder1.svg'),
-            mockArticle('Edge AI company revolutionizes smart city infrastructure', '/placeholders/placeholder2.svg')
-          ],
-          // Duplicate sections with slight variations
-          worldNews2: [
-            mockArticle('AI assistants integrate seamlessly into smart home ecosystems', '/ttttttt.jpg'),
-            mockArticle('Generative AI transforms creative industries with photorealistic outputs', '/wm01.jpeg'),
-            mockArticle('AI-powered personal tutors adapt to individual learning styles', '/placeholders/placeholder1.svg'),
-            mockArticle('Autonomous AI agents manage complex business operations independently', '/placeholders/placeholder2.svg')
-          ],
-          techUpdates2: [
-            mockArticle('Deep learning models achieve breakthrough in climate prediction accuracy', '/wm01.jpeg'),
-            mockArticle('AI-driven protein design creates novel therapeutic compounds', '/ttttttt.jpg'),
-            mockArticle('Machine learning optimizes renewable energy grid management', '/placeholders/placeholder1.svg'),
-            mockArticle('Conversational AI passes advanced emotional intelligence assessments', '/placeholders/placeholder2.svg')
-          ],
-          ai2: [
-            mockArticle('AI research lab creates first artificial consciousness simulation', '/placeholders/placeholder1.svg'),
-            mockArticle('Multi-modal AI systems understand text, images, and audio simultaneously', '/wm01.jpeg')
-          ],
-          blockchain2: [
-            mockArticle('AI vision systems enable real-time object recognition in manufacturing', '/ttttttt.jpg'),
-            mockArticle('Reinforcement learning agents master complex strategic games', '/placeholders/placeholder2.svg')
-          ],
-          hardware2: [
-            mockArticle('Neuromorphic computing chips mimic human brain architecture', '/placeholders/placeholder1.svg'),
-            mockArticle('AI-optimized processors deliver 100x efficiency improvements', '/wm01.jpeg')
-          ],
-          startups2: [
-            mockArticle('AI health startup develops non-invasive disease detection technology', '/ttttttt.jpg'),
-            mockArticle('Educational AI platform personalizes learning for 10 million students', '/placeholders/placeholder2.svg')
-          ],
-          worldNews3: [
-            mockArticle('AI-powered weather prediction achieves 95% accuracy 14 days ahead', '/wm01.jpeg'),
-            mockArticle('Autonomous AI scientists conduct independent research experiments', '/placeholders/placeholder1.svg'),
-            mockArticle('AI language models generate functional code from natural language', '/ttttttt.jpg'),
-            mockArticle('Machine learning algorithms optimize global supply chain logistics', '/placeholders/placeholder2.svg')
-          ],
-          techUpdates3: [
-            mockArticle('AI therapists provide 24/7 mental health support with human-like empathy', '/placeholders/placeholder1.svg'),
-            mockArticle('Computer vision AI detects rare diseases from smartphone photos', '/wm01.jpeg'),
-            mockArticle('AI-generated synthetic media creates realistic training environments', '/ttttttt.jpg'),
-            mockArticle('Federated learning enables privacy-preserving AI across billions of devices', '/placeholders/placeholder2.svg')
-          ],
-          ai3: [
-            mockArticle('AI companions provide emotional support for elderly care patients', '/wm01.jpeg'),
-            mockArticle('Swarm intelligence algorithms solve complex optimization problems', '/placeholders/placeholder1.svg')
-          ],
-          blockchain3: [
-            mockArticle('AI-powered cybersecurity systems prevent 99.8% of advanced threats', '/ttttttt.jpg'),
-            mockArticle('Predictive AI models forecast market trends with unprecedented accuracy', '/placeholders/placeholder2.svg')
-          ],
-          hardware3: [
-            mockArticle('Brain-inspired computing architectures achieve human-level efficiency', '/placeholders/placeholder1.svg'),
-            mockArticle('AI accelerator chips power next-generation autonomous systems', '/wm01.jpeg')
-          ],
-          startups3: [
-            mockArticle('AI agriculture startup increases crop yields by 40% using precision farming', '/ttttttt.jpg'),
-            mockArticle('Virtual AI assistants manage entire households with voice commands', '/placeholders/placeholder2.svg')
-          ]
+          worldNews: articles.slice(0, 4),
+          updates: articles.slice(4, 8),
+          sub1: articles.slice(8, 10),
+          sub2: articles.slice(10, 12),
+          sub3: articles.slice(12, 14),
+          sub4: articles.slice(14, 16),
+          worldNews2: articles.slice(16, 20),
+          updates2: articles.slice(20, 24),
+          sub1_2: articles.slice(24, 26),
+          sub2_2: articles.slice(26, 28),
+          sub3_2: articles.slice(28, 30),
+          sub4_2: articles.slice(30, 32),
+          worldNews3: articles.slice(32, 36),
+          updates3: articles.slice(36, 40),
+          sub1_3: articles.slice(40, 42),
+          sub2_3: articles.slice(42, 44),
+          sub3_3: articles.slice(44, 46),
+          sub4_3: articles.slice(46, 48)
         });
-        setLoading(false);
-      }, 1000); // Simulate loading time
+      } catch (error) {
+        console.error('❌ Error fetching technology news:', error);
+      }
+      
+      setLoading(false);
     };
 
     loadAllNews();
@@ -215,29 +100,25 @@ const AI: React.FC = () => {
     return (
       <div className="home">
         <div className="home__container" style={{ textAlign: 'center', padding: '50px' }}>
-          <p>Loading AI news...</p>
+          <h2 style={{ marginBottom: '30px' }}>Loading AI News...</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            <LoadingSkeleton variant="card" count={8} />
+          </div>
         </div>
       </div>
     );
   }
+
   return (
     <div className="home">
       <div className="home__container">
-        {/* World News Section */}
         <section className="world-section">
-          
           <div className="world-cards">
-            
             {newsData.worldNews.map((article, index) => (
-              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
+              <article key={index} className="world-card">
                 <div className="world-card-image">
-                  <img 
-                    src={article.imageUrl || "/ttttttt.jpg"} 
-                    alt={article.title}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                    }}
-                  />
+                  <img src={article.imageUrl || "/ttttttt.jpg"} alt={article.title}
+                    onError={(e) => { (e.target as HTMLImageElement).src = "/ttttttt.jpg"; }} />
                 </div>
                 <div className="world-card-content">
                   <h3 className="world-card-title">{article.title}</h3>
@@ -248,12 +129,9 @@ const AI: React.FC = () => {
           </div>
         </section>
 
-        {/* Tech Updates Section */}
         <section className="crypto-section">
-          
           <div className="crypto-cards">
-            
-            {newsData.techUpdates.map((article, index) => (
+            {newsData.updates.map((article, index) => (
               <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
@@ -264,134 +142,36 @@ const AI: React.FC = () => {
           </div>
         </section>
 
-        {/* Categories Section */}
         <section className="categories-section">
           <div className="categories-grid">
-            {/* AI Column */}
-            <div className="category-column">
-              
-              {newsData.ai.map((article: NewsArticle, index: number) => (
-                <article key={index} className={`category-card ${index === 0 ? 'featured' : ''}`}>
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
+            {[newsData.sub1, newsData.sub2, newsData.sub3, newsData.sub4].map((subNews, colIndex) => (
+              <div key={colIndex} className="category-column">
+                {subNews.map((article, index) => (
+                  <article key={index} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+                    {index === 0 && (
+                      <div className="category-card-image">
+                        <img src={article.imageUrl || "/ttttttt.jpg"} alt={article.title}
+                          onError={(e) => { (e.target as HTMLImageElement).src = "/ttttttt.jpg"; }} />
+                      </div>
+                    )}
+                    <div className="category-card-content">
+                      <h3 className="category-card-title">{article.title}</h3>
+                      <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
                     </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* Blockchain Column */}
-            <div className="category-column">
-              
-              {newsData.blockchain.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* Hardware Column */}
-            <div className="category-column">
-              
-              {newsData.hardware.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* Startups Column */}
-            <div className="category-column">
-              
-              {newsData.startups.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+                  </article>
+                ))}
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* DUPLICATE SET 1 - World News Section */}
         <section className="world-section">
-          
           <div className="world-cards">
-            
-            {newsData.worldNews2.map((article: NewsArticle, index: number) => (
-              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
+            {newsData.worldNews2.map((article, index) => (
+              <article key={index} className="world-card">
                 <div className="world-card-image">
-                  <img 
-                    src={article.imageUrl || "/ttttttt.jpg"} 
-                    alt={article.title}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                    }}
-                  />
+                  <img src={article.imageUrl || "/ttttttt.jpg"} alt={article.title}
+                    onError={(e) => { (e.target as HTMLImageElement).src = "/ttttttt.jpg"; }} />
                 </div>
                 <div className="world-card-content">
                   <h3 className="world-card-title">{article.title}</h3>
@@ -402,12 +182,9 @@ const AI: React.FC = () => {
           </div>
         </section>
 
-        {/* DUPLICATE SET 1 - Crypto Updates Section */}
         <section className="crypto-section">
-          
           <div className="crypto-cards">
-            
-            {newsData.techUpdates2.map((article: NewsArticle, index: number) => (
+            {newsData.updates2.map((article, index) => (
               <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
@@ -418,138 +195,36 @@ const AI: React.FC = () => {
           </div>
         </section>
 
-        {/* DUPLICATE SET 1 - Categories Section */}
         <section className="categories-section">
           <div className="categories-grid">
-            {/* Bitcoin Column */}
-            <div className="category-column">
-              
-              {newsData.ai2.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
+            {[newsData.sub1_2, newsData.sub2_2, newsData.sub3_2, newsData.sub4_2].map((subNews, colIndex) => (
+              <div key={colIndex} className="category-column">
+                {subNews.map((article, index) => (
+                  <article key={index} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+                    {index === 0 && (
+                      <div className="category-card-image">
+                        <img src={article.imageUrl || "/ttttttt.jpg"} alt={article.title}
+                          onError={(e) => { (e.target as HTMLImageElement).src = "/ttttttt.jpg"; }} />
+                      </div>
+                    )}
+                    <div className="category-card-content">
+                      <h3 className="category-card-title">{article.title}</h3>
+                      <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
                     </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* Ethereum Column */}
-            <div className="category-column">
-              
-              {newsData.blockchain2.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* DeFi Column */}
-            <div className="category-column">
-              
-              {newsData.hardware2.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* NFTs Column */}
-            <div className="category-column">
-              
-              {newsData.startups2.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+                  </article>
+                ))}
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* DUPLICATE SET 2 - World News Section */}
         <section className="world-section">
-          
           <div className="world-cards">
-            
-            {newsData.worldNews3.map((article: NewsArticle, index: number) => (
-              <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
+            {newsData.worldNews3.map((article, index) => (
+              <article key={index} className="world-card">
                 <div className="world-card-image">
-                  <img 
-                    src={article.imageUrl || "/ttttttt.jpg"} 
-                    alt={article.title}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                    }}
-                  />
+                  <img src={article.imageUrl || "/ttttttt.jpg"} alt={article.title}
+                    onError={(e) => { (e.target as HTMLImageElement).src = "/ttttttt.jpg"; }} />
                 </div>
                 <div className="world-card-content">
                   <h3 className="world-card-title">{article.title}</h3>
@@ -560,12 +235,9 @@ const AI: React.FC = () => {
           </div>
         </section>
 
-        {/* DUPLICATE SET 2 - Crypto Updates Section */}
         <section className="crypto-section">
-          
           <div className="crypto-cards">
-            
-            {newsData.techUpdates3.map((article: NewsArticle, index: number) => (
+            {newsData.updates3.map((article, index) => (
               <article key={index} className="crypto-card">
                 <div className="crypto-card-content">
                   <h3 className="crypto-card-title">{article.title}</h3>
@@ -576,145 +248,37 @@ const AI: React.FC = () => {
           </div>
         </section>
 
-        {/* DUPLICATE SET 2 - Categories Section */}
         <section className="categories-section">
           <div className="categories-grid">
-            {/* Bitcoin Column */}
-            <div className="category-column">
-              
-              {newsData.ai3.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
+            {[newsData.sub1_3, newsData.sub2_3, newsData.sub3_3, newsData.sub4_3].map((subNews, colIndex) => (
+              <div key={colIndex} className="category-column">
+                {subNews.map((article, index) => (
+                  <article key={index} className={`category-card ${index === 0 ? 'featured' : ''}`}>
+                    {index === 0 && (
+                      <div className="category-card-image">
+                        <img src={article.imageUrl || "/ttttttt.jpg"} alt={article.title}
+                          onError={(e) => { (e.target as HTMLImageElement).src = "/ttttttt.jpg"; }} />
+                      </div>
+                    )}
+                    <div className="category-card-content">
+                      <h3 className="category-card-title">{article.title}</h3>
+                      <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
                     </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* Ethereum Column */}
-            <div className="category-column">
-              
-              {newsData.blockchain3.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* DeFi Column */}
-            <div className="category-column">
-              
-              {newsData.hardware3.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* NFTs Column */}
-            <div className="category-column">
-              
-              {newsData.startups3.map((article: NewsArticle, index: number) => (
-                <article 
-                  key={index} 
-                  
-                  className={`category-card ${index === 0 ? 'featured' : ''}`}
-                >
-                  {index === 0 && (
-                    <div className="category-card-image">
-                      <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
-                        alt={article.title}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="category-card-content">
-                    <h3 className="category-card-title">{article.title}</h3>
-                    <p className="category-card-time">{formatTimeAgo(article.publishedAt)}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+                  </article>
+                ))}
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* Load More Articles Sections */}
-        {additionalSections.map((sectionArticles: NewsArticle[], sectionIndex: number) => (
-          <section 
-            key={sectionIndex} 
-            
-            className="world-section"
-          >
+        {additionalSections.map((sectionArticles, sectionIndex) => (
+          <section key={sectionIndex} className="world-section">
             <div className="world-cards">
-              {sectionArticles.map((article: NewsArticle, articleIndex: number) => (
-                <article 
-                  key={articleIndex} 
-                  
-                  className="world-card"
-                >
+              {sectionArticles.map((article, articleIndex) => (
+                <article key={articleIndex} className="world-card">
                   <div className="world-card-image">
-                    <img 
-                      src={article.imageUrl || "/ttttttt.jpg"} 
-                      alt={article.title}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/ttttttt.jpg";
-                      }}
-                    />
+                    <img src={article.imageUrl || "/ttttttt.jpg"} alt={article.title}
+                      onError={(e) => { (e.target as HTMLImageElement).src = "/ttttttt.jpg"; }} />
                   </div>
                   <div className="world-card-content">
                     <h3 className="world-card-title">{article.title}</h3>
@@ -727,46 +291,21 @@ const AI: React.FC = () => {
         ))}
       </div>
 
-      {/* Load More Button */}
-      <div className="load-more-container" style={{ textAlign: 'center', padding: '40px 20px' }}>
-        <button 
-          className="load-more-btn"
+      <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+        <button onClick={loadMoreArticles} disabled={loadingMore}
           style={{
-            backgroundColor: 'transparent',
-            color: '#6c757d',
-            border: '1px solid #6c757d',
-            padding: '12px 30px',
-            fontSize: '16px',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#6c757d';
-            e.currentTarget.style.color = 'white';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = '#6c757d';
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.backgroundColor = '#6c757d';
-            e.currentTarget.style.color = 'white';
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = '#6c757d';
-          }}
-          onClick={loadMoreArticles}
-          disabled={loadingMore}
-        >
-          {loadingMore ? 'Loading More Articles...' : 'Load More Articles'}
+            background: loadingMore ? '#f8f9fa' : 'transparent',
+            color: '#6c757d', border: '1px solid #6c757d',
+            padding: '12px 30px', fontSize: '16px', borderRadius: '6px',
+            cursor: loadingMore ? 'not-allowed' : 'pointer'
+          }}>
+          {loadingMore ? 'Loading...' : 'Load More'}
         </button>
       </div>
 
       <Footer />
     </div>
   );
-}
+};
 
 export default AI;

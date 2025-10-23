@@ -1,0 +1,52 @@
+{
+  "functions": {
+    "api/fetch-news.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/fetch-news?category=politics",
+      "schedule": "0 */3 * * *"
+    },
+    {
+      "path": "/api/fetch-news?category=health",
+      "schedule": "15 */3 * * *"
+    },
+    {
+      "path": "/api/fetch-news?category=technology",
+      "schedule": "30 */3 * * *"
+    },
+    {
+      "path": "/api/fetch-news?category=business",
+      "schedule": "45 */3 * * *"
+    },
+    {
+      "path": "/api/fetch-news?category=sports",
+      "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/fetch-news?category=entertainment",
+      "schedule": "30 */4 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type"
+        }
+      ]
+    }
+  ]
+}
