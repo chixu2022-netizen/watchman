@@ -107,6 +107,10 @@ const Footer: React.FC = () => {
           <p className="footer__disclaimer">
             All quotes delayed a minimum of 15 minutes. See here for a complete list of exchanges and delays.
           </p>
+          <p className="footer__disclaimer" style={{ marginTop: '10px', fontSize: '13px' }}>
+            Watchman aggregates news from multiple sources. All content belongs to original publishers. 
+            We display only headlines and brief excerpts with proper attribution and links to original articles.
+          </p>
           <p className="footer__copyright">
             © 2025 Watchman News Aggregator. All rights reserved
           </p>

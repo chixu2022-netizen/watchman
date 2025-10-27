@@ -5,8 +5,9 @@ import NewsSection from '../components/Home/NewsSection';
 import CategoryGrid from '../components/Home/CategoryGrid';
 import TechWithSidebar from '../components/Home/TechWithSidebar';
 import LazySection from '../components/Home/LazySection';
-import { optimizedNewsService } from '../services/optimizedNewsService';
+import { databaseNewsService } from '../services/databaseNewsService';
 import { NewsArticle } from '../types/news';
+import { NEWS_IMAGE_PLACEHOLDER } from '../constants/images';
 import './Home.css';
 
 function Home() {
@@ -16,23 +17,26 @@ function Home() {
   useEffect(() => {
     const fetchAllNews = async () => {
       try {
-        console.log('🚀 Fetching news for homepage...');
+        console.log('📚 Homepage: Loading from database (no API calls)...');
         
-        // Fetch all categories at once using optimized service
-        const categories = [
-          'world', 'crypto', 'technology', 'business',
-          'sports', 'entertainment', 'health', 'politics',
-          'local'
-        ];
-
-        const newsPromises = categories.map(category =>
-          optimizedNewsService.getNewsByCategory(category, 10)
-            .then(articles => ({ category, articles }))
-            .catch(error => {
-              console.error(`Error fetching ${category}:`, error);
-              return { category, articles: [] };
-            })
-        );
+        // DATABASE-ONLY: No API calls, instant response!
+        // All news is pre-fetched by cron jobs
+        const newsPromises = [
+          databaseNewsService.getNewsByCategory('world', 15).then(articles => ({ category: 'world', articles })),
+          databaseNewsService.getNewsByCategory('crypto', 10).then(articles => ({ category: 'crypto', articles })),
+          databaseNewsService.getNewsByCategory('technology', 12).then(articles => ({ category: 'technology', articles })),
+          databaseNewsService.getNewsByCategory('business', 15).then(articles => ({ category: 'business', articles })),
+          databaseNewsService.getNewsByCategory('sports', 10).then(articles => ({ category: 'sports', articles })),
+          databaseNewsService.getNewsByCategory('entertainment', 10).then(articles => ({ category: 'entertainment', articles })),
+          databaseNewsService.getNewsByCategory('health', 15).then(articles => ({ category: 'health', articles })),
+          databaseNewsService.getNewsByCategory('politics', 10).then(articles => ({ category: 'politics', articles })),
+          databaseNewsService.getNewsByCategory('local', 4).then(articles => ({ category: 'local', articles })),
+        ].map(promise => promise.catch(error => {
+          console.error('Database error:', error);
+          return { category: 'unknown', articles: [] };
+        }));
+        
+        // Total: ~101 articles loaded from database (instant!)
 
         const results = await Promise.all(newsPromises);
         
@@ -42,10 +46,11 @@ function Home() {
         });
 
         setNewsData(allNews);
-        console.log('✅ Homepage news loaded:', Object.keys(allNews));
+        console.log('✅ Homepage loaded from database:', Object.keys(allNews));
+        console.log('🚀 Zero API calls made! All from pre-fetched data.');
         
       } catch (error) {
-        console.error('❌ Error fetching homepage news:', error);
+        console.error('❌ Error loading homepage:', error);
       } finally {
         setLoading(false);
       }
@@ -71,7 +76,7 @@ function Home() {
             id: 'featured',
             title: 'Latest Technology News',
             description: 'Stay updated with the latest tech innovations and breakthroughs.',
-            imageUrl: '/ttttttt.jpg',
+            imageUrl: NEWS_IMAGE_PLACEHOLDER,
             publishedAt: new Date().toISOString(),
             url: '#',
             source: { name: 'Tech News' },
@@ -116,7 +121,7 @@ function Home() {
               id: 'tech-featured',
               title: 'Technology Innovation',
               description: 'Discover the latest in technology and innovation.',
-              imageUrl: '/ttttttt.jpg',
+              imageUrl: NEWS_IMAGE_PLACEHOLDER,
               publishedAt: new Date().toISOString(),
               url: '#',
               source: { name: 'Tech Source' },
@@ -177,7 +182,7 @@ function Home() {
               id: 'tech-2',
               title: 'Tech Updates',
               description: 'Latest technology developments and trends.',
-              imageUrl: '/ttttttt.jpg',
+              imageUrl: NEWS_IMAGE_PLACEHOLDER,
               publishedAt: new Date().toISOString(),
               url: '#',
               source: { name: 'Tech News' },
@@ -254,7 +259,7 @@ function Home() {
               id: 'tech-3',
               title: 'Technology Trends',
               description: 'Explore emerging technology trends and innovations.',
-              imageUrl: '/ttttttt.jpg',
+              imageUrl: NEWS_IMAGE_PLACEHOLDER,
               publishedAt: new Date().toISOString(),
               url: '#',
               source: { name: 'Tech Source' },

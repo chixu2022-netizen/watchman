@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import './NavBar.css';
 import Logo from './Logo';
 import SearchResults from './SearchResults';
-import { newsAPI } from '../services/newsAPI';
+import { databaseNewsService } from '../services/databaseNewsService';
 import { NewsArticle } from '../types/news';
 
 const primaryLinks = [
@@ -27,7 +27,7 @@ const NavBar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Search functionality
+  // Search functionality (database-only, no API calls)
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
@@ -36,8 +36,9 @@ const NavBar: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await newsAPI.searchNews(query.trim());
-      setSearchResults(response.articles);
+      // Search through database (no API calls!)
+      const results = await databaseNewsService.searchArticles(query, 20);
+      setSearchResults(results);
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
@@ -137,7 +138,7 @@ const NavBar: React.FC = () => {
             </button>
           </div>
           <button className="nm-subscribe">Subscribe</button>
-          <a className="nm-signin" href="/signin">Sign in</a>
+          <span className="nm-signin" style={{ cursor: 'default', opacity: 0.5 }}>Sign in (Coming Soon)</span>
         </div>
 
         {/* Mobile nav only (hidden on desktop) */}

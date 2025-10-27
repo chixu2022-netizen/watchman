@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
-import { optimizedNewsService } from '../services/optimizedNewsService';
+import { databaseNewsService } from '../services/databaseNewsService';
 import { NewsArticle } from '../types/news';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import { NEWS_IMAGE_PLACEHOLDER } from '../constants/images';
 import './Home.css'; // Use the same CSS as Home
 
 // Using NewsArticle from types/news.ts
@@ -77,7 +78,7 @@ const Crypto: React.FC = () => {
     id: Math.random().toString(),
     title,
     description: 'Crypto news description',
-    imageUrl: "/ttttttt.jpg",
+    imageUrl: NEWS_IMAGE_PLACEHOLDER,
     publishedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
     url: "#",
     source: { name: 'Crypto News' },
@@ -106,13 +107,13 @@ const Crypto: React.FC = () => {
       setLoading(true);
       
       try {
-        console.log('🚀 Fetching STRICTLY CRYPTO NEWS with smart caching...');
+        console.log('📚 Crypto: Loading from database (no API calls)...');
         
-        // Fetch crypto news using optimized service (searches: cryptocurrency, bitcoin, ethereum, blockchain)
-        const cryptoArticles = await optimizedNewsService.getNewsByCategory('crypto', 50);
+        // DATABASE ONLY: Crypto news pre-fetched by cron jobs
+        const cryptoArticles = await databaseNewsService.getNewsByCategory('crypto', 50);
         
-        console.log(`✅ Loaded ${cryptoArticles.length} STRICTLY crypto articles`);
-        console.log('📊 Using search query: cryptocurrency OR bitcoin OR ethereum OR blockchain');
+        console.log(`✅ Loaded ${cryptoArticles.length} crypto articles from database`);
+        console.log('🚀 Zero API calls made! All from pre-fetched data.');
         
         // If we got less than 48 articles, repeat them to fill all sections
         while (cryptoArticles.length < 48 && cryptoArticles.length > 0) {
@@ -178,10 +179,10 @@ const Crypto: React.FC = () => {
               <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                 <div className="world-card-image">
                   <img 
-                    src={article.imageUrl || "/ttttttt.jpg"} 
+                    src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                     alt={article.title}
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                      (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                     }}
                   />
                 </div>
@@ -220,10 +221,10 @@ const Crypto: React.FC = () => {
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
+                        src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                         alt={article.title}
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                          (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                         }}
                       />
                     </div>
@@ -248,10 +249,10 @@ const Crypto: React.FC = () => {
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
+                        src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                         alt={article.title}
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                          (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                         }}
                       />
                     </div>
@@ -276,10 +277,10 @@ const Crypto: React.FC = () => {
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
+                        src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                         alt={article.title}
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                          (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                         }}
                       />
                     </div>
@@ -304,10 +305,10 @@ const Crypto: React.FC = () => {
                   {index === 0 && (
                     <div className="category-card-image">
                       <img 
-                        src={article.imageUrl || "/ttttttt.jpg"} 
+                        src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                         alt={article.title}
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                          (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                         }}
                       />
                     </div>
@@ -329,10 +330,10 @@ const Crypto: React.FC = () => {
                 <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                   <div className="world-card-image">
                     <img 
-                      src={article.imageUrl || "/ttttttt.jpg"} 
+                      src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                       alt={article.title}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                        (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                       }}
                     />
                   </div>
@@ -377,10 +378,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -409,10 +410,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -438,10 +439,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -467,10 +468,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -493,10 +494,10 @@ const Crypto: React.FC = () => {
                 <article key={`world-1-${index}`} className="world-card" data-article-id={`world-1-${index}`} data-category="world" data-section="1" data-position={index + 1}>
                   <div className="world-card-image">
                     <img 
-                      src={article.imageUrl || "/ttttttt.jpg"} 
+                      src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                       alt={article.title}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                        (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                       }}
                     />
                   </div>
@@ -538,10 +539,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -566,10 +567,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -594,10 +595,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -622,10 +623,10 @@ const Crypto: React.FC = () => {
                     {index === 0 && (
                       <div className="category-card-image">
                         <img 
-                          src={article.imageUrl || "/ttttttt.jpg"} 
+                          src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                           alt={article.title}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                            (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                           }}
                         />
                       </div>
@@ -656,10 +657,10 @@ const Crypto: React.FC = () => {
                 >
                   <div className="world-card-image">
                     <img 
-                      src={article.imageUrl || "/ttttttt.jpg"} 
+                      src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                       alt={article.title}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/ttttttt.jpg";
+                        (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                       }}
                     />
                   </div>

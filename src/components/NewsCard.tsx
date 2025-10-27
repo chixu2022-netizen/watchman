@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { NewsArticle } from '../types/news';
 import { LazyImage } from './LazyImage';
+import { NEWS_IMAGE_PLACEHOLDER } from '../constants/images';
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -77,7 +78,7 @@ const NewsCard: React.FC<NewsCardProps> = memo(({
       >
         <div className="category-card-image">
           <LazyImage
-            src={article.imageUrl || '/ttttttt.jpg'}
+            src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER}
             alt={article.title}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
@@ -102,14 +103,17 @@ const NewsCard: React.FC<NewsCardProps> = memo(({
     >
       <div className="world-card-image">
         <LazyImage
-          src={article.imageUrl || '/ttttttt.jpg'}
+                      src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER}
           alt={article.title}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </div>
       <div className="world-card-content">
         <h3 className="world-card-title">{article.title}</h3>
-        <p className="world-card-time">{formatTimeAgo(article.publishedAt)}</p>
+        <p className="world-card-time">
+          {article.source?.name && <span style={{ fontWeight: 600 }}>{article.source.name} · </span>}
+          {formatTimeAgo(article.publishedAt)}
+        </p>
       </div>
     </article>
   );

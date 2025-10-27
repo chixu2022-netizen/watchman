@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NewsArticle } from '../types/news';
 import { ENV } from '../config/environment';
+import { NEWS_IMAGE_PLACEHOLDER } from '../constants/images';
 
 // Supabase configuration - Using environment variables (SECURE)
 const supabaseUrl = ENV.supabaseUrl;
@@ -50,7 +51,7 @@ class SupabaseDatabaseService {
         id: `mock-${category}-${i}`,
         title: `Mock ${category} news article ${i}`,
         description: `This is a mock ${category} article.`,
-        imageUrl: '/ttttttt.jpg',
+        imageUrl: NEWS_IMAGE_PLACEHOLDER,
         publishedAt: new Date(Date.now() - i * 3600000).toISOString(),
         url: '#',
         source: { name: `Mock ${category} Source` },
@@ -72,7 +73,7 @@ class SupabaseDatabaseService {
         id: article.id,
         title: article.title,
         description: article.description || '',
-        image_url: article.imageUrl || '/ttttttt.jpg',
+        image_url: article.imageUrl || NEWS_IMAGE_PLACEHOLDER,
         published_at: article.publishedAt,
         url: article.url,
         source: article.source?.name || 'Unknown',
@@ -116,7 +117,7 @@ class SupabaseDatabaseService {
         id: row.id,
         title: row.title,
         description: row.description,
-        imageUrl: row.image_url || '/ttttttt.jpg',
+        imageUrl: row.image_url || NEWS_IMAGE_PLACEHOLDER,
         publishedAt: row.published_at,
         url: row.url,
         source: { name: row.source },
@@ -147,7 +148,7 @@ class SupabaseDatabaseService {
         id: row.id,
         title: row.title,
         description: row.description,
-        imageUrl: row.image_url || '/ttttttt.jpg',
+        imageUrl: row.image_url || NEWS_IMAGE_PLACEHOLDER,
         publishedAt: row.published_at,
         url: row.url,
         source: { name: row.source },

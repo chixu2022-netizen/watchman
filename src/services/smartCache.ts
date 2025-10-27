@@ -1,12 +1,12 @@
 import { NewsArticle } from '../types/news';
-import { CACHE_CONFIG, API_LIMITS } from '../config/environment';
+import { CACHE_CONFIG, API_LIMITS, ENV } from '../config/environment';
 
 /**
- * Smart caching service optimized for free API tier (200 requests/day)
+ * Smart caching service for multi-provider news APIs
  * Implements multiple caching strategies:
  * 1. LocalStorage cache with TTL
  * 2. Request deduplication
- * 3. API quota tracking
+ * 3. API quota tracking (supports multiple providers)
  * 4. Stale-while-revalidate pattern
  */
 
@@ -123,10 +123,12 @@ class SmartCacheService {
         };
       }
 
-      // Check if quota exceeded
-      if (quota.count >= API_LIMITS.dailyLimit) {
+      // Check if quota exceeded (use total daily limit across all providers)
+      if (quota.count >= API_LIMITS.totalDaily) {
         const hoursUntilReset = Math.floor((quota.resetAt - now) / 3600000);
-        console.warn(`⚠️ API QUOTA EXCEEDED! ${quota.count}/${API_LIMITS.dailyLimit} requests used. Resets in ${hoursUntilReset}h`);
+        if (ENV.isDevelopment) {
+          console.warn(`⚠️ API QUOTA EXCEEDED! ${quota.count}/${API_LIMITS.totalDaily} requests used. Resets in ${hoursUntilReset}h`);
+        }
         return false;
       }
 
@@ -134,8 +136,10 @@ class SmartCacheService {
       quota.count++;
       localStorage.setItem(this.QUOTA_KEY, JSON.stringify(quota));
       
-      const remaining = API_LIMITS.dailyLimit - quota.count;
-      console.log(`📊 API Quota: ${quota.count}/${API_LIMITS.dailyLimit} used (${remaining} remaining)`);
+      const remaining = API_LIMITS.totalDaily - quota.count;
+      if (ENV.isDevelopment) {
+        console.log(`📊 API Quota: ${quota.count}/${API_LIMITS.totalDaily} used (${remaining} remaining)`);
+      }
       
       return true;
     } catch (error) {
@@ -153,26 +157,26 @@ class SmartCacheService {
       const now = Date.now();
       
       if (!quotaData) {
-        return { used: 0, limit: API_LIMITS.dailyLimit, remaining: API_LIMITS.dailyLimit, resetIn: 24 };
+        return { used: 0, limit: API_LIMITS.totalDaily, remaining: API_LIMITS.totalDaily, resetIn: 24 };
       }
 
       const quota: QuotaInfo = JSON.parse(quotaData);
       
       // Check if quota should be reset
       if (now > quota.resetAt) {
-        return { used: 0, limit: API_LIMITS.dailyLimit, remaining: API_LIMITS.dailyLimit, resetIn: 24 };
+        return { used: 0, limit: API_LIMITS.totalDaily, remaining: API_LIMITS.totalDaily, resetIn: 24 };
       }
 
       const resetIn = Math.ceil((quota.resetAt - now) / 3600000);
       
       return {
         used: quota.count,
-        limit: API_LIMITS.dailyLimit,
-        remaining: Math.max(0, API_LIMITS.dailyLimit - quota.count),
+        limit: API_LIMITS.totalDaily,
+        remaining: Math.max(0, API_LIMITS.totalDaily - quota.count),
         resetIn,
       };
     } catch (error) {
-      return { used: 0, limit: API_LIMITS.dailyLimit, remaining: API_LIMITS.dailyLimit, resetIn: 24 };
+      return { used: 0, limit: API_LIMITS.totalDaily, remaining: API_LIMITS.totalDaily, resetIn: 24 };
     }
   }
 
@@ -183,7 +187,9 @@ class SmartCacheService {
     const existingRequest = this.requestCache.get(key);
     
     if (existingRequest) {
-      console.log(`♻️ Deduplicating request for ${key}`);
+      if (ENV.isDevelopment) {
+        console.log(`♻️ Deduplicating request for ${key}`);
+      }
       return existingRequest as Promise<T>;
     }
 
@@ -225,7 +231,9 @@ class SmartCacheService {
       }
 
       keysToRemove.forEach(key => localStorage.removeItem(key));
-      console.log(`🗑️ Cleared ${keysToRemove.length} old cache entries`);
+      if (ENV.isDevelopment && keysToRemove.length > 0) {
+        console.log(`🗑️ Cleared ${keysToRemove.length} old cache entries`);
+      }
     } catch (error) {
       console.error('Cache cleanup error:', error);
     }
@@ -246,7 +254,9 @@ class SmartCacheService {
       }
 
       keys.forEach(key => localStorage.removeItem(key));
-      console.log(`🗑️ Cleared all cache (${keys.length} entries)`);
+      if (ENV.isDevelopment) {
+        console.log(`🗑️ Cleared all cache (${keys.length} entries)`);
+      }
     } catch (error) {
       console.error('Cache clear error:', error);
     }

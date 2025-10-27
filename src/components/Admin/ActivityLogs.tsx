@@ -11,15 +11,17 @@ const ActivityLogs: React.FC<ActivityLogsProps> = ({
   refreshInterval = 2000 
 }) => {
   const [logs, setLogs] = useState<string[]>([]);
-  const [autoScroll, setAutoScroll] = useState(true);
+  const [autoScroll, setAutoScroll] = useState(false); // Changed default to false
   const logsEndRef = useRef<HTMLDivElement>(null);
+  const logsContainerRef = useRef<HTMLDivElement>(null);
 
   const updateLogs = () => {
     const latestLogs = adminService.getLogs();
     setLogs(latestLogs);
     
-    if (autoScroll && logsEndRef.current) {
-      logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    // Scroll within the logs container only, not the entire page
+    if (autoScroll && logsContainerRef.current) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
     }
   };
 
@@ -99,14 +101,17 @@ const ActivityLogs: React.FC<ActivityLogsProps> = ({
         </div>
       </div>
 
-      <div style={{
-        maxHeight: '300px',
-        overflowY: 'auto',
-        padding: '12px',
-        background: '#000',
-        borderRadius: '8px',
-        border: '1px solid #333'
-      }}>
+      <div 
+        ref={logsContainerRef}
+        style={{
+          maxHeight: '300px',
+          overflowY: 'auto',
+          padding: '12px',
+          background: '#000',
+          borderRadius: '8px',
+          border: '1px solid #333',
+          scrollBehavior: 'smooth'
+        }}>
         {logs.length === 0 ? (
           <div style={{ 
             color: '#666', 

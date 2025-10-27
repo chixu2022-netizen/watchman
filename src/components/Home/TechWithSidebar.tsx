@@ -1,5 +1,6 @@
 import React from 'react';
 import { NewsArticle } from '../../types/news';
+import { NEWS_IMAGE_PLACEHOLDER } from '../../constants/images';
 
 interface TechWithSidebarProps {
   featuredArticle: NewsArticle;
@@ -56,7 +57,7 @@ const TechWithSidebar: React.FC<TechWithSidebarProps> = ({
             </div>
             <div className="featured-image">
               <img 
-                src={featuredArticle.imageUrl || '/ttttttt.jpg'} 
+                src={featuredArticle.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                 alt={featuredArticle.title}
                 loading="lazy"
                 style={{
@@ -65,7 +66,7 @@ const TechWithSidebar: React.FC<TechWithSidebarProps> = ({
                   objectFit: 'cover'
                 }}
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/ttttttt.jpg';
+                  (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                 }}
               />
             </div>

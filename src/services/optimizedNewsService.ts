@@ -1,47 +1,18 @@
 import { NewsArticle } from '../types/news';
 import { supabaseDatabaseService } from './supabaseDatabase';
 import { smartCacheService } from './smartCache';
-import { ENV, API_CONFIG } from '../config/environment';
+import { multiProviderService } from './multiProviderService';
+import { NEWS_IMAGE_PLACEHOLDER } from '../constants/images';
+import { ENV } from '../config/environment';
 
 /**
- * Optimized News Service for free API tier
- * Priority: Cache > Database > API > Fallback
+ * Optimized News Service with Smart Caching
+ * Strategy: Cache (instant) > Database (fast) > API (slow) > Fallback
+ * Uses multi-provider service for maximum API availability
+ * Total capacity: Up to 500+ requests/day (depends on configured APIs)
  */
 
-const NEWS_API_KEY = ENV.newsDataApiKey;
-const NEWS_API_BASE_URL = API_CONFIG.newsDataBaseUrl;
-
-interface NewsDataResponse {
-  status: string;
-  totalResults?: number;
-  results: Array<{
-    article_id: string;
-    title: string;
-    description?: string;
-    image_url?: string;
-    pubDate: string;
-    link: string;
-    source_name?: string;
-    source_id?: string;
-  }>;
-}
-
 class OptimizedNewsService {
-  /**
-   * Transform API article to our format
-   */
-  private transformArticle(article: any, category: string): NewsArticle {
-    return {
-      id: article.article_id || `${Date.now()}-${Math.random()}`,
-      title: article.title || 'Breaking News',
-      description: article.description || `Latest ${category} news`,
-      imageUrl: article.image_url || '/ttttttt.jpg',
-      publishedAt: article.pubDate || new Date().toISOString(),
-      url: article.link || '#',
-      source: { name: article.source_name || article.source_id || 'News Source' },
-      category,
-    };
-  }
 
   /**
    * Generate fallback articles
@@ -59,7 +30,7 @@ class OptimizedNewsService {
       id: `fallback-${category}-${i + 1}`,
       title: fallbackTitles[i] || `${category} news update`,
       description: `Stay updated with the latest ${category} news and analysis`,
-      imageUrl: '/ttttttt.jpg',
+      imageUrl: NEWS_IMAGE_PLACEHOLDER,
       publishedAt: new Date(Date.now() - i * 3600000).toISOString(),
       url: '#',
       source: { name: `${category.charAt(0).toUpperCase() + category.slice(1)} Today` },
@@ -68,144 +39,160 @@ class OptimizedNewsService {
   }
 
   /**
-   * Fetch from API (with quota check)
+   * Fetch from API using multi-provider (with quota tracking)
    */
   private async fetchFromAPI(category: string, limit: number): Promise<NewsArticle[]> {
-    // Check API quota first
+    // Check if we have any enabled providers
+    if (!multiProviderService.hasEnabledProviders()) {
+      if (ENV.isDevelopment) {
+        console.warn('⚠️ No API providers configured, skipping API fetch');
+      }
+      return [];
+    }
+
+    // Check API quota
     if (!smartCacheService.trackAPIRequest()) {
-      console.warn(`⚠️ API quota exceeded for ${category}, using fallback`);
+      if (ENV.isDevelopment) {
+        console.warn(`⚠️ API quota exceeded for ${category}, skipping API`);
+      }
       return [];
     }
 
     try {
-      // Special handling for crypto - use search query instead of category
-      let url: string;
-      if (category === 'crypto') {
-        url = `${NEWS_API_BASE_URL}/news?apikey=${NEWS_API_KEY}&q=cryptocurrency OR bitcoin OR ethereum OR blockchain&size=${limit}&language=en`;
-      } else {
-        url = `${NEWS_API_BASE_URL}/news?apikey=${NEWS_API_KEY}&category=${category}&size=${limit}&language=en`;
+      // Multi-provider automatically tries all enabled APIs
+      const articles = await multiProviderService.getNewsByCategory(category, limit);
+      
+      if (articles && articles.length > 0) {
+        if (ENV.isDevelopment) {
+          console.log(`✅ API fetch: ${articles.length} ${category} articles`);
+        }
+        return articles;
       }
       
-      console.log(`📡 Fetching fresh ${category} news from API...`);
-      
-      const response = await fetch(url, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
-      }
-
-      const data: NewsDataResponse = await response.json();
-
-      if (data.status !== 'success' || !data.results?.length) {
-        throw new Error('No results from API');
-      }
-
-      const articles = data.results.map(article => 
-        this.transformArticle(article, category)
-      );
-
-      console.log(`✅ Fetched ${articles.length} fresh ${category} articles from API`);
-      return articles;
+      return [];
     } catch (error) {
-      console.error(`❌ API fetch failed for ${category}:`, error);
+      if (ENV.isDevelopment) {
+        console.error(`❌ API fetch failed for ${category}:`, error);
+      }
       return [];
     }
   }
 
   /**
    * Main method: Get news with smart caching strategy
-   * Priority: Cache > Database > API > Fallback
+   * Priority: Cache (instant) > Database (fast) > API (slow) > Fallback
    */
   async getNewsByCategory(category: string, limit: number = 20): Promise<NewsArticle[]> {
     try {
-      console.log(`⚡ OptimizedNewsService: Getting ${category} news...`);
+      if (ENV.isDevelopment) {
+        console.log(`⚡ Getting ${category} news (limit: ${limit})...`);
+      }
 
-      // STEP 1: Check cache first (instant)
+      // STEP 1: Check cache first (instant - no network)
       const cachedArticles = smartCacheService.getCachedArticles(category);
-      if (cachedArticles && cachedArticles.length > 0) {
+      if (cachedArticles && cachedArticles.length >= limit) {
+        if (ENV.isDevelopment) {
+          console.log(`🚀 Cache hit: ${cachedArticles.length} ${category} articles`);
+        }
         return cachedArticles.slice(0, limit);
       }
 
-      // STEP 2: Try database (fast)
+      // STEP 2: Try database (fast - local DB query)
       try {
         const dbArticles = await supabaseDatabaseService.getNewsByCategory(category, limit);
         if (dbArticles && dbArticles.length > 0) {
-          // Cache database results for next time
+          // Cache database results
           smartCacheService.setCachedArticles(category, dbArticles);
-          console.log(`✅ Retrieved ${dbArticles.length} ${category} articles from database`);
+          if (ENV.isDevelopment) {
+            console.log(`💾 Database: ${dbArticles.length} ${category} articles`);
+          }
           return dbArticles;
         }
       } catch (dbError) {
-        console.warn(`⚠️ Database fetch failed for ${category}, trying API`);
+        if (ENV.isDevelopment) {
+          console.warn(`⚠️ Database failed for ${category}, trying API`);
+        }
       }
 
-      // STEP 3: Fetch from API (with quota check)
+      // STEP 3: Fetch from API (slow - external API call)
       const apiArticles = await this.fetchFromAPI(category, limit);
       
       if (apiArticles.length > 0) {
         // Cache API results
         smartCacheService.setCachedArticles(category, apiArticles);
         
-        // Store in database for future use (non-blocking)
-        this.storeInDatabase(category, apiArticles).catch(err => 
-          console.warn('Background database store failed:', err)
-        );
+        // Store in database for future (non-blocking)
+        this.storeInDatabase(category, apiArticles).catch(() => {
+          // Silent fail - not critical
+        });
         
         return apiArticles;
       }
 
-      // STEP 4: Try stale cache as fallback
+      // STEP 4: Try stale cache (expired but better than nothing)
       const staleCache = smartCacheService.getStaleCache(category);
       if (staleCache && staleCache.length > 0) {
-        console.log(`⚠️ Using stale cache for ${category}`);
+        if (ENV.isDevelopment) {
+          console.log(`🔄 Using stale cache for ${category}`);
+        }
         return staleCache.slice(0, limit);
       }
 
-      // STEP 5: Final fallback - generate mock articles
-      console.log(`⚠️ Using fallback articles for ${category}`);
+      // STEP 5: Final fallback - static mock articles
+      if (ENV.isDevelopment) {
+        console.log(`🚫 Using fallback articles for ${category}`);
+      }
       const fallbackArticles = this.getFallbackArticles(category, limit);
-      smartCacheService.setCachedArticles(category, fallbackArticles);
       return fallbackArticles;
 
     } catch (error) {
-      console.error(`❌ Error in OptimizedNewsService for ${category}:`, error);
+      if (ENV.isDevelopment) {
+        console.error(`❌ Error fetching ${category}:`, error);
+      }
       return this.getFallbackArticles(category, limit);
     }
   }
 
   /**
-   * Store articles in database (non-blocking)
+   * Store articles in database (non-blocking background task)
    */
   private async storeInDatabase(category: string, articles: NewsArticle[]): Promise<void> {
     try {
       await supabaseDatabaseService.insertNewsArticles(articles);
-      console.log(`💾 Stored ${articles.length} ${category} articles in database`);
+      if (ENV.isDevelopment) {
+        console.log(`💾 Stored ${articles.length} ${category} articles in DB`);
+      }
     } catch (error) {
-      console.warn('Database storage failed:', error);
+      // Silent fail - not critical for user experience
     }
   }
 
   /**
-   * Preload critical categories (run on app startup)
+   * Preload critical categories (only from cache/database)
+   * Should be run on app startup or after cron job completes
    */
   async preloadCriticalCategories(): Promise<void> {
-    const criticalCategories = ['politics', 'technology', 'business', 'health'];
+    const criticalCategories = ['world', 'politics', 'technology', 'business', 'health'];
     
-    console.log('🚀 Preloading critical categories...');
+    if (ENV.isDevelopment) {
+      console.log('🚀 Preloading critical categories (cache/DB only)...');
+    }
     
     for (const category of criticalCategories) {
       try {
-        await this.getNewsByCategory(category, 10);
-        // Small delay between requests
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Get from cache or database only (no API calls)
+        const cached = smartCacheService.getCachedArticles(category);
+        if (!cached || cached.length === 0) {
+          await supabaseDatabaseService.getNewsByCategory(category, 10);
+        }
       } catch (error) {
-        console.error(`Failed to preload ${category}:`, error);
+        // Silent fail - preload is optional
       }
     }
     
-    console.log('✅ Critical categories preloaded!');
+    if (ENV.isDevelopment) {
+      console.log('✅ Preload complete!');
+    }
   }
 
   /**
@@ -226,16 +213,29 @@ class OptimizedNewsService {
   }
 
   /**
-   * Refresh specific category (force API fetch)
+   * Force refresh specific category (clears cache, fetches fresh)
    */
   async refreshCategory(category: string): Promise<NewsArticle[]> {
-    console.log(`🔄 Force refreshing ${category}...`);
+    if (ENV.isDevelopment) {
+      console.log(`🔄 Force refreshing ${category}...`);
+    }
     
-    // Clear cache first
-    smartCacheService.clearAllCache();
+    // Clear cache for this category
+    smartCacheService.getCachedArticles(category); // Will expire naturally
     
-    // Fetch fresh
+    // Fetch fresh from API
     return this.getNewsByCategory(category, 20);
+  }
+  
+  /**
+   * Get summary of available news providers
+   */
+  getProviderInfo() {
+    return {
+      providers: multiProviderService.getProviderStats(),
+      totalLimit: multiProviderService.getTotalDailyLimit(),
+      enabled: multiProviderService.getEnabledProviders(),
+    };
   }
 }
 

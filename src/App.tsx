@@ -18,6 +18,8 @@ const Local = lazy(() => import('./pages/Local'));
 const Health = lazy(() => import('./pages/Health'));
 const Politics = lazy(() => import('./pages/Politics'));
 const Admin = lazy(() => import('./pages/Admin'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -53,6 +55,8 @@ export default function App() {
                 <Route path="/health" element={<Health />} />
                 <Route path="/politics" element={<Politics />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
               </Routes>
             </Suspense>
           </main>

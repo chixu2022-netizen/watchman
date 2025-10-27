@@ -1,5 +1,6 @@
 import React from 'react';
 import { NewsArticle } from '../types/news';
+import { NEWS_IMAGE_PLACEHOLDER } from '../constants/images';
 import './SearchResults.css';
 
 interface SearchResultsProps {
@@ -86,7 +87,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             </div>
             {(article as any).imageUrl && (
               <div className="search-result-image">
-                <img src={(article as any).imageUrl} alt={article.title} />
+                <img 
+                  src={(article as any).imageUrl} 
+                  alt={article.title}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
+                  }}
+                />
               </div>
             )}
           </div>

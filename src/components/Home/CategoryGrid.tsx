@@ -1,5 +1,6 @@
 import React from 'react';
 import { NewsArticle } from '../../types/news';
+import { NEWS_IMAGE_PLACEHOLDER } from '../../constants/images';
 
 interface CategoryGridProps {
   categories: {
@@ -59,11 +60,11 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
                   {index === 0 && (
                     <div className={`${columnClass.replace('-column', '-card')}-image`}>
                       <img 
-                        src={article.imageUrl || '/ttttttt.jpg'} 
+                        src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                         alt={article.title}
                         loading="lazy"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/ttttttt.jpg';
+                          (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                         }}
                       />
                     </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { NEWS_IMAGE_PLACEHOLDER } from '../constants/images';
 
 interface LazyImageProps {
   src: string;
@@ -17,7 +18,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   alt, 
   className = '',
   style = {},
-  fallbackSrc = '/ttttttt.jpg'
+  fallbackSrc = NEWS_IMAGE_PLACEHOLDER
 }) => {
   const [imageSrc, setImageSrc] = useState<string>(fallbackSrc);
   const [isLoaded, setIsLoaded] = useState(false);

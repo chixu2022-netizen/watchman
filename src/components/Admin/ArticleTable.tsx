@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NewsArticle } from '../../types/news';
+import { NEWS_IMAGE_PLACEHOLDER } from '../../constants/images';
 
 interface ArticleTableProps {
   articles: NewsArticle[];
@@ -214,7 +215,7 @@ const ArticleTable: React.FC<ArticleTableProps> = ({
                 >
                   <td style={{ padding: '12px' }}>
                     <img 
-                      src={article.imageUrl || '/ttttttt.jpg'}
+                      src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER}
                       alt={article.title}
                       style={{
                         width: '60px',
@@ -224,7 +225,7 @@ const ArticleTable: React.FC<ArticleTableProps> = ({
                         border: '1px solid #ddd'
                       }}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/ttttttt.jpg';
+                        (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                       }}
                     />
                   </td>

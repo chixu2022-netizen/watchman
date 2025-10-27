@@ -3,29 +3,69 @@ import StatsCard from '../components/Admin/StatsCard';
 import ActivityLogs from '../components/Admin/ActivityLogs';
 import ArticleTable from '../components/Admin/ArticleTable';
 import AnalyticsDashboard from '../components/Admin/AnalyticsDashboard';
+import AdminAuth from '../components/AdminAuth';
 import { adminService, AdminStats } from '../services/adminService';
 import { NewsArticle } from '../types/news';
 import Footer from '../components/Footer';
 
 const AdminNew: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'articles' | 'analytics' | 'system'>('dashboard');
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
   const [articlesLoading, setArticlesLoading] = useState(false);
 
-  // Load initial stats
+  // Check if already authenticated on mount
   useEffect(() => {
-    loadStats();
+    const authToken = sessionStorage.getItem('watchman_admin_auth');
+    if (authToken === 'authenticated') {
+      setIsAuthenticated(true);
+    }
+    
+    // Prevent auto-scroll on mount
+    window.scrollTo(0, 0);
+    
+    // Prevent scroll restoration
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
   }, []);
+
+  // Load initial stats (only when authenticated)
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadStats();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   // Load articles when switching to articles tab
   useEffect(() => {
-    if (activeTab === 'articles' && articles.length === 0) {
+    if (isAuthenticated && activeTab === 'articles' && articles.length === 0) {
       loadArticles();
     }
+    
+    // Scroll to top when switching tabs
+    window.scrollTo({ top: 0, behavior: 'auto' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
+  }, [activeTab, isAuthenticated]);
+
+  // Handle authentication
+  const handleAuthentication = () => {
+    setIsAuthenticated(true);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    sessionStorage.removeItem('watchman_admin_auth');
+    setIsAuthenticated(false);
+  };
+
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return <AdminAuth onAuthenticated={handleAuthentication} />;
+  }
 
   const loadStats = async () => {
     setLoading(true);
@@ -127,8 +167,8 @@ const AdminNew: React.FC = () => {
   const cacheHitRate = stats ? adminService.getCacheHitRate() : 0;
 
   return (
-    <div className="home">
-      <div className="home__container" style={{ padding: '20px' }}>
+    <div className="home" style={{ overflowX: 'hidden' }}>
+      <div className="home__container" style={{ padding: '20px', minHeight: '100vh' }}>
         {/* Header */}
         <div style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -165,6 +205,24 @@ const AdminNew: React.FC = () => {
               }}>
                 {stats?.databaseConnected ? '🟢 Database Connected' : '🔴 Database Offline'}
               </div>
+              
+              <button
+                onClick={handleLogout}
+                style={{
+                  background: 'rgba(220, 53, 69, 0.2)',
+                  color: 'white',
+                  border: '2px solid #dc3545',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  backdropFilter: 'blur(10px)',
+                  marginRight: '8px'
+                }}
+              >
+                🔓 Logout
+              </button>
               
               <button
                 onClick={loadStats}

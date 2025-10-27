@@ -1,5 +1,6 @@
 import React from 'react';
 import { NewsArticle } from '../../types/news';
+import { NEWS_IMAGE_PLACEHOLDER } from '../../constants/images';
 
 interface NewsSectionProps {
   articles: NewsArticle[];
@@ -78,11 +79,11 @@ const NewsSection: React.FC<NewsSectionProps> = ({
             {showImages && (
               <div className={`${cardClass}-image`}>
                 <img 
-                  src={article.imageUrl || '/ttttttt.jpg'} 
+                  src={article.imageUrl || NEWS_IMAGE_PLACEHOLDER} 
                   alt={article.title}
                   loading="lazy"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/ttttttt.jpg';
+                    (e.target as HTMLImageElement).src = NEWS_IMAGE_PLACEHOLDER;
                   }}
                 />
               </div>
